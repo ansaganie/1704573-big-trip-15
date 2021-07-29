@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Ansagan Islamgali](https://up.htmlacademy.ru/ecmascript/15/user/1704573).
-* Наставник: `Неизвестно`.
+* Студент: [Ansagan Islamgali](https://htmlacademy.ru/profile/id1704573).
+* Наставник: [Артём Рудов](https://htmlacademy.ru/profile/artrudov).
 
 ---
 
