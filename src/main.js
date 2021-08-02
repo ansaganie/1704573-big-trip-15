@@ -7,37 +7,34 @@ import { createNewEventForm } from './view/new-event-form.js';
 import { createEventList } from './view/event-list.js';
 import { createEventItem } from './view/event-item.js';
 
-const Positions = {
-  BEFORE_BEGIN: 'beforebegin',
-  AFTER_BEGIN: 'afterbegin',
-  BEFORE_END: 'beforeend',
-  AFTER_END: 'afterend',
-};
+const EVENT_ITEMS_COUNT = 3;
 
-const tripMainElement = document.querySelector('.trip-main');
-const navigationElement = tripMainElement.querySelector(
-  '.trip-controls__navigation',
-);
-const filterElement = tripMainElement.querySelector('.trip-controls__filters');
-const tripEventsElement = document.querySelector('.trip-events');
-
-const render = (container, element, position) => {
+const render = (container, element, position = 'beforeend') => {
   container.insertAdjacentHTML(position, element);
 };
 
-render(tripMainElement, createTripInfo(), Positions.AFTER_BEGIN);
+const stringToHTML = (input) => {
+  const template = document.createElement('template');
+  template.innerHTML = input.trim();
+  return template.content.firstChild;
+};
 
-const tripInfoElement = tripMainElement.querySelector('.trip-main__trip-info');
-render(tripInfoElement, createTripCost(), Positions.BEFORE_END);
+const tripMainElement = document.querySelector('.trip-main');
+const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
+const filterElement = tripMainElement.querySelector('.trip-controls__filters');
+const tripEventsElement = document.querySelector('.trip-events');
+const tripInfoElement = stringToHTML(createTripInfo());
+const eventListElement = stringToHTML(createEventList());
 
-render(navigationElement, createTripTabs(), Positions.BEFORE_END);
-render(filterElement, createTripFilters(), Positions.BEFORE_END);
-render(tripEventsElement, createTripSort(), Positions.BEFORE_END);
-render(tripEventsElement, createEventList(), Positions.BEFORE_END);
+render(tripInfoElement, createTripCost());
+render(tripMainElement, tripInfoElement.outerHTML, 'afterbegin');
+render(navigationElement, createTripTabs());
+render(filterElement, createTripFilters());
+render(tripEventsElement, createTripSort());
+render(eventListElement, createNewEventForm());
 
-const eventListElement = tripEventsElement.querySelector('.trip-events__list');
-render(eventListElement, createNewEventForm(), Positions.BEFORE_END);
-
-for (let i = 0; i < 3; i++) {
-  render(eventListElement, createEventItem(), Positions.BEFORE_END);
+for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
+  render(eventListElement, createEventItem());
 }
+
+render(tripEventsElement, eventListElement.outerHTML);
