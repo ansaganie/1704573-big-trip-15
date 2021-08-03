@@ -6,8 +6,9 @@ import { createTripSort } from './view/trip-sort.js';
 import { createNewEventForm } from './view/new-event-form.js';
 import { createEventList } from './view/event-list.js';
 import { createEventItem } from './view/event-item.js';
+import { generatePoints } from './mock/event.js';
 
-const EVENT_ITEMS_COUNT = 3;
+const EVENT_ITEMS_COUNT = 15;
 
 const render = (container, element, position = 'beforeend') => {
   container.insertAdjacentHTML(position, element);
@@ -18,6 +19,8 @@ const stringToHTML = (input) => {
   template.innerHTML = input.trim();
   return template.content.firstChild;
 };
+
+const randomEvents = generatePoints(EVENT_ITEMS_COUNT);
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
@@ -34,7 +37,7 @@ render(tripEventsElement, createTripSort());
 render(eventListElement, createNewEventForm());
 
 for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
-  render(eventListElement, createEventItem());
+  render(eventListElement, createEventItem(randomEvents[i]));
 }
 
 render(tripEventsElement, eventListElement.outerHTML);
