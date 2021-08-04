@@ -20,7 +20,11 @@ const stringToHTML = (input) => {
   return template.content.firstChild;
 };
 
-const randomEvents = generatePoints(EVENT_ITEMS_COUNT);
+const sortPointsByDateAscending = (date1, date2) =>
+  new Date(date1.dateFrom) - new Date(date2.dateFrom);
+
+const randomEvents = generatePoints(EVENT_ITEMS_COUNT)
+  .sort(sortPointsByDateAscending);
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
