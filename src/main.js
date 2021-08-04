@@ -3,7 +3,7 @@ import { createTripTabs } from './view/trip-tabs.js';
 import { createTripCost } from './view/trip-cost';
 import { createTripFilters } from './view/trip-filters.js';
 import { createTripSort } from './view/trip-sort.js';
-import { createNewEventForm } from './view/new-event-form.js';
+import { createEditForm } from './view/edit-form.js';
 import { createEventList } from './view/event-list.js';
 import { createEventItem } from './view/event-item.js';
 import { generatePoints } from './mock/event.js';
@@ -38,9 +38,9 @@ render(tripMainElement, tripInfoElement.outerHTML, 'afterbegin');
 render(navigationElement, createTripTabs());
 render(filterElement, createTripFilters());
 render(tripEventsElement, createTripSort());
-render(eventListElement, createNewEventForm());
+render(eventListElement, createEditForm(randomEvents[0]));
 
-for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
+for (let i = 1; i < EVENT_ITEMS_COUNT; i++) {
   render(eventListElement, createEventItem(randomEvents[i]));
 }
 
