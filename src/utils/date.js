@@ -53,9 +53,10 @@ const formatDate = (date, format) => {
   const hours = makeTwoPlace(date.getHours());
   const minutes = makeTwoPlace(date.getMinutes());
   const formatConverters = {
-    'MMM dd': `${months[date.getMonth()]} ${dayOfMonth}`,
+    'MMM dd': `${months[date.getMonth()]} ${date.getDate()}`,
     'hh:mm': `${hours}:${minutes}`,
     'yyyy-mm-dd': `${year}-${month}-${dayOfMonth}`,
+    'dd/mm/yy hh:mm': `${dayOfMonth}/${month}/${year.slice(2)} ${hours}:${minutes}`,
   };
 
   if (Object.keys(formatConverters).includes(format)) {
