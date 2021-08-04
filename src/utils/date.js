@@ -66,4 +66,15 @@ const formatDate = (date, format) => {
   }
 };
 
-export { formatDate, getRandomDateFrom, getDateTo };
+const createTripInfoDate = (start, end) => {
+  let result = `${months[start.getMonth()]} ${start.getDate()}&nbsp;&mdash;&nbsp;`;
+  if (start.getMonth() === end.getMonth()) {
+    result = `${result}${end.getDate()}`;
+  } else {
+    result = `${result}${months[end.getMonth()]} ${end.getDate()}`;
+  }
+
+  return result;
+};
+
+export { formatDate, getRandomDateFrom, getDateTo, createTripInfoDate };
