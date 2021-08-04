@@ -23,11 +23,10 @@ let globalId = 0;
 const generatePoint = () => {
   const type = getRandomElement(pointType);
   const dateFrom = getRandomDateFrom();
-  const dateTo =  getDateTo(new Date(dateFrom), Math.random() > 0.5 ? 60 : 30);
   return {
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom,
-    dateTo: new Date(dateTo),
+    dateTo: getDateTo(dateFrom),
     destination: getRandomDestination(),
     id: globalId++,
     isFavorite: false,

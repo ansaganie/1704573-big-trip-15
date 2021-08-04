@@ -1,5 +1,13 @@
 import { getRandomInteger } from './random';
 
+const MONTH_AHEAD = 2;
+const MIN_DAY_MONTH = 1;
+const MAX_DAY_MONTH = 30;
+const MIN_HOUR = 0;
+const MAX_HOUR = 23;
+const MIN_QUATER = 1;
+const MAX_QUATER = 4;
+
 const months = [
   'JAN',
   'FEB',
@@ -15,32 +23,39 @@ const months = [
   'DEC',
 ];
 
+const makeTwoPlace = (input) => input.toString().padStart(2, '0');
+
 const getRandomDateFrom = () => {
   const current = new Date();
   const date = new Date(
     current.getFullYear(),
-    current.getMonth() + 1,
-    getRandomInteger(0, 30),
-    getRandomInteger(0, 23),
+    current.getMonth() + MONTH_AHEAD,
+    getRandomInteger(MIN_DAY_MONTH, MAX_DAY_MONTH),
+    getRandomInteger(MIN_HOUR, MAX_HOUR),
   );
   return date;
 };
 
-const getDateTo = (date, minutes) =>
-  minutes === 60
-    ? date.setHours(date.getHours() + 1)
-    : date.setMinutes(minutes);
+const getDateTo = (date) => {
+  const minutes = 15 * getRandomInteger(MIN_QUATER, MAX_QUATER);
+
+  return new Date(
+    minutes === 15 * MAX_QUATER
+      ? new Date(date).setHours(date.getHours() + 1)
+      : new Date(date).setMinutes(minutes),
+  );
+};
 
 const formatDate = (date, format) => {
-  const dayOfMonth = date.getDate();
-  const month = date.getMonth();
-  const year = date.getFullYear();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+  const dayOfMonth = makeTwoPlace(date.getDate());
+  const month = makeTwoPlace(date.getMonth() + 1);
+  const year = makeTwoPlace(date.getFullYear());
+  const hours = makeTwoPlace(date.getHours());
+  const minutes = makeTwoPlace(date.getMinutes());
   const formatConverters = {
-    'MMM dd': `${months[month]} ${dayOfMonth}`,
+    'MMM dd': `${months[date.getMonth()]} ${dayOfMonth}`,
     'hh:mm': `${hours}:${minutes}`,
-    'yyyy-mm-dd': `${year}-${month + 1}-${dayOfMonth}`,
+    'yyyy-mm-dd': `${year}-${month}-${dayOfMonth}`,
   };
 
   if (Object.keys(formatConverters).includes(format)) {
