@@ -7,6 +7,7 @@ import { createEditForm } from './view/edit-form.js';
 import { createEventList } from './view/event-list.js';
 import { createEventItem } from './view/event-item.js';
 import { generatePoints } from './mock/event.js';
+import { createTripInfoDate } from './utils/date.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
@@ -26,14 +27,20 @@ const sortPointsByDateAscending = (date1, date2) =>
 const randomEvents = generatePoints(EVENT_ITEMS_COUNT)
   .sort(sortPointsByDateAscending);
 
+const tripInfoCost = randomEvents
+  .map(({basePrice}) => basePrice)
+  .reduce((acc, basePrice) => acc + basePrice);
+const tripInfoTitle = randomEvents.map(({ destination }) => destination.name).join(' &mdash; ');
+const tripInfoDate = createTripInfoDate(randomEvents[0].dateFrom, randomEvents[randomEvents.length - 1].dateTo);
+
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector('.trip-controls__navigation');
 const filterElement = tripMainElement.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
-const tripInfoElement = stringToHTML(createTripInfo());
+const tripInfoElement = stringToHTML(createTripInfo(tripInfoTitle, tripInfoDate));
 const eventListElement = stringToHTML(createEventList());
 
-render(tripInfoElement, createTripCost());
+render(tripInfoElement, createTripCost(tripInfoCost));
 render(tripMainElement, tripInfoElement.outerHTML, 'afterbegin');
 render(navigationElement, createTripTabs());
 render(filterElement, createTripFilters());
