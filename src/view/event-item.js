@@ -1,5 +1,6 @@
 import { createOffer } from './event-item-offer';
 import { formatDate } from '../utils/date';
+import { capitalize } from '../utils/string';
 
 export const createEventItem = ({
   type,
@@ -8,6 +9,7 @@ export const createEventItem = ({
   basePrice,
   offers,
   destination,
+  isFavorite,
 }) => {
   const offersFragment = [];
   offers.forEach((offer) => offersFragment.push(createOffer(offer)));
@@ -19,7 +21,7 @@ export const createEventItem = ({
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type.charAt(0).toUpperCase() + type.slice(1)} ${destination.name}</h3>
+      <h3 class="event__title">${capitalize(type)} ${destination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${formatDate(dateFrom, 'hh:mm')}</time>
@@ -35,7 +37,7 @@ export const createEventItem = ({
       <ul class="event__selected-offers">
         ${offersFragment.join('')}
       </ul>
-      <button class="event__favorite-btn event__favorite-btn--active" type="button">
+      <button class="event__favorite-btn event__favorite-btn${isFavorite ? '--active' : ''}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
           <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
