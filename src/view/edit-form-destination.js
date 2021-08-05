@@ -1,6 +1,6 @@
 import { showOrHide } from '../utils/show-hide';
 
-export const createEditFromDestination = ({ description, pictures }) => {
+export const createEditFormDestination = ({ description, pictures }) => {
   let picturesOfDestination = '';
 
   if (pictures) {

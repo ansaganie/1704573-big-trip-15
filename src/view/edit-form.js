@@ -1,9 +1,11 @@
 import { offers as offersMock } from '../mock/offer';
 import { formatDate } from '../utils/date';
 import { capitalize } from '../utils/string';
-import { createEditFromDestination } from './edit-form-destination';
+import { createEditFormDestination } from './edit-form-destination';
 import { createEditFormOffers } from './edit-form-offer';
 import { createEditFormEventType } from './edit-form-event-type.js';
+import { createEditFormDestinationList } from './edit-form-destination-list.js';
+import { cityNames } from '../mock/destination.js';
 
 export const createEditForm = (event = {}) => {
   const {
@@ -19,7 +21,7 @@ export const createEditForm = (event = {}) => {
     basePrice = 0,
   } = event;
   const editFormOffers = createEditFormOffers(offers);
-  const editFormDestination = createEditFromDestination(destination);
+  const editFormDestination = createEditFormDestination(destination);
 
   return `<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -30,11 +32,7 @@ export const createEditForm = (event = {}) => {
           ${capitalize(type)}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
-        <datalist id="destination-list-1">
-          <option value="Amsterdam"></option>
-          <option value="Geneva"></option>
-          <option value="Chamonix"></option>
-        </datalist>
+        ${createEditFormDestinationList(cityNames)}
       </div>
 
       <div class="event__field-group  event__field-group--time">

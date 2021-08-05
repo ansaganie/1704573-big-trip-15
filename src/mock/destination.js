@@ -34,4 +34,4 @@ const getRandomDestination = () => {
   };
 };
 
-export { getRandomDestination };
+export { getRandomDestination, cityNames };
