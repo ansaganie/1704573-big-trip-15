@@ -9,6 +9,8 @@ import { createEventItem } from './view/event-item.js';
 import { generatePoints } from './mock/event.js';
 import { createTripInfoDate } from './utils/date.js';
 import { capitalize } from './utils/string.js';
+import { createEditFormOffers } from './view/edit-form-offer.js';
+import { offers } from './mock/offer.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
@@ -58,11 +60,16 @@ render(tripEventsElement, eventListElement.outerHTML);
 const eventTypeIcon = document.querySelector('.event__type-icon');
 const eventTypeOutput = document.querySelector('.event__type-output');
 const eventTypeGroup = document.querySelector('.event__type-group');
+const eventDetails = document.querySelector('.event__details');
 
 const onEventTypeGroupChange = (event) => {
-  eventTypeIcon.src = `img/icons/${event.target.value}.png`;
-  eventTypeOutput.textContent = capitalize(event.target.value);
+  const selectedEventType = event.target.value;
+  eventTypeIcon.src = `img/icons/${selectedEventType}.png`;
+  eventTypeOutput.textContent = capitalize(selectedEventType);
   document.querySelector('.event__type-toggle').checked = false;
+  const updatedOffers = createEditFormOffers(offers[selectedEventType]);
+  eventDetails.removeChild(eventDetails.querySelector('.event__section--offers'));
+  render(eventDetails, updatedOffers, 'afterbegin');
 };
 
 eventTypeGroup.addEventListener('change', onEventTypeGroupChange);
