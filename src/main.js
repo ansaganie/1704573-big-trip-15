@@ -8,6 +8,7 @@ import { createEventList } from './view/event-list.js';
 import { createEventItem } from './view/event-item.js';
 import { generatePoints } from './mock/event.js';
 import { createTripInfoDate } from './utils/date.js';
+import { capitalize } from './utils/string.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
@@ -30,6 +31,7 @@ const randomEvents = generatePoints(EVENT_ITEMS_COUNT)
 const tripInfoCost = randomEvents
   .map(({basePrice}) => basePrice)
   .reduce((acc, basePrice) => acc + basePrice);
+
 const tripInfoTitle = randomEvents.map(({ destination }) => destination.name).join(' &mdash; ');
 const tripInfoDate = createTripInfoDate(randomEvents[0].dateFrom, randomEvents[randomEvents.length - 1].dateTo);
 
@@ -52,3 +54,15 @@ for (let i = 1; i < EVENT_ITEMS_COUNT; i++) {
 }
 
 render(tripEventsElement, eventListElement.outerHTML);
+
+const eventTypeIcon = document.querySelector('.event__type-icon');
+const eventTypeOutput = document.querySelector('.event__type-output');
+const eventTypeGroup = document.querySelector('.event__type-group');
+
+const onEventTypeGroupChange = (event) => {
+  eventTypeIcon.src = `img/icons/${event.target.value}.png`;
+  eventTypeOutput.textContent = capitalize(event.target.value);
+  document.querySelector('.event__type-toggle').checked = false;
+};
+
+eventTypeGroup.addEventListener('change', onEventTypeGroupChange);
