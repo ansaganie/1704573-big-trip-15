@@ -94,4 +94,3 @@ const onEventDestinationInputChange = (event) => {
 
 eventTypeGroupElement.addEventListener('change', onEventTypeGroupChange);
 eventDestinationInputElement.addEventListener('change', onEventDestinationInputChange);
-

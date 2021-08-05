@@ -2,7 +2,8 @@ export const createEditFormEventType = (type) => {
   const checked = {};
   checked[type] = 'checked';
 
-  return `<div class="event__type-wrapper">
+  return `
+  <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
       <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
@@ -66,4 +67,3 @@ export const createEditFormEventType = (type) => {
     </div>
   </div>`;
 };
-

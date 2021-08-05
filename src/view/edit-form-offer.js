@@ -7,7 +7,8 @@ const createOffers = (offers) => {
   if (offers) {
     offers.forEach(({ isChecked, title, price }) => {
       const id = createIdForOffer(title);
-      result = `${result}
+      result = `
+      ${result}
       <div class="event__offer-selector">
         <input
           class="event__offer-checkbox  visually-hidden"
@@ -18,8 +19,7 @@ const createOffers = (offers) => {
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
         </label>
-      </div>
-      `;
+      </div>`;
     });
   }
 
@@ -33,5 +33,4 @@ export const createEditFormOffers = (offers) => `
     <div class="event__available-offers ${showOrHide(offers)}">
       ${createOffers(offers)}
     </div>
-  </section>
-`;
+  </section>`;

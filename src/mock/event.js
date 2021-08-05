@@ -29,8 +29,6 @@ const pointType = [
   'restaurant',
 ];
 
-let globalId = 0;
-
 const generatePoint = () => {
   const type = getRandomElement(pointType);
   const dateFrom = getRandomDateFrom();
@@ -39,7 +37,6 @@ const generatePoint = () => {
     dateFrom,
     dateTo: getDateTo(dateFrom),
     destination: getRandomDestination(getRandomElement(cityNames)),
-    id: globalId++,
     isFavorite: false,
     offers: offers[type],
     type,

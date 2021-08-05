@@ -1,8 +1,8 @@
 import { showOrHide } from '../utils/show-hide';
 
 export const createEditFormDestination = (destination) => {
-  let picturesOfDestination = '';
   const { description, pictures} = destination;
+  let picturesOfDestination = '';
 
   if (pictures) {
     pictures.forEach((picture) => {

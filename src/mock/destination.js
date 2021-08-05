@@ -1,5 +1,7 @@
 import { getRandomElement } from '../utils/random';
 
+const PICSUM_LINK = 'http://picsum.photos/300/200?r=';
+
 const descriptions = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -15,7 +17,19 @@ const getRandomDestination = (cityName) => ({
   pictures: [
     {
       description: `Photo of ${cityName}`,
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
+      src: `${PICSUM_LINK}${Math.random()}`,
+    },
+    {
+      description: `Photo of ${cityName}`,
+      src: `${PICSUM_LINK}${Math.random()}`,
+    },
+    {
+      description: `Photo of ${cityName}`,
+      src: `${PICSUM_LINK}${Math.random()}`,
+    },
+    {
+      description: `Photo of ${cityName}`,
+      src: `${PICSUM_LINK}${Math.random()}`,
     },
   ],
 });
