@@ -1,3 +1,4 @@
+import { cityNames } from '../mock/event.js';
 import { offers as offersMock } from '../mock/offer';
 import { formatDate } from '../utils/date';
 import { capitalize } from '../utils/string';
@@ -5,7 +6,6 @@ import { createEditFormDestination } from './edit-form-destination';
 import { createEditFormOffers } from './edit-form-offer';
 import { createEditFormEventType } from './edit-form-event-type.js';
 import { createEditFormDestinationList } from './edit-form-destination-list.js';
-import { cityNames } from '../mock/destination.js';
 
 export const createEditForm = (event = {}) => {
   const {
@@ -31,7 +31,7 @@ export const createEditForm = (event = {}) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${capitalize(type)}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Chamonix" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
         ${createEditFormDestinationList(cityNames)}
       </div>
 

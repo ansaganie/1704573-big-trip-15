@@ -1,7 +1,8 @@
 import { showOrHide } from '../utils/show-hide';
 
-export const createEditFormDestination = ({ description, pictures }) => {
+export const createEditFormDestination = (destination) => {
   let picturesOfDestination = '';
+  const { description, pictures} = destination;
 
   if (pictures) {
     pictures.forEach((picture) => {
@@ -11,14 +12,13 @@ export const createEditFormDestination = ({ description, pictures }) => {
   }
 
   return `
-    <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description" ${showOrHide(description)}>${description}</p>
-          <div class="event__photos-container ${showOrHide(description)}">
-            <div class="event__photos-tape">
-              ${picturesOfDestination}
-            </div>
-          </div>
-    </section>
-    `;
+    <section class="event__section  event__section--destination ${showOrHide(destination)}">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description" ${showOrHide(description)}>${description}</p>
+      <div class="event__photos-container ${showOrHide(description)}">
+        <div class="event__photos-tape">
+          ${picturesOfDestination}
+        </div>
+      </div>
+    </section>`;
 };

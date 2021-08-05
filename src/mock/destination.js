@@ -1,16 +1,5 @@
 import { getRandomElement } from '../utils/random';
 
-const cityNames = [
-  'Paris',
-  'London',
-  'Lissabon',
-  'Oslo',
-  'Helsinki',
-  'Rio de Janeiro',
-  'Tokio',
-  'Berlin',
-];
-
 const descriptions = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -20,18 +9,15 @@ const descriptions = [
   'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
 ];
 
-const getRandomDestination = () => {
-  const cityName = getRandomElement(cityNames);
-  return {
-    name: cityName,
-    description: getRandomElement(descriptions),
-    pictures: [
-      {
-        description: `Photo of ${cityName}`,
-        src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      },
-    ],
-  };
-};
+const getRandomDestination = (cityName) => ({
+  name: cityName,
+  description: getRandomElement(descriptions),
+  pictures: [
+    {
+      description: `Photo of ${cityName}`,
+      src: `http://picsum.photos/300/200?r=${Math.random()}`,
+    },
+  ],
+});
 
-export { getRandomDestination, cityNames };
+export { getRandomDestination };

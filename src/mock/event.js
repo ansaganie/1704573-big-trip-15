@@ -6,6 +6,17 @@ import { offers } from './offer';
 const MAX_PRICE = 300;
 const MIN_PRICE = 5000;
 
+const cityNames = [
+  'Paris',
+  'London',
+  'Lisbon',
+  'Oslo',
+  'Helsinki',
+  'Rio de Janeiro',
+  'Tokio',
+  'Berlin',
+];
+
 const pointType = [
   'taxi',
   'bus',
@@ -27,7 +38,7 @@ const generatePoint = () => {
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom,
     dateTo: getDateTo(dateFrom),
-    destination: getRandomDestination(),
+    destination: getRandomDestination(getRandomElement(cityNames)),
     id: globalId++,
     isFavorite: false,
     offers: offers[type],
@@ -38,4 +49,4 @@ const generatePoint = () => {
 const generatePoints = (count) =>
   new Array(count).fill(null).map(generatePoint);
 
-export { generatePoints };
+export { generatePoints, cityNames };

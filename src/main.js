@@ -6,11 +6,13 @@ import { createTripSort } from './view/trip-sort.js';
 import { createEditForm } from './view/edit-form.js';
 import { createEventList } from './view/event-list.js';
 import { createEventItem } from './view/event-item.js';
-import { generatePoints } from './mock/event.js';
+import { cityNames, generatePoints } from './mock/event.js';
 import { createTripInfoDate } from './utils/date.js';
 import { capitalize } from './utils/string.js';
 import { createEditFormOffers } from './view/edit-form-offer.js';
 import { offers } from './mock/offer.js';
+import { getRandomDestination } from './mock/destination.js';
+import { createEditFormDestination } from './view/edit-form-destination.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
@@ -57,19 +59,39 @@ for (let i = 1; i < EVENT_ITEMS_COUNT; i++) {
 
 render(tripEventsElement, eventListElement.outerHTML);
 
-const eventTypeIcon = document.querySelector('.event__type-icon');
-const eventTypeOutput = document.querySelector('.event__type-output');
-const eventTypeGroup = document.querySelector('.event__type-group');
-const eventDetails = document.querySelector('.event__details');
+const eventEditElement = document.querySelector('.event--edit');
+const eventTypeIconElement = eventEditElement.querySelector('.event__type-icon');
+const eventTypeOutputElement = eventEditElement.querySelector('.event__type-output');
+const eventTypeGroupElement = eventEditElement.querySelector('.event__type-group');
+const eventDetailsElement = eventEditElement.querySelector('.event__details');
+const eventDestinationInputElement = eventEditElement.querySelector('.event__input--destination');
 
 const onEventTypeGroupChange = (event) => {
   const selectedEventType = event.target.value;
-  eventTypeIcon.src = `img/icons/${selectedEventType}.png`;
-  eventTypeOutput.textContent = capitalize(selectedEventType);
+
+  eventTypeIconElement.src = `img/icons/${selectedEventType}.png`;
+  eventTypeOutputElement.textContent = capitalize(selectedEventType);
+
   document.querySelector('.event__type-toggle').checked = false;
+
   const updatedOffers = createEditFormOffers(offers[selectedEventType]);
-  eventDetails.removeChild(eventDetails.querySelector('.event__section--offers'));
-  render(eventDetails, updatedOffers, 'afterbegin');
+  eventDetailsElement.removeChild(eventDetailsElement.querySelector('.event__section--offers'));
+
+  render(eventDetailsElement, updatedOffers, 'afterbegin');
 };
 
-eventTypeGroup.addEventListener('change', onEventTypeGroupChange);
+const onEventDestinationInputChange = (event) => {
+  const inputCityName = event.target.value;
+  let updatedDestination = createEditFormDestination('');
+
+  if (cityNames.includes(inputCityName)) {
+    updatedDestination  = createEditFormDestination(getRandomDestination(inputCityName));
+  }
+
+  eventDetailsElement.removeChild(eventDetailsElement.querySelector('.event__section--destination'));
+  render(eventDetailsElement, updatedDestination);
+};
+
+eventTypeGroupElement.addEventListener('change', onEventTypeGroupChange);
+eventDestinationInputElement.addEventListener('change', onEventDestinationInputChange);
+
