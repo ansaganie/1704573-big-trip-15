@@ -45,9 +45,8 @@ const endDate = randomEvents[randomEvents.length - 1].dateTo;
 const tripInfoDate = createTripInfoDate(startDate, endDate);
 
 const tripMainElement = document.querySelector('.trip-main');
-const navigationElement = tripMainElement.querySelector(
-  '.trip-controls__navigation',
-);
+const navigationElement = tripMainElement
+  .querySelector('.trip-controls__navigation');
 const filterElement = tripMainElement
   .querySelector('.trip-controls__filters');
 
