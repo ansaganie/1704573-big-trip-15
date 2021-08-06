@@ -7,20 +7,20 @@ import { createEditFormOffers } from './edit-form-offer';
 import { createEditFormEventType } from './edit-form-event-type.js';
 import { createEditFormDestinationList } from './edit-form-destination-list.js';
 
-export const createEditForm = (
-  event = {
-    type: 'taxi',
-    offers: offersMock[this.type],
-    destination: {
-      name: '',
-      description: '',
-      pictures: [],
-    },
-    dateFrom: new Date(),
-    dateTo: new Date(),
-    basePrice: 0,
+const BLANK_EVENT = {
+  type: 'taxi',
+  offers: offersMock[this.type],
+  destination: {
+    name: '',
+    description: '',
+    pictures: [],
   },
-) => {
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  basePrice: 0,
+};
+
+export const createEditForm = (event = BLANK_EVENT) => {
   const { type, offers, destination, dateFrom, dateTo, basePrice } = event;
   const editFormOffers = createEditFormOffers(offers);
   const editFormDestination = createEditFormDestination(destination);
