@@ -5,10 +5,13 @@ const MIN_DAY_MONTH = 1;
 const MAX_DAY_MONTH = 30;
 const MIN_HOUR = 0;
 const MAX_HOUR = 23;
-const MIN_QUATER = 1;
-const MAX_QUATER = 4;
+const MIN_QUARTER = 1;
+const MAX_QUARTER = 4;
+const DATE_PLACES = 2;
+const DATE_PAD = '0';
+const QUARTER = 15;
 
-const months = [
+const MONTHS = [
   'JAN',
   'FEB',
   'MAR',
@@ -23,24 +26,29 @@ const months = [
   'DEC',
 ];
 
-const makeTwoPlace = (input) => input.toString().padStart(2, '0');
+const makeTwoPlace = (input) =>
+  input.toString().padStart(DATE_PLACES, DATE_PAD);
 
 const getRandomDateFrom = () => {
   const current = new Date();
-  const date = new Date(
-    current.getFullYear(),
-    current.getMonth() + MONTH_AHEAD,
+  current.setMonth(current.getMonth() + MONTH_AHEAD);
+  current.setDate(
     getRandomInteger(MIN_DAY_MONTH, MAX_DAY_MONTH),
+  );
+  current.setHours(
     getRandomInteger(MIN_HOUR, MAX_HOUR),
   );
-  return date;
+  current.setMinutes(0);
+  current.setSeconds(0);
+
+  return current;
 };
 
 const getDateTo = (date) => {
-  const minutes = 15 * getRandomInteger(MIN_QUATER, MAX_QUATER);
+  const minutes = QUARTER * getRandomInteger(MIN_QUARTER, MAX_QUARTER);
 
   return new Date(
-    minutes === 15 * MAX_QUATER
+    minutes === QUARTER * MAX_QUARTER
       ? new Date(date).setHours(date.getHours() + 1)
       : new Date(date).setMinutes(minutes),
   );
@@ -52,11 +60,13 @@ const formatDate = (date, format) => {
   const year = makeTwoPlace(date.getFullYear());
   const hours = makeTwoPlace(date.getHours());
   const minutes = makeTwoPlace(date.getMinutes());
+
   const formatConverters = {
-    'MMM dd': `${months[date.getMonth()]} ${date.getDate()}`,
+    'MMM dd': `${MONTHS[date.getMonth()]} ${date.getDate()}`,
     'hh:mm': `${hours}:${minutes}`,
     'yyyy-mm-dd': `${year}-${month}-${dayOfMonth}`,
-    'dd/mm/yy hh:mm': `${dayOfMonth}/${month}/${year.slice(2)} ${hours}:${minutes}`,
+    'dd/mm/yy hh:mm':
+      `${dayOfMonth}/${month}/${year.slice(2)} ${hours}:${minutes}`,
   };
 
   if (Object.keys(formatConverters).includes(format)) {
@@ -67,14 +77,24 @@ const formatDate = (date, format) => {
 };
 
 const createTripInfoDate = (start, end) => {
-  let result = `${months[start.getMonth()]} ${start.getDate()}&nbsp;&mdash;&nbsp;`;
-  if (start.getMonth() === end.getMonth()) {
-    result = `${result}${end.getDate()}`;
+  const startDate = start.getDate();
+  const startMonth = start.getMonth();
+  const endDate = end.getDate();
+  const endMonth = end.getMonth();
+  let result = `${MONTHS[startMonth]} ${startDate}&nbsp;&mdash;&nbsp;`;
+
+  if (startMonth === endMonth) {
+    result = `${result}${endDate}`;
   } else {
-    result = `${result}${months[end.getMonth()]} ${end.getDate()}`;
+    result = `${result}${MONTHS[endMonth]} ${endDate}`;
   }
 
   return result;
 };
 
-export { formatDate, getRandomDateFrom, getDateTo, createTripInfoDate };
+export {
+  formatDate,
+  getRandomDateFrom,
+  getDateTo,
+  createTripInfoDate
+};
