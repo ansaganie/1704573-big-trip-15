@@ -9,7 +9,7 @@ import { createEditFormDestinationList } from './edit-form-destination-list.js';
 
 const BLANK_EVENT = {
   type: 'taxi',
-  offers: offersMock[this.type],
+  offers: offersMock['taxi'],
   destination: {
     name: '',
     description: '',
