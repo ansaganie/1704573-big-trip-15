@@ -2,14 +2,18 @@ import { showOrHide } from '../utils/show-hide';
 
 export const createEditFormDestination = (destination) => {
   const { description, pictures} = destination;
+  let picturesOfDestination;
 
-  const picturesOfDestination = pictures
-    .map((picture) =>
-      `<img
-        class="event__photo"
-        src="${picture.src}"
-        alt="${picture.description}">`)
-    .join('\n');
+  if (pictures) {
+    picturesOfDestination = pictures
+      .map((picture) =>
+        `<img
+          class="event__photo"
+          src="${picture.src}"
+          alt="${picture.description}">`)
+      .join('\n');
+  }
+
 
   return (
     `<section class="event__section  event__section--destination ${showOrHide(destination)}">
