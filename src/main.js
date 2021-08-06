@@ -51,10 +51,13 @@ render(tripMainElement, tripInfoElement.outerHTML, 'afterbegin');
 render(navigationElement, createTripTabs());
 render(filterElement, createTripFilters());
 render(tripEventsElement, createTripSort());
-render(eventListElement, createEditForm(randomEvents[0]));
 
-for (let i = 1; i < EVENT_ITEMS_COUNT; i++) {
-  render(eventListElement, createEventItem(randomEvents[i]));
+for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
+  if (i !== 0) {
+    render(eventListElement, createEventItem(randomEvents[i]));
+    continue;
+  }
+  render(eventListElement, createEditForm(randomEvents[i]));
 }
 
 render(tripEventsElement, eventListElement.outerHTML);
