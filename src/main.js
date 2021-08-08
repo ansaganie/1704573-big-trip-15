@@ -7,13 +7,60 @@ import EventItem from './view/EventList/event-item.js';
 import EditForm from './view/EditForm/edit-form.js';
 import EventList from './view/EventList/event-list.js';
 import { createTripInfoDate } from './date.js';
-import { render, RenderPosition } from './utils.js';
+import { isEscapePressed, render, RenderPosition } from './utils.js';
 import { generatePoints } from './mock/event.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
 const sortPointsByDateAscending = (date1, date2) =>
   new Date(date1.dateFrom) - new Date(date2.dateFrom);
+
+const renderEventItem = (container, event) => {
+  const eventItem = new EventItem(event);
+  const editForm = new EditForm(event);
+  const formElement = editForm.getElement();
+  const eventItemElement = eventItem.getElement();
+  const rollDownButton = eventItemElement.querySelector('.event__rollup-btn');
+  const rollUpButton = formElement.querySelector('.event__rollup-btn');
+
+  const changeEventItemToForm = () => {
+    container.replaceChild(formElement, eventItemElement);
+  };
+
+  const changeFormToEventItem = () => {
+    container.replaceChild(eventItemElement, formElement);
+  };
+
+  const onEscKeydown = (evt) => {
+    if (isEscapePressed(evt)) {
+      evt.preventDefault();
+      changeFormToEventItem();
+      document.removeEventListener('keydown', onEscKeydown);
+    }
+  };
+
+  const onEditFromSubmit = () => {
+    changeFormToEventItem();
+    document.removeEventListener('keydown', onEscKeydown);
+  };
+
+  const onRollUpButtonClick = () => {
+    changeFormToEventItem();
+    document.removeEventListener('keydown', onEscKeydown);
+  };
+
+  const onRollDownButtonClick = () => {
+    changeEventItemToForm();
+
+    formElement.addEventListener('submit', onEditFromSubmit);
+    document.addEventListener('keydown', onEscKeydown);
+    rollUpButton.addEventListener('click', onRollUpButtonClick);
+  };
+
+  render(container, eventItem.getElement());
+
+  rollDownButton.addEventListener('click', onRollDownButtonClick);
+};
 
 const randomEvents = generatePoints(EVENT_ITEMS_COUNT).sort(
   sortPointsByDateAscending,
@@ -50,25 +97,7 @@ render(filterElement, new TripFilter().getElement());
 render(tripEventsElement, new TripSort().getElement());
 
 for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
-  const eventItem = new EventItem(randomEvents[i]);
-  const editForm = new EditForm(randomEvents[i]);
-  const formElement = editForm.getElement();
-  const eventItemElement = eventItem.getElement();
-  const rollUpButton = eventItemElement.querySelector('.event__rollup-btn');
-
-  const onEditFromSubmit = () => {
-    eventListElement.replaceChild(eventItemElement, formElement);
-  };
-
-  const onRollUpButtonClick = () => {
-    eventListElement.replaceChild(formElement, eventItemElement);
-
-    formElement.addEventListener('submit', onEditFromSubmit);
-  };
-
-  render(eventListElement, eventItem.getElement());
-
-  rollUpButton.addEventListener('click', onRollUpButtonClick);
+  renderEventItem(eventListElement, randomEvents[i]);
 }
 
 render(tripEventsElement, eventListElement);
