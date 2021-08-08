@@ -35,6 +35,8 @@ const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
 const showOrHide = (element) => (element ? '' : 'visually-hidden');
 
+const isEscapePressed = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
+
 export {
   getRandomInteger,
   getRandomElement,
@@ -42,5 +44,6 @@ export {
   createElement,
   capitalize,
   showOrHide,
+  isEscapePressed,
   RenderPosition
 };
