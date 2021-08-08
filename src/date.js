@@ -1,4 +1,4 @@
-import { getRandomInteger } from './random';
+import { getRandomInteger } from './utils.js';
 
 const MONTH_AHEAD = 2;
 const MIN_DAY_MONTH = 1;
@@ -32,12 +32,8 @@ const makeTwoPlace = (input) =>
 const getRandomDateFrom = () => {
   const current = new Date();
   current.setMonth(current.getMonth() + MONTH_AHEAD);
-  current.setDate(
-    getRandomInteger(MIN_DAY_MONTH, MAX_DAY_MONTH),
-  );
-  current.setHours(
-    getRandomInteger(MIN_HOUR, MAX_HOUR),
-  );
+  current.setDate(getRandomInteger(MIN_DAY_MONTH, MAX_DAY_MONTH));
+  current.setHours(getRandomInteger(MIN_HOUR, MAX_HOUR));
   current.setMinutes(0);
   current.setSeconds(0);
 
@@ -92,9 +88,4 @@ const createTripInfoDate = (start, end) => {
   return result;
 };
 
-export {
-  formatDate,
-  getRandomDateFrom,
-  getDateTo,
-  createTripInfoDate
-};
+export { formatDate, getRandomDateFrom, getDateTo, createTripInfoDate };

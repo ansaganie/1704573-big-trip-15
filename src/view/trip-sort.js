@@ -1,4 +1,4 @@
-import { capitalize } from '../utils/string';
+import { createElement, capitalize } from '../utils.js';
 
 const SORT_TYPES = ['day', 'event', 'time', 'price', 'offer'];
 const DISABLED = SORT_TYPES.reduce((obj, elem) => ({ ...obj, [elem]: '' }), {});
@@ -8,7 +8,7 @@ DISABLED['offer'] = 'disabled';
 const CHECKED = SORT_TYPES.reduce((obj, elem) => ({ ...obj, [elem]: '' }), {});
 CHECKED['day'] = 'checked';
 
-export const createTripSort = () => {
+const createTripSortTemplate = () => {
   const sortTemplates = SORT_TYPES.map(
     (sortType) =>
       `<div class="trip-sort__item  trip-sort__item--${sortType}">
@@ -33,3 +33,27 @@ export const createTripSort = () => {
     </form>`
   );
 };
+
+class TripSort {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripSortTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default TripSort;

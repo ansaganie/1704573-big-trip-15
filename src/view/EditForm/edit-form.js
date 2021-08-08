@@ -1,11 +1,11 @@
-import { CITY_NAMES } from '../mock/event.js';
-import { offers as offersMock } from '../mock/offer';
-import { formatDate } from '../utils/date';
-import { capitalize } from '../utils/string';
-import { createEditFormDestination } from './edit-form-destination';
-import { createEditFormOffers } from './edit-form-offer';
-import { createEditFormEventType } from './edit-form-event-type.js';
-import { createEditFormDestinationList } from './edit-form-destination-list.js';
+import { createElement, capitalize } from '../../utils.js';
+import { CITY_NAMES } from '../../mock/event.js';
+import { offers as offersMock } from '../../mock/offer.js';
+import { formatDate } from '../../date.js';
+import DestinationList from './destination-list.js';
+import Destination from './destination.js';
+import EventType from './event-type.js';
+import Offers from './offer.js';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -20,16 +20,17 @@ const BLANK_EVENT = {
   basePrice: 0,
 };
 
-export const createEditForm = (event = BLANK_EVENT) => {
+export const createEditFormTemplate = (event = BLANK_EVENT) => {
   const { type, offers, destination, dateFrom, dateTo, basePrice } = event;
-  const editFormOffers = createEditFormOffers(offers);
-  const editFormDestination = createEditFormDestination(destination);
+  const offersTemplate = new Offers(offers).getTemplate();
+  const destinationListTemplate = new DestinationList(CITY_NAMES).getTemplate();
+  const destinationTemplate = new Destination(destination).getTemplate();
+  const eventTypeTemplate = new EventType(type).getTemplate();
 
-  return (
-    `<li class="trip-events__item">
+  return `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
-          ${createEditFormEventType(type)}
+          ${eventTypeTemplate}
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
               ${capitalize(type)}
@@ -40,7 +41,7 @@ export const createEditForm = (event = BLANK_EVENT) => {
               name="event-destination"
               value="${destination.name}"
               list="destination-list-1">
-            ${createEditFormDestinationList(CITY_NAMES)}
+            ${destinationListTemplate}
           </div>
 
           <div class="event__field-group  event__field-group--time">
@@ -50,7 +51,7 @@ export const createEditForm = (event = BLANK_EVENT) => {
               id="event-start-time-1"
               type="text"
               name="event-start-time"
-              value="${formatDate(dateFrom,'dd/mm/yy hh:mm')}">
+              value="${formatDate(dateFrom, 'dd/mm/yy hh:mm')}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
             <input
@@ -80,10 +81,34 @@ export const createEditForm = (event = BLANK_EVENT) => {
           </button>
         </header>
         <section class="event__details">
-          ${editFormOffers}
-          ${editFormDestination}
+          ${offersTemplate}
+          ${destinationTemplate}
         </section>
       </form>
-    </li>`
-  );
+    </li>`;
 };
+
+class EditForm {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditFormTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default EditForm;

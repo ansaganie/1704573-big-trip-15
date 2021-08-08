@@ -1,6 +1,6 @@
-import { getDateTo, getRandomDateFrom } from '../utils/date';
-import { getRandomInteger, getRandomElement } from '../utils/random';
-import { getRandomDestination } from './destination';
+import { getDateTo, getRandomDateFrom } from '../date.js';
+import { getRandomInteger, getRandomElement } from '../utils.js';
+import { getRandomDestination } from './destination.js';
 import { offers } from './offer';
 
 const MAX_PRICE = 300;

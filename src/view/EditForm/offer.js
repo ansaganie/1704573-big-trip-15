@@ -1,4 +1,4 @@
-import { showOrHide } from '../utils/show-hide';
+import { createElement, showOrHide } from '../../utils.js';
 
 const createOffers = (offers) => {
   const createIdForOffer = (input) => input.toLowerCase().replace(' ', '-');
@@ -19,7 +19,7 @@ const createOffers = (offers) => {
     .join('\n');
 };
 
-export const createEditFormOffers = (offers) => (
+const createOffersTemplate = (offers) => (
   `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -28,3 +28,28 @@ export const createEditFormOffers = (offers) => (
     </div>
   </section>`
 );
+
+class Offers {
+  constructor(offers) {
+    this._offers = offers;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createOffersTemplate(this._offers);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default Offers;
