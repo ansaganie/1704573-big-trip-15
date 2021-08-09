@@ -27,7 +27,8 @@ export const createEditFormTemplate = (event = BLANK_EVENT) => {
   const destinationTemplate = new Destination(destination).getTemplate();
   const eventTypeTemplate = new EventType(type).getTemplate();
 
-  return `<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           ${eventTypeTemplate}
@@ -85,7 +86,8 @@ export const createEditFormTemplate = (event = BLANK_EVENT) => {
           ${destinationTemplate}
         </section>
       </form>
-    </li>`;
+    </li>`
+  );
 };
 
 class EditForm {

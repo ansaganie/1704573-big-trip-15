@@ -2,10 +2,8 @@ import { createElement, showOrHide } from '../../utils.js';
 
 const createDestination = (destination) => {
   const { description, pictures } = destination;
-  let picturesOfDestination;
-
-  if (pictures) {
-    picturesOfDestination = pictures
+  const picturesOfDestination = pictures
+    ? pictures
       .map(
         (picture) =>
           `<img
@@ -13,10 +11,11 @@ const createDestination = (destination) => {
             src="${picture.src}"
             alt="${picture.description}">`,
       )
-      .join('\n');
-  }
+      .join('\n')
+    : '';
 
-  return `<section
+  return (
+    `<section
       class="event__section
         event__section--destination
         ${showOrHide(destination)}"
@@ -30,7 +29,8 @@ const createDestination = (destination) => {
           ${picturesOfDestination}
         </div>
       </div>
-    </section>`;
+    </section>`
+  );
 };
 
 class Destination {

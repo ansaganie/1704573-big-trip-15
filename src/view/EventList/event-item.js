@@ -41,7 +41,8 @@ const createEventItem = ({
     .map((offer) => createOfferTemplate(offer))
     .join('\n');
 
-  return `<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
       <div class="event">
         <time
           class="event__date"
@@ -82,7 +83,8 @@ const createEventItem = ({
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>`;
+    </li>`
+  );
 };
 
 class EventItem {
