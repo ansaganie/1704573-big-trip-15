@@ -1,4 +1,4 @@
-import { capitalize } from '../utils/string';
+import { createElement, capitalize } from '../utils.js';
 
 const FILTER_TYPES = ['everything', 'future', 'past'];
 const CHECKED = FILTER_TYPES.reduce(
@@ -7,7 +7,7 @@ const CHECKED = FILTER_TYPES.reduce(
 );
 CHECKED['everything'] = 'checked';
 
-export const createTripFilters = () => {
+const createTripFiltersTemplate = () => {
   const filterTemplates = FILTER_TYPES.map(
     (filterType) =>
       `<div class="trip-filters__filter">
@@ -32,3 +32,27 @@ export const createTripFilters = () => {
     </form>`
   );
 };
+
+class TripFilter {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripFiltersTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+export default TripFilter;
