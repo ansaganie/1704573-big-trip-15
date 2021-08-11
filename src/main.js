@@ -80,6 +80,7 @@ render(filterElement, new TripFilterView());
 render(tripEventsElement, new TripSortView());
 
 for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
+  console.log(randomEvents[i]);
   renderEventItem(eventList, randomEvents[i]);
 }
 
