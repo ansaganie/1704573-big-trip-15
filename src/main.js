@@ -18,10 +18,8 @@ const sortPointsByDateAscending = (date1, date2) =>
 const renderEventItem = (container, event) => {
   const eventItem = new EventItem(event);
   const editForm = new EditForm(event);
-  const formElement = editForm.getElement();
   const eventItemElement = eventItem.getElement();
-  const rollDownButton = eventItemElement.querySelector('.event__rollup-btn');
-  const rollUpButton = formElement.querySelector('.event__rollup-btn');
+  const formElement = editForm.getElement();
 
   const changeEventItemToForm = () => {
     container.replaceChild(formElement, eventItemElement);
@@ -33,33 +31,41 @@ const renderEventItem = (container, event) => {
 
   const onEscKeydown = (evt) => {
     if (isEscapePressed(evt)) {
-      evt.preventDefault();
       changeFormToEventItem();
-      document.removeEventListener('keydown', onEscKeydown);
+
+      editForm.unsetEscapeKeydownHandler();
+      editForm.unsetFormSubmitHandler();
+      editForm.unsetRollUpButtonClickHandler();
     }
   };
 
   const onEditFromSubmit = () => {
     changeFormToEventItem();
-    document.removeEventListener('keydown', onEscKeydown);
+
+    editForm.unsetEscapeKeydownHandler();
+    editForm.unsetFormSubmitHandler();
+    editForm.unsetRollUpButtonClickHandler();
   };
 
   const onRollUpButtonClick = () => {
     changeFormToEventItem();
-    document.removeEventListener('keydown', onEscKeydown);
+
+    editForm.unsetEscapeKeydownHandler();
+    editForm.unsetFormSubmitHandler();
+    editForm.unsetRollUpButtonClickHandler();
   };
 
   const onRollDownButtonClick = () => {
     changeEventItemToForm();
 
-    formElement.addEventListener('submit', onEditFromSubmit);
-    document.addEventListener('keydown', onEscKeydown);
-    rollUpButton.addEventListener('click', onRollUpButtonClick);
+    editForm.setFormSubmitHandler(onEditFromSubmit);
+    editForm.setEscapeKeydownHandler(onEscKeydown);
+    editForm.setRollUpButtonClickHandler(onRollUpButtonClick);
   };
 
   render(container, eventItem.getElement());
 
-  rollDownButton.addEventListener('click', onRollDownButtonClick);
+  eventItem.setRollDownButtonClickHandler(onRollDownButtonClick);
 };
 
 const randomEvents = generatePoints(EVENT_ITEMS_COUNT).sort(

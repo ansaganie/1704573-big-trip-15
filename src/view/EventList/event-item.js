@@ -92,10 +92,24 @@ class EventItem extends Abstract{
   constructor(event) {
     super();
     this._event = event;
+    this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
   }
 
   getTemplate() {
     return createEventItem(this._event);
+  }
+
+  _onRollDownButtonClick (evt) {
+    evt.preventDefault();
+    this._callback.clickRollDownButton();
+  }
+
+  setRollDownButtonClickHandler(handler) {
+    this._callback.clickRollDownButton = handler;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._onRollDownButtonClick);
   }
 }
 
