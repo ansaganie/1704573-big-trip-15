@@ -6,8 +6,9 @@ import TripSort from './view/trip-sort.js';
 import EventItem from './view/EventList/event-item.js';
 import EditForm from './view/EditForm/edit-form.js';
 import EventList from './view/EventList/event-list.js';
-import { createTripInfoDate } from './date.js';
-import { isEscapePressed, render, RenderPosition } from './utils.js';
+import { createTripInfoDate } from './utils/date.js';
+import { isEscapePressed} from './utils/common.js';
+import { render, RenderPosition, replace } from './utils/render.js';
 import { generatePoints } from './mock/event.js';
 
 const EVENT_ITEMS_COUNT = 15;
@@ -18,20 +19,10 @@ const sortPointsByDateAscending = (date1, date2) =>
 const renderEventItem = (container, event) => {
   const eventItem = new EventItem(event);
   const editForm = new EditForm(event);
-  const eventItemElement = eventItem.getElement();
-  const formElement = editForm.getElement();
-
-  const changeEventItemToForm = () => {
-    container.replaceChild(formElement, eventItemElement);
-  };
-
-  const changeFormToEventItem = () => {
-    container.replaceChild(eventItemElement, formElement);
-  };
 
   const onEscKeydown = (evt) => {
     if (isEscapePressed(evt)) {
-      changeFormToEventItem();
+      replace(eventItem, editForm);
 
       editForm.unsetEscapeKeydownHandler();
       editForm.unsetFormSubmitHandler();
@@ -40,7 +31,7 @@ const renderEventItem = (container, event) => {
   };
 
   const onEditFromSubmit = () => {
-    changeFormToEventItem();
+    replace(eventItem, editForm);
 
     editForm.unsetEscapeKeydownHandler();
     editForm.unsetFormSubmitHandler();
@@ -48,7 +39,7 @@ const renderEventItem = (container, event) => {
   };
 
   const onRollUpButtonClick = () => {
-    changeFormToEventItem();
+    replace(eventItem, editForm);
 
     editForm.unsetEscapeKeydownHandler();
     editForm.unsetFormSubmitHandler();
@@ -56,14 +47,14 @@ const renderEventItem = (container, event) => {
   };
 
   const onRollDownButtonClick = () => {
-    changeEventItemToForm();
+    replace(editForm, eventItem);
 
     editForm.setFormSubmitHandler(onEditFromSubmit);
     editForm.setEscapeKeydownHandler(onEscKeydown);
     editForm.setRollUpButtonClickHandler(onRollUpButtonClick);
   };
 
-  render(container, eventItem.getElement());
+  render(container, eventItem);
 
   eventItem.setRollDownButtonClickHandler(onRollDownButtonClick);
 };
@@ -94,16 +85,15 @@ const tripEventsElement = document.querySelector('.trip-events');
 const tripInfo = new TripInfo(tripInfoTitle, tripInfoDate);
 
 const eventList = new EventList();
-const eventListElement = eventList.getElement();
 
-render(tripInfo.getElement(), new TripCost(tripInfoCost).getElement());
-render(tripMainElement, tripInfo.getElement(), RenderPosition.AFTERBEGIN);
-render(navigationElement, new TripTabs().getElement());
-render(filterElement, new TripFilter().getElement());
-render(tripEventsElement, new TripSort().getElement());
+render(tripInfo, new TripCost(tripInfoCost));
+render(tripMainElement, tripInfo, RenderPosition.AFTERBEGIN);
+render(navigationElement, new TripTabs());
+render(filterElement, new TripFilter());
+render(tripEventsElement, new TripSort());
 
 for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
-  renderEventItem(eventListElement, randomEvents[i]);
+  renderEventItem(eventList, randomEvents[i]);
 }
 
-render(tripEventsElement, eventListElement);
+render(tripEventsElement, eventList);

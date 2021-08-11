@@ -1,4 +1,4 @@
-import { capitalize } from '../../utils.js';
+import { capitalize } from '../../utils/common.js';
 import { POINT_TYPE } from '../../mock/event.js';
 import Abstract from '../../abstract.js';
 

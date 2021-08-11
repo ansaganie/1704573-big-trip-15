@@ -1,7 +1,7 @@
-import { capitalize } from '../../utils.js';
+import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
-import { formatDate } from '../../date.js';
+import { formatDate } from '../../utils/date.js';
 import DestinationList from './destination-list.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';

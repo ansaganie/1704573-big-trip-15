@@ -1,4 +1,4 @@
-import { getRandomInteger } from './utils.js';
+import { getRandomInteger } from './common.js';
 
 const MONTH_AHEAD = 2;
 const MIN_DAY_MONTH = 1;

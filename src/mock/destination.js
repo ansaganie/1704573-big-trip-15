@@ -1,4 +1,4 @@
-import { getRandomElement, getRandomInteger } from '../utils.js';
+import { getRandomElement, getRandomInteger } from '../utils/common.js';
 
 const PICSUM_LINK = 'http://picsum.photos/300/200?r=';
 

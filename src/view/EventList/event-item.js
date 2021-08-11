@@ -1,6 +1,6 @@
 import Abstract from '../../abstract.js';
-import { formatDate } from '../../date.js';
-import { capitalize } from '../../utils.js';
+import { formatDate } from '../../utils/date.js';
+import { capitalize } from '../../utils/common.js';
 
 const createOfferTemplate = ({ title, price }) =>
   `<li class="event__offer">

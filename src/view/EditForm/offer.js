@@ -1,4 +1,4 @@
-import { showOrHide } from '../../utils.js';
+import { showOrHide } from '../../utils/common.js';
 import Abstract from '../../abstract.js';
 
 const createOffers = (offers) => {
