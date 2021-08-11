@@ -1,5 +1,6 @@
+import Abstract from '../../abstract.js';
 import { formatDate } from '../../date.js';
-import { createElement, capitalize } from '../../utils.js';
+import { capitalize } from '../../utils.js';
 
 const createOfferTemplate = ({ title, price }) =>
   `<li class="event__offer">
@@ -87,26 +88,14 @@ const createEventItem = ({
   );
 };
 
-class EventItem {
+class EventItem extends Abstract{
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventItem(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
