@@ -6,9 +6,11 @@ const createTripCostTemplate = (cost = 0) =>
   </p>`;
 
 class TripCost extends Abstract{
-  constructor(cost) {
+  constructor(events) {
     super();
-    this._cost = cost;
+    this._cost = events
+      .map(({ basePrice }) => basePrice)
+      .reduce((acc, price) => acc + price);
   }
 
   getTemplate() {
