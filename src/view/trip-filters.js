@@ -1,4 +1,5 @@
-import { createElement, capitalize } from '../utils.js';
+import { capitalize } from '../utils.js';
+import Abstract from '../abstract.js';
 
 const FILTER_TYPES = ['everything', 'future', 'past'];
 const CHECKED = FILTER_TYPES.reduce(
@@ -33,25 +34,13 @@ const createTripFiltersTemplate = () => {
   );
 };
 
-class TripFilter {
+class TripFilter extends Abstract {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
     return createTripFiltersTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

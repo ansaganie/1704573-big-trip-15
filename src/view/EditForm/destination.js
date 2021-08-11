@@ -1,4 +1,5 @@
-import { createElement, showOrHide } from '../../utils.js';
+import Abstract from '../../abstract.js';
+import { showOrHide } from '../../utils.js';
 
 const createDestination = (destination) => {
   const { description, pictures } = destination;
@@ -33,26 +34,14 @@ const createDestination = (destination) => {
   );
 };
 
-class Destination {
+class Destination extends Abstract {
   constructor(destination) {
+    super();
     this._destination = destination;
-    this._element = null;
   }
 
   getTemplate() {
     return createDestination(this._destination);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

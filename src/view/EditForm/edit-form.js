@@ -1,4 +1,4 @@
-import { createElement, capitalize } from '../../utils.js';
+import { capitalize } from '../../utils.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
 import { formatDate } from '../../date.js';
@@ -6,6 +6,7 @@ import DestinationList from './destination-list.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
+import Abstract from '../../abstract.js';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -90,26 +91,14 @@ export const createEditFormTemplate = (event = BLANK_EVENT) => {
   );
 };
 
-class EditForm {
+class EditForm extends Abstract{
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditFormTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

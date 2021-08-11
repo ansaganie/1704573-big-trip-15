@@ -1,5 +1,6 @@
-import { createElement, capitalize } from '../../utils.js';
+import { capitalize } from '../../utils.js';
 import { POINT_TYPE } from '../../mock/event.js';
+import Abstract from '../../abstract.js';
 
 export const createEventTypeTemplate = (type) => {
   const CHECKED = POINT_TYPE.reduce(
@@ -42,26 +43,14 @@ export const createEventTypeTemplate = (type) => {
   );
 };
 
-class EventType {
+class EventType extends Abstract {
   constructor(type) {
+    super();
     this._type = type;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventTypeTemplate(this._type);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
