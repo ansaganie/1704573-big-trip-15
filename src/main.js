@@ -1,23 +1,23 @@
-import TripInfo from './view/trip-info.js';
-import TripTabs from './view/trip-tabs.js';
-import TripCost from './view/trip-cost';
-import TripFilter from './view/trip-filters.js';
-import TripSort from './view/trip-sort.js';
-import EventItem from './view/EventList/event-item.js';
-import EditForm from './view/EditForm/edit-form.js';
-import EventList from './view/EventList/event-list.js';
-import { isEscapePressed} from './utils/common.js';
+import TripInfoView from './view/trip-info.js';
+import TripTabsView from './view/trip-tabs.js';
+import TripCostView from './view/trip-cost';
+import TripFilterView from './view/trip-filters.js';
+import TripSortView from './view/trip-sort.js';
+import EventItemView from './view/EventList/event-item.js';
+import EditFormView from './view/EditForm/edit-form.js';
+import EventListView from './view/EventList/event-list.js';
+import { isEscapePressed } from './utils/common.js';
 import { render, RenderPosition, replace } from './utils/render.js';
 import { generatePoints } from './mock/event.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
-const sortPointsByDateAscending = (date1, date2) =>
-  new Date(date1.dateFrom) - new Date(date2.dateFrom);
+const sortPointsByDateAscending = (event1, event2) =>
+  new Date(event1.dateFrom) - new Date(event2.dateFrom);
 
 const renderEventItem = (container, event) => {
-  const eventItem = new EventItem(event);
-  const editForm = new EditForm(event);
+  const eventItem = new EventItemView(event);
+  const editForm = new EditFormView(event);
 
   const onEscKeydown = (evt) => {
     if (isEscapePressed(evt)) {
@@ -69,17 +69,18 @@ const navigationElement = tripMainElement.querySelector(
 const filterElement = tripMainElement.querySelector('.trip-controls__filters');
 
 const tripEventsElement = document.querySelector('.trip-events');
-const tripInfo = new TripInfo(randomEvents);
+const tripInfo = new TripInfoView(randomEvents);
 
-const eventList = new EventList();
+const eventList = new EventListView();
 
-render(tripInfo, new TripCost(randomEvents));
+render(tripInfo, new TripCostView(randomEvents));
 render(tripMainElement, tripInfo, RenderPosition.AFTERBEGIN);
-render(navigationElement, new TripTabs());
-render(filterElement, new TripFilter());
-render(tripEventsElement, new TripSort());
+render(navigationElement, new TripTabsView());
+render(filterElement, new TripFilterView());
+render(tripEventsElement, new TripSortView());
 
 for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
+  console.log(randomEvents[i]);
   renderEventItem(eventList, randomEvents[i]);
 }
 
