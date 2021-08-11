@@ -21,7 +21,7 @@ const BLANK_EVENT = {
   basePrice: 0,
 };
 
-export const createEditFormTemplate = (event = BLANK_EVENT) => {
+const createEditFormTemplate = (event = BLANK_EVENT) => {
   const { type, offers, destination, dateFrom, dateTo, basePrice } = event;
   const offersTemplate = new Offers(offers).getTemplate();
   const destinationListTemplate = new DestinationList(CITY_NAMES).getTemplate();
@@ -95,10 +95,70 @@ class EditForm extends Abstract{
   constructor(event) {
     super();
     this._event = event;
+    this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
+    this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
   }
 
   getTemplate() {
     return createEditFormTemplate(this._event);
+  }
+
+  _onRollUpButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.clickRollUpButton(evt);
+  }
+
+  _onFormSubmit(evt) {
+    evt.preventDefault();
+    this._callback.submitForm(evt);
+  }
+
+  _onEscapeKeydown(evt) {
+    evt.preventDefault();
+    this._callback.pressEscape(evt);
+  }
+
+  setRollUpButtonClickHandler(handler) {
+    this._callback.clickRollUpButton = handler;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._onRollUpButtonClick);
+  }
+
+  setFormSubmitHandler(handler) {
+    this._callback.submitForm = handler;
+    this
+      .getElement()
+      .addEventListener('submit', this._onFormSubmit);
+  }
+
+  setEscapeKeydownHandler(handler) {
+    this._callback.pressEscape = handler;
+    document
+      .addEventListener('keydown', this._onEscapeKeydown);
+  }
+
+  unsetEscapeKeydownHandler() {
+    this._callback.pressEscape = null;
+    document
+      .removeEventListener('keydown', this._onEscapeKeydown);
+  }
+
+  unsetFormSubmitHandler() {
+    this._callback.submitForm = null;
+    this
+      .getElement()
+      .removeEventListener('submit', this._onFormSubmit);
+  }
+
+  unsetRollUpButtonClickHandler() {
+    this._callback.clickRollUpButton = null;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .removeEventListener('click', this._onRollUpButtonClick);
   }
 }
 
