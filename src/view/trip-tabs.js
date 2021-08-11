@@ -1,4 +1,4 @@
-import Abstract from '../abstract';
+import Abstract from '../abstract.js';
 
 const createTripTabsTemplate = () =>
   `<nav class="trip-controls__trip-tabs  trip-tabs">

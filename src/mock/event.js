@@ -1,5 +1,5 @@
-import { getDateTo, getRandomDateFrom } from '../date.js';
-import { getRandomInteger, getRandomElement } from '../utils.js';
+import { getDateTo, getRandomDateFrom } from '../utils/date.js';
+import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import { getRandomDestination } from './destination.js';
 import { offers } from './offer';
 

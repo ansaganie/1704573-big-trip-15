@@ -1,4 +1,4 @@
-import { capitalize } from '../utils.js';
+import { capitalize } from '../utils/common.js';
 import Abstract from '../abstract.js';
 
 const FILTER_TYPES = ['everything', 'future', 'past'];

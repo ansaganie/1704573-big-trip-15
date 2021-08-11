@@ -1,5 +1,5 @@
 import Abstract from '../../abstract.js';
-import { showOrHide } from '../../utils.js';
+import { showOrHide } from '../../utils/common.js';
 
 const createDestination = (destination) => {
   const { description, pictures } = destination;
