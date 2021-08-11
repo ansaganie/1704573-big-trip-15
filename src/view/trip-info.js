@@ -1,4 +1,5 @@
 import Abstract from '../abstract.js';
+import { createTripInfoDate } from '../utils/date.js';
 
 const createTripInfoTemplate = (title = '', date = '') =>
   `<section class="trip-main__trip-info  trip-info">
@@ -9,10 +10,16 @@ const createTripInfoTemplate = (title = '', date = '') =>
   </section>`;
 
 class TripInfo extends Abstract{
-  constructor(title, date) {
+  constructor(events) {
     super();
-    this._title = title;
-    this._date = date;
+
+    this._title = events
+      .map(({ destination }) => destination.name)
+      .join(' &mdash; ');
+
+    const startDate = events[0].dateFrom;
+    const endDate = events[events.length - 1].dateTo;
+    this._date =  createTripInfoDate(startDate, endDate);
   }
 
   getTemplate() {
