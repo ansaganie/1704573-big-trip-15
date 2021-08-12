@@ -12,7 +12,7 @@ const getRandomElement = (array) =>
 
 const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-const showOrHide = (element) => (element ? '' : 'visually-hidden');
+const showOrHide = (element) => (!element || element.length === 0 ? 'visually-hidden' : '');
 
 const isEscapePressed = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
