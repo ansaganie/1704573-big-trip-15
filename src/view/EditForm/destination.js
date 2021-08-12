@@ -1,6 +1,14 @@
 import Abstract from '../../abstract.js';
 import { showOrHide } from '../../utils/common.js';
 
+const isDestinationEmpty = ({ pictures, description }) => {
+  if (pictures.length === 0 && description === '') {
+    return true;
+  } else {
+    false;
+  }
+};
+
 const createDestination = (destination) => {
   const { description, pictures } = destination;
   const picturesOfDestination = pictures
@@ -19,13 +27,13 @@ const createDestination = (destination) => {
     `<section
       class="event__section
         event__section--destination
-        ${showOrHide(destination)}"
+        ${isDestinationEmpty(destination) ? 'visually-hidden' : ''}"
     >
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description ${showOrHide(description)}">
         ${description}
       </p>
-      <div class="event__photos-container ${showOrHide(description)}">
+      <div class="event__photos-container ${showOrHide(pictures)}">
         <div class="event__photos-tape">
           ${picturesOfDestination}
         </div>
