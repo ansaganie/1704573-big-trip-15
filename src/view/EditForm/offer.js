@@ -1,4 +1,5 @@
-import { createElement, showOrHide } from '../../utils.js';
+import { showOrHide } from '../../utils/common.js';
+import Abstract from '../../abstract.js';
 
 const createOffers = (offers) => {
   const createIdForOffer = (input) => input.toLowerCase().replace(' ', '-');
@@ -20,35 +21,23 @@ const createOffers = (offers) => {
 };
 
 const createOffersTemplate = (offers) => (
-  `<section class="event__section  event__section--offers">
+  `<section class="event__section  event__section--offers ${showOrHide(offers)}">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-    <div class="event__available-offers ${showOrHide(offers)}">
+    <div class="event__available-offers">
       ${createOffers(offers)}
     </div>
   </section>`
 );
 
-class Offers {
+class Offers extends Abstract {
   constructor(offers) {
+    super();
     this._offers = offers;
-    this._element = null;
   }
 
   getTemplate() {
     return createOffersTemplate(this._offers);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

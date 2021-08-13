@@ -1,4 +1,5 @@
-import { createElement, capitalize } from '../utils.js';
+import Abstract from '../abstract.js';
+import { capitalize } from '../utils/common.js';
 
 const SORT_TYPES = ['day', 'event', 'time', 'price', 'offer'];
 const DISABLED = SORT_TYPES.reduce((obj, elem) => ({ ...obj, [elem]: '' }), {});
@@ -34,25 +35,13 @@ const createTripSortTemplate = () => {
   );
 };
 
-class TripSort {
+class TripSort extends Abstract {
   constructor() {
-    this._element = null;
+    super();
   }
 
   getTemplate() {
     return createTripSortTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

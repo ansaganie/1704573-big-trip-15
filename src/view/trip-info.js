@@ -1,4 +1,5 @@
-import { createElement } from '../utils.js';
+import Abstract from '../abstract.js';
+import { createTripInfoDate } from '../utils/date.js';
 
 const createTripInfoTemplate = (title = '', date = '') =>
   `<section class="trip-main__trip-info  trip-info">
@@ -8,27 +9,21 @@ const createTripInfoTemplate = (title = '', date = '') =>
     </div>
   </section>`;
 
-class TripInfo {
-  constructor(title, date) {
-    this._title = title;
-    this._date = date;
-    this._element = null;
+class TripInfo extends Abstract{
+  constructor(events) {
+    super();
+
+    this._title = events
+      .map(({ destination }) => destination.name)
+      .join(' &mdash; ');
+
+    const startDate = events[0].dateFrom;
+    const endDate = events[events.length - 1].dateTo;
+    this._date =  createTripInfoDate(startDate, endDate);
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._title, this._date);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

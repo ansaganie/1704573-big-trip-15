@@ -1,4 +1,4 @@
-import { createElement } from '../../utils.js';
+import Abstract from '../../abstract.js';
 
 const createDestinationListTemplate = (cityNames) => {
   const result = cityNames
@@ -12,26 +12,14 @@ const createDestinationListTemplate = (cityNames) => {
   );
 };
 
-class DestinationList {
+class DestinationList extends Abstract {
   constructor(cityNames) {
+    super();
     this._cityNames = cityNames;
-    this._element = null;
   }
 
   getTemplate() {
     return createDestinationListTemplate(this._cityNames);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

@@ -1,5 +1,6 @@
-import { formatDate } from '../../date.js';
-import { createElement, capitalize } from '../../utils.js';
+import Abstract from '../../abstract.js';
+import { formatDate } from '../../utils/date.js';
+import { capitalize } from '../../utils/common.js';
 
 const createOfferTemplate = ({ title, price }) =>
   `<li class="event__offer">
@@ -87,26 +88,28 @@ const createEventItem = ({
   );
 };
 
-class EventItem {
+class EventItem extends Abstract{
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
   }
 
   getTemplate() {
     return createEventItem(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _onRollDownButtonClick (evt) {
+    evt.preventDefault();
+    this._callback.clickRollDownButton();
   }
 
-  removeElement() {
-    this._element = null;
+  setRollDownButtonClickHandler(handler) {
+    this._callback.clickRollDownButton = handler;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._onRollDownButtonClick);
   }
 }
 

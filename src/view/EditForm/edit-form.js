@@ -1,11 +1,12 @@
-import { createElement, capitalize } from '../../utils.js';
+import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
-import { formatDate } from '../../date.js';
+import { formatDate } from '../../utils/date.js';
 import DestinationList from './destination-list.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
+import Abstract from '../../abstract.js';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -20,7 +21,7 @@ const BLANK_EVENT = {
   basePrice: 0,
 };
 
-export const createEditFormTemplate = (event = BLANK_EVENT) => {
+const createEditFormTemplate = (event = BLANK_EVENT) => {
   const { type, offers, destination, dateFrom, dateTo, basePrice } = event;
   const offersTemplate = new Offers(offers).getTemplate();
   const destinationListTemplate = new DestinationList(CITY_NAMES).getTemplate();
@@ -90,26 +91,74 @@ export const createEditFormTemplate = (event = BLANK_EVENT) => {
   );
 };
 
-class EditForm {
+class EditForm extends Abstract{
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
+    this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
   }
 
   getTemplate() {
     return createEditFormTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _onRollUpButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.clickRollUpButton(evt);
   }
 
-  removeElement() {
-    this._element = null;
+  _onFormSubmit(evt) {
+    evt.preventDefault();
+    this._callback.submitForm(evt);
+  }
+
+  _onEscapeKeydown(evt) {
+    evt.preventDefault();
+    this._callback.pressEscape(evt);
+  }
+
+  setRollUpButtonClickHandler(handler) {
+    this._callback.clickRollUpButton = handler;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._onRollUpButtonClick);
+  }
+
+  setFormSubmitHandler(handler) {
+    this._callback.submitForm = handler;
+    this
+      .getElement()
+      .addEventListener('submit', this._onFormSubmit);
+  }
+
+  setEscapeKeydownHandler(handler) {
+    this._callback.pressEscape = handler;
+    document
+      .addEventListener('keydown', this._onEscapeKeydown);
+  }
+
+  unsetEscapeKeydownHandler() {
+    this._callback.pressEscape = null;
+    document
+      .removeEventListener('keydown', this._onEscapeKeydown);
+  }
+
+  unsetFormSubmitHandler() {
+    this._callback.submitForm = null;
+    this
+      .getElement()
+      .removeEventListener('submit', this._onFormSubmit);
+  }
+
+  unsetRollUpButtonClickHandler() {
+    this._callback.clickRollUpButton = null;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .removeEventListener('click', this._onRollUpButtonClick);
   }
 }
 

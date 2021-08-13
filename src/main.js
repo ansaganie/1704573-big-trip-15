@@ -1,82 +1,66 @@
-import TripInfo from './view/trip-info.js';
-import TripTabs from './view/trip-tabs.js';
-import TripCost from './view/trip-cost';
-import TripFilter from './view/trip-filters.js';
-import TripSort from './view/trip-sort.js';
-import EventItem from './view/EventList/event-item.js';
-import EditForm from './view/EditForm/edit-form.js';
-import EventList from './view/EventList/event-list.js';
-import { createTripInfoDate } from './date.js';
-import { isEscapePressed, render, RenderPosition } from './utils.js';
+import TripInfoView from './view/trip-info.js';
+import TripTabsView from './view/trip-tabs.js';
+import TripCostView from './view/trip-cost';
+import TripFilterView from './view/trip-filters.js';
+import TripSortView from './view/trip-sort.js';
+import EventItemView from './view/EventList/event-item.js';
+import EditFormView from './view/EditForm/edit-form.js';
+import EventListView from './view/EventList/event-list.js';
+import { isEscapePressed } from './utils/common.js';
+import { render, RenderPosition, replace } from './utils/render.js';
 import { generatePoints } from './mock/event.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
-const sortPointsByDateAscending = (date1, date2) =>
-  new Date(date1.dateFrom) - new Date(date2.dateFrom);
+const sortPointsByDateAscending = (event1, event2) =>
+  new Date(event1.dateFrom) - new Date(event2.dateFrom);
 
 const renderEventItem = (container, event) => {
-  const eventItem = new EventItem(event);
-  const editForm = new EditForm(event);
-  const formElement = editForm.getElement();
-  const eventItemElement = eventItem.getElement();
-  const rollDownButton = eventItemElement.querySelector('.event__rollup-btn');
-  const rollUpButton = formElement.querySelector('.event__rollup-btn');
-
-  const changeEventItemToForm = () => {
-    container.replaceChild(formElement, eventItemElement);
-  };
-
-  const changeFormToEventItem = () => {
-    container.replaceChild(eventItemElement, formElement);
-  };
+  const eventItem = new EventItemView(event);
+  const editForm = new EditFormView(event);
 
   const onEscKeydown = (evt) => {
     if (isEscapePressed(evt)) {
-      evt.preventDefault();
-      changeFormToEventItem();
-      document.removeEventListener('keydown', onEscKeydown);
+      replace(eventItem, editForm);
+
+      editForm.unsetEscapeKeydownHandler();
+      editForm.unsetFormSubmitHandler();
+      editForm.unsetRollUpButtonClickHandler();
     }
   };
 
   const onEditFromSubmit = () => {
-    changeFormToEventItem();
-    document.removeEventListener('keydown', onEscKeydown);
+    replace(eventItem, editForm);
+
+    editForm.unsetEscapeKeydownHandler();
+    editForm.unsetFormSubmitHandler();
+    editForm.unsetRollUpButtonClickHandler();
   };
 
   const onRollUpButtonClick = () => {
-    changeFormToEventItem();
-    document.removeEventListener('keydown', onEscKeydown);
+    replace(eventItem, editForm);
+
+    editForm.unsetEscapeKeydownHandler();
+    editForm.unsetFormSubmitHandler();
+    editForm.unsetRollUpButtonClickHandler();
   };
 
   const onRollDownButtonClick = () => {
-    changeEventItemToForm();
+    replace(editForm, eventItem);
 
-    formElement.addEventListener('submit', onEditFromSubmit);
-    document.addEventListener('keydown', onEscKeydown);
-    rollUpButton.addEventListener('click', onRollUpButtonClick);
+    editForm.setFormSubmitHandler(onEditFromSubmit);
+    editForm.setEscapeKeydownHandler(onEscKeydown);
+    editForm.setRollUpButtonClickHandler(onRollUpButtonClick);
   };
 
-  render(container, eventItem.getElement());
+  render(container, eventItem);
 
-  rollDownButton.addEventListener('click', onRollDownButtonClick);
+  eventItem.setRollDownButtonClickHandler(onRollDownButtonClick);
 };
 
 const randomEvents = generatePoints(EVENT_ITEMS_COUNT).sort(
   sortPointsByDateAscending,
 );
-
-const tripInfoCost = randomEvents
-  .map(({ basePrice }) => basePrice)
-  .reduce((acc, basePrice) => acc + basePrice);
-
-const tripInfoTitle = randomEvents
-  .map(({ destination }) => destination.name)
-  .join(' &mdash; ');
-
-const startDate = randomEvents[0].dateFrom;
-const endDate = randomEvents[randomEvents.length - 1].dateTo;
-const tripInfoDate = createTripInfoDate(startDate, endDate);
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector(
@@ -85,19 +69,18 @@ const navigationElement = tripMainElement.querySelector(
 const filterElement = tripMainElement.querySelector('.trip-controls__filters');
 
 const tripEventsElement = document.querySelector('.trip-events');
-const tripInfo = new TripInfo(tripInfoTitle, tripInfoDate);
+const tripInfo = new TripInfoView(randomEvents);
 
-const eventList = new EventList();
-const eventListElement = eventList.getElement();
+const eventList = new EventListView();
 
-render(tripInfo.getElement(), new TripCost(tripInfoCost).getElement());
-render(tripMainElement, tripInfo.getElement(), RenderPosition.AFTERBEGIN);
-render(navigationElement, new TripTabs().getElement());
-render(filterElement, new TripFilter().getElement());
-render(tripEventsElement, new TripSort().getElement());
+render(tripInfo, new TripCostView(randomEvents));
+render(tripMainElement, tripInfo, RenderPosition.AFTERBEGIN);
+render(navigationElement, new TripTabsView());
+render(filterElement, new TripFilterView());
+render(tripEventsElement, new TripSortView());
 
 for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
-  renderEventItem(eventListElement, randomEvents[i]);
+  renderEventItem(eventList, randomEvents[i]);
 }
 
-render(tripEventsElement, eventListElement);
+render(tripEventsElement, eventList);
