@@ -9,11 +9,13 @@ import EventListView from './view/EventList/event-list.js';
 import { isEscapePressed } from './utils/common.js';
 import { render, RenderPosition, replace } from './utils/render.js';
 import { generatePoints } from './mock/event.js';
+import Message from './view/EventList/message.js';
 
-const EVENT_ITEMS_COUNT = 15;
+const EVENT_ITEMS_COUNT = 0;
+const currentFilter = 'everything';
 
-const sortPointsByDateAscending = (event1, event2) =>
-  new Date(event1.dateFrom) - new Date(event2.dateFrom);
+const sortPointsByDateAscending = (first, second) =>
+  new Date(first.dateFrom) - new Date(second.dateFrom);
 
 const renderEventItem = (container, event) => {
   const eventItem = new EventItemView(event);
@@ -69,18 +71,24 @@ const navigationElement = tripMainElement.querySelector(
 const filterElement = tripMainElement.querySelector('.trip-controls__filters');
 
 const tripEventsElement = document.querySelector('.trip-events');
-const tripInfo = new TripInfoView(randomEvents);
 
 const eventList = new EventListView();
 
-render(tripInfo, new TripCostView(randomEvents));
-render(tripMainElement, tripInfo, RenderPosition.AFTERBEGIN);
 render(navigationElement, new TripTabsView());
 render(filterElement, new TripFilterView());
-render(tripEventsElement, new TripSortView());
 
-for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
-  renderEventItem(eventList, randomEvents[i]);
+if (randomEvents.length === 0) {
+  render(tripEventsElement, new Message(currentFilter));
+} else {
+  const tripInfo = new TripInfoView(randomEvents);
+  render(tripEventsElement, new TripSortView());
+  render(tripInfo, new TripCostView(randomEvents));
+  render(tripMainElement, tripInfo, RenderPosition.AFTERBEGIN);
+
+  for (let i = 0; i < EVENT_ITEMS_COUNT; i++) {
+    renderEventItem(eventList, randomEvents[i]);
+  }
+
+  render(tripEventsElement, eventList);
 }
 
-render(tripEventsElement, eventList);
