@@ -4,7 +4,7 @@ const createMessageTemplate = (message) =>
   `<p class="trip-events__msg">${message}</p>`;
 
 class Message extends Abstract {
-  constructor(currentFilter) {
+  constructor() {
     super();
     this._filterMessage = {
       everything: 'Click New Event to create your first point',
@@ -12,13 +12,18 @@ class Message extends Abstract {
       future: 'There are no future events now',
       loading: 'Loading...',
     };
-    this._currentFilter = currentFilter;
+  }
+
+  setFilterType(filterType) {
+    this._currentFilter = filterType;
   }
 
   getTemplate() {
-    return createMessageTemplate(
-      this._filterMessage[this._currentFilter],
-    );
+    return this._currentFilter
+      ? createMessageTemplate(
+        this._filterMessage[this._currentFilter],
+      )
+      : '';
   }
 }
 

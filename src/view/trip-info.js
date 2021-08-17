@@ -10,9 +10,11 @@ const createTripInfoTemplate = (title = '', date = '') =>
   </section>`;
 
 class TripInfo extends Abstract{
-  constructor(events) {
+  constructor() {
     super();
+  }
 
+  setEvents(events) {
     this._title = events
       .map(({ destination }) => destination.name)
       .join(' &mdash; ');
@@ -23,7 +25,11 @@ class TripInfo extends Abstract{
   }
 
   getTemplate() {
-    return createTripInfoTemplate(this._title, this._date);
+    if (this._title && this._date) {
+      return createTripInfoTemplate(this._title, this._date);
+    }
+
+    return '';
   }
 }
 
