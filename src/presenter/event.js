@@ -33,11 +33,16 @@ class Event {
     this._pointPresenters = new Map();
 
     this._updateEventData = this._updateEventData.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(eventItems) {
     this._eventItems = eventItems;
     this._renderEvent();
+  }
+
+  _handleModeChange() {
+    this._pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
   _updateEventData(updated) {
@@ -46,7 +51,11 @@ class Event {
   }
 
   _renderPoint(container, event) {
-    const pointPresenter = new PointPresenter(container, this._updateEventData);
+    const pointPresenter = new PointPresenter(
+      container,
+      this._updateEventData,
+      this._handleModeChange,
+    );
     this._pointPresenters.set(event.id, pointPresenter);
     pointPresenter.init(event);
   }
