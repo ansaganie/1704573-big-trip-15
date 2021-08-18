@@ -1,5 +1,5 @@
 import Abstract from '../../abstract.js';
-import { formatDate } from '../../utils/date.js';
+import { formatDate, calculateDuration } from '../../utils/date.js';
 import { capitalize } from '../../utils/common.js';
 
 const createOfferTemplate = ({ title, price }) =>
@@ -25,7 +25,7 @@ const createEventScheduleTemplate = (dateFrom, dateTo) =>
       </time>
     </p>
     <p class="event__duration">
-      ${(dateTo - dateFrom) / 60000}M
+      ${calculateDuration(dateTo, dateFrom )}M
     </p>
   </div>`;
 
