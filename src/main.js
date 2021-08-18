@@ -3,12 +3,7 @@ import { generatePoints } from './mock/event.js';
 
 const EVENT_ITEMS_COUNT = 15;
 
-const sortPointsByDateAscending = (first, second) =>
-  new Date(first.dateFrom) - new Date(second.dateFrom);
-
-const randomEvents = generatePoints(EVENT_ITEMS_COUNT).sort(
-  sortPointsByDateAscending,
-);
+const randomEvents = generatePoints(EVENT_ITEMS_COUNT);
 
 const tripMainElement = document.querySelector('.trip-main');
 const navigationElement = tripMainElement.querySelector(
