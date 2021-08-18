@@ -7,6 +7,7 @@ import EventListView from '../view/EventList/event-list.js';
 import NoEventView from '../view/EventList/message.js';
 import PointPresenter from './point.js';
 import { render, RenderPosition } from '../utils/render.js';
+import { updateArray } from '../utils/common.js';
 
 class Event {
   constructor(
@@ -29,6 +30,9 @@ class Event {
     this._costComponent = new TripCostView();
 
     this._currentFilter = 'everything';
+    this._pointPresenters = new Map();
+
+    this._updateEventData = this._updateEventData.bind(this);
   }
 
   init(eventItems) {
@@ -36,8 +40,14 @@ class Event {
     this._renderEvent();
   }
 
+  _updateEventData(updated) {
+    this._eventItems = updateArray(this._eventItems, updated);
+    this._pointPresenters.get(updated.id).init(updated);
+  }
+
   _renderPoint(container, event) {
-    const pointPresenter = new PointPresenter(container);
+    const pointPresenter = new PointPresenter(container, this._updateEventData);
+    this._pointPresenters.set(event.id, pointPresenter);
     pointPresenter.init(event);
   }
 
@@ -74,10 +84,9 @@ class Event {
     } else {
       this._renderInfo();
       this._renderSort();
-
-      for (let i = 0; i < this._eventItems.length; i++) {
-        this._renderPoint(this._listComponent, this._eventItems[i]);
-      }
+      this._eventItems.forEach(
+        (item) => this._renderPoint(this._listComponent, item),
+      );
 
       render(this._tripListContainer, this._listComponent);
     }

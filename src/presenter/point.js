@@ -1,61 +1,100 @@
 import PointView from '../view/EventList/event-item.js';
 import FormView from '../view/EditForm/edit-form.js';
-import { render, replace } from '../utils/render.js';
+import { remove, render, replace } from '../utils/render.js';
 import { isEscapePressed } from '../utils/common.js';
 
-class Point {
-  constructor(container) {
-    this._container = container;
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
-    this._onEscKeydown = this._onEscKeydown.bind(this);
-    this._onEditFromSubmit = this._onEditFromSubmit.bind(this);
-    this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
-    this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
+class Point {
+  constructor(container, updateData) {
+    this._container = container;
+    this._updateData = updateData;
+
+    this._pointComponent = null;
+    this._editComponent = null;
+    this._mode = Mode.DEFAULT;
+
+    this._handleEscKeydown = this._handleEscKeydown.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleRollUpClick = this._handleRollUpClick.bind(this);
+    this._handleRollDownClick = this._handleRollDownClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
-  init(event) {
-    this._pointComponent = new PointView(event);
-    this._formComponent = new FormView(event);
+  init(point) {
+    this._point = point;
 
-    render(this._container, this._pointComponent);
+    const prevPointComponent = this._pointComponent;
+    const prevPointEditComponent = this._editComponent;
+
+    this._pointComponent = new PointView(point);
+    this._editComponent = new FormView(point);
 
     this._pointComponent.setRollDownButtonClickHandler(
-      this._onRollDownButtonClick,
+      this._handleRollDownClick,
     );
+    this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(this._container, this._pointComponent);
+      return;
+    }
+
+    if (this._mode === Mode.DEFAULT) {
+      replace(this._pointComponent, prevPointComponent);
+    }
+
+    if (this._mode === Mode.EDITING) {
+      replace(this._editComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
   }
 
-  _onEscKeydown(evt) {
-    if (isEscapePressed(evt)) {
-      replace(this._pointComponent, this._formComponent);
+  _closeEditForm() {
+    replace(this._pointComponent, this._editComponent);
 
-      this._formComponent.unsetEscapeKeydownHandler();
-      this._formComponent.unsetFormSubmitHandler();
-      this._formComponent.unsetRollUpButtonClickHandler();
+    this._editComponent.unsetEscapeKeydownHandler();
+    this._editComponent.unsetFormSubmitHandler();
+    this._editComponent.unsetRollUpButtonClickHandler();
+    this._mode = Mode.DEFAULT;
+  }
+
+  _openEditForm() {
+    replace(this._editComponent, this._pointComponent);
+
+    this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._editComponent.setEscapeKeydownHandler(this._handleEscKeydown);
+    this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
+    this._mode = Mode.EDITING;
+  }
+
+  _handleEscKeydown(evt) {
+    if (isEscapePressed(evt)) {
+      this._closeEditForm();
     }
   }
 
-  _onEditFromSubmit() {
-    replace(this._pointComponent, this._formComponent);
-
-    this._formComponent.unsetEscapeKeydownHandler();
-    this._formComponent.unsetFormSubmitHandler();
-    this._formComponent.unsetRollUpButtonClickHandler();
+  _handleFormSubmit() {
+    this._closeEditForm();
   }
 
-  _onRollUpButtonClick() {
-    replace(this._pointComponent, this._formComponent);
-
-    this._formComponent.unsetEscapeKeydownHandler();
-    this._formComponent.unsetFormSubmitHandler();
-    this._formComponent.unsetRollUpButtonClickHandler();
+  _handleRollUpClick() {
+    this._closeEditForm();
   }
 
-  _onRollDownButtonClick() {
-    replace(this._formComponent, this._pointComponent);
+  _handleRollDownClick() {
+    this._openEditForm();
+  }
 
-    this._formComponent.setFormSubmitHandler(this._onEditFromSubmit);
-    this._formComponent.setEscapeKeydownHandler(this._onEscKeydown);
-    this._formComponent.setRollUpButtonClickHandler(this._onRollUpButtonClick);
+  _handleFavoriteClick() {
+    const updatedPoint = { ...this._point };
+    updatedPoint.isFavorite = !this._point.isFavorite;
+    this._updateData(updatedPoint);
   }
 }
 
