@@ -5,6 +5,7 @@ import { offers } from './offer';
 
 const MAX_PRICE = 300;
 const MIN_PRICE = 5000;
+let eventId = 0;
 
 const CITY_NAMES = [
   'Paris',
@@ -34,6 +35,7 @@ const generatePoint = () => {
   const dateFrom = getRandomDateFrom();
 
   return {
+    id: eventId++,
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom,
     dateTo: getDateTo(dateFrom),
