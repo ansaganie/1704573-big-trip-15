@@ -62,6 +62,11 @@ class Point {
     }
   }
 
+  destroy() {
+    remove(this._pointComponent);
+    remove(this._editComponent);
+  }
+
   _closeEditForm() {
     replace(this._pointComponent, this._editComponent);
 
