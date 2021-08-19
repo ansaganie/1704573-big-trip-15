@@ -38,6 +38,22 @@ const createTripSortTemplate = () => {
 class TripSort extends Abstract {
   constructor() {
     super();
+
+    this._onSortTypeChange = this._onSortTypeChange.bind(this);
+  }
+
+  _onSortTypeChange(evt) {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+
+    this._callback.changeSort(evt.target.id);
+  }
+
+  setSortTypeChangeHandler(handler) {
+    this._callback.changeSort = handler;
+    this.getElement()
+      .addEventListener('click', this._onSortTypeChange);
   }
 
   getTemplate() {

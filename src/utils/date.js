@@ -88,4 +88,21 @@ const createTripInfoDate = (start, end) => {
   return result;
 };
 
-export { formatDate, getRandomDateFrom, getDateTo, createTripInfoDate };
+const calculateDuration = (first, second) => {
+  if (first === second) {
+    return 0;
+  }
+  first = new Date(first);
+  second = new Date(second);
+  const min = Math.min(first, second);
+  const max = Math.max(first, second);
+  return (max - min) / 60000;
+};
+
+export {
+  formatDate,
+  getRandomDateFrom,
+  getDateTo,
+  createTripInfoDate,
+  calculateDuration
+};

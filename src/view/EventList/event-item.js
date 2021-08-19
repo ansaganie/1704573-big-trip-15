@@ -1,5 +1,5 @@
 import Abstract from '../../abstract.js';
-import { formatDate } from '../../utils/date.js';
+import { formatDate, calculateDuration } from '../../utils/date.js';
 import { capitalize } from '../../utils/common.js';
 
 const createOfferTemplate = ({ title, price }) =>
@@ -25,7 +25,7 @@ const createEventScheduleTemplate = (dateFrom, dateTo) =>
       </time>
     </p>
     <p class="event__duration">
-      ${(dateTo - dateFrom) / 60000}M
+      ${calculateDuration(dateTo, dateFrom )}M
     </p>
   </div>`;
 
@@ -73,7 +73,7 @@ const createEventItem = ({
         <button
           class="
             event__favorite-btn
-            event__favorite-btn${isFavorite ? '--active' : ''}"
+            ${isFavorite ? 'event__favorite-btn--active' : ''}"
           type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -93,15 +93,21 @@ class EventItem extends Abstract{
     super();
     this._event = event;
     this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
+    this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
     return createEventItem(this._event);
   }
 
-  _onRollDownButtonClick (evt) {
+  _onRollDownButtonClick(evt) {
     evt.preventDefault();
     this._callback.clickRollDownButton();
+  }
+
+  _onFavoriteClick(evt) {
+    evt.preventDefault();
+    this._callback.clickFavorite();
   }
 
   setRollDownButtonClickHandler(handler) {
@@ -110,6 +116,14 @@ class EventItem extends Abstract{
       .getElement()
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this._onRollDownButtonClick);
+  }
+
+  setFavoriteClickHandler(handler) {
+    this._callback.clickFavorite = handler;
+    this
+      .getElement()
+      .querySelector('.event__favorite-btn')
+      .addEventListener('click', this._onFavoriteClick);
   }
 }
 
