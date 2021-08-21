@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { getRandomInteger } from './common.js';
 
 const MONTH_AHEAD = 2;
@@ -92,11 +93,11 @@ const calculateDuration = (first, second) => {
   if (first === second) {
     return 0;
   }
-  first = new Date(first);
-  second = new Date(second);
+
   const min = Math.min(first, second);
   const max = Math.max(first, second);
-  return (max - min) / 60000;
+
+  return dayjs(max).diff(dayjs(min), 'minutes');
 };
 
 export {
