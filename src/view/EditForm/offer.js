@@ -1,4 +1,3 @@
-import { showOrHide } from '../../utils/common.js';
 import Abstract from '../../abstract.js';
 
 const createOffers = (offers) => {
@@ -21,7 +20,7 @@ const createOffers = (offers) => {
 };
 
 const createOffersTemplate = (offers) => (
-  `<section class="event__section  event__section--offers ${showOrHide(offers)}">
+  `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">

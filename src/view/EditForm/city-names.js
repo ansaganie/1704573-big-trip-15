@@ -12,7 +12,7 @@ const createDestinationListTemplate = (cityNames) => {
   );
 };
 
-class DestinationList extends Abstract {
+class CityNames extends Abstract {
   constructor(cityNames) {
     super();
     this._cityNames = cityNames;
@@ -23,4 +23,4 @@ class DestinationList extends Abstract {
   }
 }
 
-export default DestinationList;
+export default CityNames;

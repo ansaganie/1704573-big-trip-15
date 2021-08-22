@@ -1,55 +1,54 @@
 import Abstract from '../../abstract.js';
-import { showOrHide } from '../../utils/common.js';
 
-const isDestinationEmpty = ({ pictures, description }) => {
-  if (pictures.length === 0 && description === '') {
-    return true;
-  } else {
-    false;
-  }
-};
-
-const createDestination = (destination) => {
-  const { description, pictures } = destination;
+const createPicturesTemplate = (pictures) => {
   const picturesOfDestination = pictures
-    ? pictures
-      .map(
-        (picture) =>
-          `<img
-            class="event__photo"
-            src="${picture.src}"
-            alt="${picture.description}">`,
-      )
-      .join('\n')
-    : '';
+    .map(
+      (picture) =>
+        `<img
+          class="event__photo"
+          src="${picture.src}"
+          alt="${picture.description}">`,
+    )
+    .join('\n');
 
   return (
-    `<section
-      class="event__section
-        event__section--destination
-        ${isDestinationEmpty(destination) ? 'visually-hidden' : ''}"
-    >
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description ${showOrHide(description)}">
-        ${description}
-      </p>
-      <div class="event__photos-container ${showOrHide(pictures)}">
-        <div class="event__photos-tape">
-          ${picturesOfDestination}
-        </div>
+    `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${picturesOfDestination}
       </div>
+    </div>`
+  );
+};
+
+const createDestinationTemplate = (destination, hasDescription, hasPictures) => {
+  const { description, pictures } = destination;
+  const picturesTemplate = hasPictures ? createPicturesTemplate(pictures) : '' ;
+  const descriptionTemplate = hasDescription
+    ? `<p class="event__destination-description">${description}</p>` : '';
+
+  return (
+    `<section class="event__section event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      ${descriptionTemplate}
+      ${picturesTemplate}
     </section>`
   );
 };
 
 class Destination extends Abstract {
-  constructor(destination) {
+  constructor(destination, hasDescription, hasPictures) {
     super();
     this._destination = destination;
+    this._hasDescription = hasDescription;
+    this._hasPictures = hasPictures;
   }
 
   getTemplate() {
-    return createDestination(this._destination);
+    return createDestinationTemplate(
+      this._destination,
+      this._hasDescription,
+      this._hasPictures,
+    );
   }
 }
 

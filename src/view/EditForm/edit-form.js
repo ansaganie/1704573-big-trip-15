@@ -2,7 +2,7 @@ import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
 import { formatDate } from '../../utils/date.js';
-import DestinationList from './destination-list.js';
+import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
@@ -22,10 +22,24 @@ const BLANK_EVENT = {
 };
 
 const createEditFormTemplate = (event = BLANK_EVENT) => {
-  const { type, offers, destination, dateFrom, dateTo, basePrice } = event;
-  const offersTemplate = new Offers(offers).getTemplate();
-  const destinationListTemplate = new DestinationList(CITY_NAMES).getTemplate();
-  const destinationTemplate = new Destination(destination).getTemplate();
+  const {
+    type,
+    offers,
+    destination,
+    dateFrom,
+    dateTo,
+    basePrice,
+    hasDescription,
+    hasPictures,
+    hasOffers,
+  } = event;
+  const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
+  const destinationListTemplate = new CityNames(CITY_NAMES).getTemplate();
+
+  const destinationTemplate =
+    hasPictures || hasDescription
+      ? new Destination(destination, hasDescription, hasPictures).getTemplate() : '' ;
+
   const eventTypeTemplate = new EventType(type).getTemplate();
 
   return (
@@ -92,16 +106,31 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
 };
 
 class EditForm extends Smart {
-  constructor(state) {
+  constructor(event) {
     super();
-    this._state = state;
-
+    this._state = EditForm.convertEventToState(event);
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
 
     this._setInnerEventHandlers();
+  }
+
+  static convertEventToState(event) {
+    return {
+      ...event,
+      hasOffers: event.offers.length !== 0,
+      hasDescription: event.destination.description.length !== 0,
+      hasPictures: event.destination.pictures.length !== 0,
+    };
+  }
+
+  static convertStateToEvent(state) {
+    delete state.hasDescription;
+    delete state.hasPictures;
+    delete state.hasOffers;
+    return state;
   }
 
   getTemplate() {
@@ -113,36 +142,6 @@ class EditForm extends Smart {
     this.setEscapeKeydownHandler(this._callback.pressEscape);
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
-  }
-
-  _setInnerEventHandlers() {
-    this.getElement()
-      .querySelector('.event__type-group')
-      .addEventListener('change', this._onEventTypeChange);
-  }
-
-  _onRollUpButtonClick(evt) {
-    evt.preventDefault();
-    this._callback.clickRollUpButton(evt);
-  }
-
-  _onFormSubmit(evt) {
-    evt.preventDefault();
-    this._callback.submitForm(evt);
-  }
-
-  _onEscapeKeydown(evt) {
-    evt.preventDefault();
-    this._callback.pressEscape(evt);
-  }
-
-  _onEventTypeChange({ target }) {
-    this.updateState({
-      offers: offersMock[target.value],
-      type: target.value,
-    });
-
-    target.checked = false;
   }
 
   setRollUpButtonClickHandler(handler) {
@@ -181,6 +180,40 @@ class EditForm extends Smart {
       .getElement()
       .querySelector('.event__rollup-btn')
       .removeEventListener('click', this._onRollUpButtonClick);
+  }
+
+  _setInnerEventHandlers() {
+    this.getElement()
+      .querySelector('.event__type-group')
+      .addEventListener('change', this._onEventTypeChange);
+  }
+
+  _onRollUpButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.clickRollUpButton(evt);
+  }
+
+  _onFormSubmit(evt) {
+    evt.preventDefault();
+    this._callback.submitForm(evt);
+  }
+
+  _onEscapeKeydown(evt) {
+    evt.preventDefault();
+    this._callback.pressEscape(evt);
+  }
+
+  _onEventTypeChange({ target }) {
+    const offers = offersMock[target.value];
+    const updatedState = {
+      offers,
+      hasOffers: offers.length !== 0,
+      type: target.value,
+    };
+
+    this.updateState(updatedState);
+
+    target.checked = false;
   }
 }
 
