@@ -68,8 +68,8 @@ class Point {
   }
 
   _closeEditForm() {
+    this._editComponent.resetState(this._point);
     replace(this._pointComponent, this._editComponent);
-
     this._editComponent.unsetEventHandlers();
     this._mode = Mode.DEFAULT;
   }

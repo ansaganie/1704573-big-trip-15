@@ -2,12 +2,14 @@ import Abstract from '../../abstract.js';
 import { formatDate, calculateDuration } from '../../utils/date.js';
 import { capitalize } from '../../utils/common.js';
 
-const createOfferTemplate = ({ title, price }) =>
-  `<li class="event__offer">
-    <span class="event__offer-title">${title}</span>
-    +€&nbsp;
-    <span class="event__offer-price">${price}</span>
-  </li>`;
+const createOfferTemplate = ({ title, price, isChecked }) => (
+  isChecked
+    ? (`<li class="event__offer">
+        <span class="event__offer-title">${title}</span>
+        +€&nbsp;
+        <span class="event__offer-price">${price}</span>
+      </li>`) : ''
+);
 
 const createEventScheduleTemplate = (dateFrom, dateTo) =>
   `<div class="event__schedule">

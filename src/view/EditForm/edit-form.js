@@ -7,6 +7,7 @@ import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
 import Smart from '../../smart.js';
+import { getRandomDestination } from '../../mock/destination.js';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -32,6 +33,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
     hasDescription,
     hasPictures,
     hasOffers,
+    isSaveDisabled,
   } = event;
   const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
   const destinationListTemplate = new CityNames(CITY_NAMES).getTemplate();
@@ -90,7 +92,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
               name="event-price" value="${basePrice}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isSaveDisabled ? 'disabled' : ''}>Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -109,10 +111,12 @@ class EditForm extends Smart {
   constructor(event) {
     super();
     this._state = EditForm.convertEventToState(event);
+
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
+    this._onCityNameChange = this._onCityNameChange.bind(this);
 
     this._setInnerEventHandlers();
   }
@@ -123,6 +127,7 @@ class EditForm extends Smart {
       hasOffers: event.offers.length !== 0,
       hasDescription: event.destination.description.length !== 0,
       hasPictures: event.destination.pictures.length !== 0,
+      isSaveDisabled: false,
     };
   }
 
@@ -144,12 +149,22 @@ class EditForm extends Smart {
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
   }
 
+  resetState(event) {
+    this.updateState(
+      EditForm.convertEventToState(event),
+    );
+  }
+
   setRollUpButtonClickHandler(handler) {
     this._callback.clickRollUpButton = handler;
     this
       .getElement()
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this._onRollUpButtonClick);
+    this
+      .getElement()
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this._onCityNameChange);
   }
 
   setFormSubmitHandler(handler) {
@@ -199,12 +214,12 @@ class EditForm extends Smart {
   }
 
   _onEscapeKeydown(evt) {
-    evt.preventDefault();
     this._callback.pressEscape(evt);
   }
 
   _onEventTypeChange({ target }) {
     const offers = offersMock[target.value];
+    offers.forEach((offer) => offer.isChecked = false);
     const updatedState = {
       offers,
       hasOffers: offers.length !== 0,
@@ -214,6 +229,31 @@ class EditForm extends Smart {
     this.updateState(updatedState);
 
     target.checked = false;
+  }
+
+  _onCityNameChange(evt) {
+    const cityName = evt.target.value;
+
+    if (CITY_NAMES.includes(cityName)) {
+      const destination = getRandomDestination(cityName);
+      const updatedState = {
+        destination,
+        hasDescription: destination.description.length !== 0,
+        hasPictures: destination.pictures.length !== 0,
+        isSaveDisabled: false,
+      };
+
+      this.updateState(updatedState);
+    } else {
+      this.updateState({
+        destination: {
+          name: cityName,
+        },
+        hasDescription: false,
+        hasPictures: false,
+        isSaveDisabled: true,
+      });
+    }
   }
 }
 
