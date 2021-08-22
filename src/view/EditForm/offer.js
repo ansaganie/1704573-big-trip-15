@@ -1,22 +1,25 @@
 import Abstract from '../../abstract.js';
 
 const createOffers = (offers) => {
-  const createIdForOffer = (input) => input.toLowerCase().replace(' ', '-');
+  const createIdForOffer = (input) => input.toLowerCase().replaceAll(' ', '-');
 
   return offers
-    .map(({ isChecked, title, price }) =>
-      `<div class="event__offer-selector">
-        <input
-          class="event__offer-checkbox  visually-hidden"
-          id="${createIdForOffer(title)}" type="checkbox"
-          name="event-offer-luggage" ${isChecked ? 'checked' : ''}>
-        <label class="event__offer-label" for="${createIdForOffer(title)}">
-          <span class="event__offer-title">${title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${price}</span>
-        </label>
-      </div>`)
-    .join('\n');
+    .map(({ isChecked, title, price }) => {
+      const id = createIdForOffer(title);
+      return (
+        `<div class="event__offer-selector">
+          <input
+            class="event__offer-checkbox  visually-hidden"
+            id="${id}" type="checkbox"
+            name="${id}" ${isChecked ? 'checked' : ''}>
+          <label class="event__offer-label" for="${id}">
+            <span class="event__offer-title">${title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${price}</span>
+          </label>
+        </div>`
+      );
+    }).join('\n');
 };
 
 const createOffersTemplate = (offers) => (
