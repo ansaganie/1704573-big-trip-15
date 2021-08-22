@@ -14,12 +14,14 @@ const render = (container, element, place) => {
     element = element.getElement();
   }
 
-  if (place === RenderPosition.AFTERBEGIN) {
-    container.prepend(element);
-    return;
-  }
+  if (element) {
+    if (place === RenderPosition.AFTERBEGIN) {
+      container.prepend(element);
+      return;
+    }
 
-  container.append(element);
+    container.append(element);
+  }
 };
 
 const createElement = (template) => {

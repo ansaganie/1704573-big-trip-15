@@ -1,12 +1,8 @@
-import TripInfoView from '../view/trip-info.js';
-import TripTabsView from '../view/trip-tabs.js';
-import TripCostView from '../view/trip-cost';
-import TripFilterView from '../view/trip-filters.js';
 import TripSortView from '../view/trip-sort.js';
 import EventListView from '../view/EventList/event-list.js';
 import NoEventView from '../view/EventList/message.js';
 import PointPresenter from './point.js';
-import { render, RenderPosition } from '../utils/render.js';
+import { render } from '../utils/render.js';
 import { updateArray } from '../utils/common.js';
 import { calculateDuration } from '../utils/date.js';
 
@@ -18,23 +14,13 @@ const SortType = {
 
 class Event {
   constructor(
-    infoContainer,
-    tabsContainer,
-    filterContainer,
     tripListContainer,
   ) {
-    this._infoContainer = infoContainer;
-    this._tabsContainer = tabsContainer;
-    this._filterContainer = filterContainer;
     this._tripListContainer = tripListContainer;
 
     this._listComponent = new EventListView();
-    this._tabsComponent = new TripTabsView();
-    this._filtersComponent = new TripFilterView();
     this._noEventComponent = new NoEventView();
-    this._infoComponent = new TripInfoView();
     this._sortComponent = new TripSortView();
-    this._costComponent = new TripCostView();
 
     this._currentFilter = 'everything';
     this._currentSortType = SortType.DAY;
@@ -74,14 +60,6 @@ class Event {
 
     this._pointPresenters.set(event.id, pointPresenter);
     pointPresenter.init(event);
-  }
-
-  _renderTabs() {
-    render(this._tabsContainer, this._tabsComponent);
-  }
-
-  _renderFilters() {
-    render(this._filterContainer, this._filtersComponent);
   }
 
   _renderNoEvent() {
@@ -140,22 +118,10 @@ class Event {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _renderInfo() {
-    this._infoComponent.setEvents(this._pointsData);
-    this._costComponent.setEvents(this._pointsData);
-
-    render(this._infoComponent, this._costComponent);
-    render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
-  }
-
   _renderEvent() {
-    this._renderTabs();
-    this._renderFilters();
-
     if (this._pointsData.length === 0) {
       this._renderNoEvent();
     } else {
-      this._renderInfo();
       this._renderSort();
       this._pointsData.forEach(
         (item) => this._renderPoint(this._listComponent, item),
