@@ -5,7 +5,7 @@ import EventPresenter from './presenter/event.js';
 import { generatePoints } from './mock/event.js';
 import { render, RenderPosition } from './utils/render.js';
 
-const EVENT_ITEMS_COUNT = 0;
+const EVENT_ITEMS_COUNT = 6;
 
 const randomEvents = generatePoints(EVENT_ITEMS_COUNT);
 

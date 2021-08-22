@@ -9,10 +9,10 @@ const Mode = {
 };
 
 class Point {
-  constructor(container, updateData, changeMode) {
+  constructor(container, updateData, switchMode) {
     this._container = container;
     this._updateData = updateData;
-    this._changeMode = changeMode;
+    this._switchMode = switchMode;
 
     this._pointComponent = null;
     this._editComponent = null;
@@ -70,9 +70,7 @@ class Point {
   _closeEditForm() {
     replace(this._pointComponent, this._editComponent);
 
-    this._editComponent.unsetEscapeKeydownHandler();
-    this._editComponent.unsetFormSubmitHandler();
-    this._editComponent.unsetRollUpButtonClickHandler();
+    this._editComponent.unsetEventHandlers();
     this._mode = Mode.DEFAULT;
   }
 
@@ -82,7 +80,7 @@ class Point {
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editComponent.setEscapeKeydownHandler(this._handleEscKeydown);
     this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
-    this._changeMode();
+    this._switchMode();
     this._mode = Mode.EDITING;
   }
 

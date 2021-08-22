@@ -2,6 +2,7 @@ import { getDateTo, getRandomDateFrom } from '../utils/date.js';
 import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import { getRandomDestination } from './destination.js';
 import { offers } from './offer';
+import { POINT_TYPE } from '../utils/const.js';
 
 const MAX_PRICE = 300;
 const MIN_PRICE = 5000;
@@ -16,18 +17,6 @@ const CITY_NAMES = [
   'Rio de Janeiro',
   'Tokio',
   'Berlin',
-];
-
-const POINT_TYPE = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant',
 ];
 
 const generatePoint = () => {
@@ -49,4 +38,4 @@ const generatePoint = () => {
 const generatePoints = (count) =>
   new Array(count).fill(null).map(generatePoint);
 
-export { generatePoints, CITY_NAMES, POINT_TYPE };
+export { generatePoints, CITY_NAMES };

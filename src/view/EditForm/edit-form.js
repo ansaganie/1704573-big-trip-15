@@ -6,7 +6,7 @@ import DestinationList from './destination-list.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
-import Abstract from '../../abstract.js';
+import Smart from '../../smart.js';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -91,17 +91,34 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
   );
 };
 
-class EditForm extends Abstract{
-  constructor(event) {
+class EditForm extends Smart {
+  constructor(state) {
     super();
-    this._event = event;
+    this._state = state;
+
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
     this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
+    this._onEventTypeChange = this._onEventTypeChange.bind(this);
+
+    this._setInnerEventHandlers();
   }
 
   getTemplate() {
-    return createEditFormTemplate(this._event);
+    return createEditFormTemplate(this._state);
+  }
+
+  restoreHandlers() {
+    this._setInnerEventHandlers();
+    this.setEscapeKeydownHandler(this._callback.pressEscape);
+    this.setFormSubmitHandler(this._callback.submitForm);
+    this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
+  }
+
+  _setInnerEventHandlers() {
+    this.getElement()
+      .querySelector('.event__type-group')
+      .addEventListener('change', this._onEventTypeChange);
   }
 
   _onRollUpButtonClick(evt) {
@@ -117,6 +134,15 @@ class EditForm extends Abstract{
   _onEscapeKeydown(evt) {
     evt.preventDefault();
     this._callback.pressEscape(evt);
+  }
+
+  _onEventTypeChange({ target }) {
+    this.updateState({
+      offers: offersMock[target.value],
+      type: target.value,
+    });
+
+    target.checked = false;
   }
 
   setRollUpButtonClickHandler(handler) {
@@ -140,21 +166,17 @@ class EditForm extends Abstract{
       .addEventListener('keydown', this._onEscapeKeydown);
   }
 
-  unsetEscapeKeydownHandler() {
+  unsetEventHandlers() {
     this._callback.pressEscape = null;
+    this._callback.submitForm = null;
+    this._callback.clickRollUpButton = null;
     document
       .removeEventListener('keydown', this._onEscapeKeydown);
-  }
 
-  unsetFormSubmitHandler() {
-    this._callback.submitForm = null;
     this
       .getElement()
       .removeEventListener('submit', this._onFormSubmit);
-  }
 
-  unsetRollUpButtonClickHandler() {
-    this._callback.clickRollUpButton = null;
     this
       .getElement()
       .querySelector('.event__rollup-btn')

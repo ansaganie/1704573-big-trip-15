@@ -1,6 +1,6 @@
 import { capitalize } from '../../utils/common.js';
-import { POINT_TYPE } from '../../mock/event.js';
 import Abstract from '../../abstract.js';
+import { POINT_TYPE } from '../../utils/const.js';
 
 export const createEventTypeTemplate = (type) => {
   const CHECKED = POINT_TYPE.reduce(
