@@ -1,4 +1,4 @@
-import Abstract from '../../abstract.js';
+import AbstractView from '../abstract.js';
 
 const createPicturesTemplate = (pictures) => {
   const picturesOfDestination = pictures
@@ -35,7 +35,7 @@ const createDestinationTemplate = (destination, hasDescription, hasPictures) => 
   );
 };
 
-class Destination extends Abstract {
+class Destination extends AbstractView {
   constructor(destination, hasDescription, hasPictures) {
     super();
     this._destination = destination;

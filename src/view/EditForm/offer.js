@@ -1,4 +1,4 @@
-import Abstract from '../../abstract.js';
+import AbstractView from '../abstract.js';
 
 const createOffers = (offers) =>
   offers.map(({ id, isChecked, title, price }) =>
@@ -23,7 +23,7 @@ const createOffersTemplate = (offers) => (
   </section>`
 );
 
-class Offers extends Abstract {
+class Offers extends AbstractView {
   constructor(offers) {
     super();
     this._offers = offers;

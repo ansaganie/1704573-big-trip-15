@@ -6,7 +6,7 @@ import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
-import Smart from '../../smart.js';
+import SmartView from '../smart.js';
 import { getRandomDestination } from '../../mock/destination.js';
 
 const BLANK_EVENT = {
@@ -108,7 +108,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
   );
 };
 
-class EditForm extends Smart {
+class EditForm extends SmartView {
   constructor(pointData) {
     super();
     this._offerId = 0;

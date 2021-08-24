@@ -1,4 +1,4 @@
-import Abstract from '../../abstract.js';
+import AbstractView from '../abstract.js';
 
 const createDestinationListTemplate = (cityNames) => {
   const result = cityNames
@@ -12,7 +12,7 @@ const createDestinationListTemplate = (cityNames) => {
   );
 };
 
-class CityNames extends Abstract {
+class CityNames extends AbstractView {
   constructor(cityNames) {
     super();
     this._cityNames = cityNames;

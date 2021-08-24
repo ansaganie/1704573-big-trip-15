@@ -1,4 +1,4 @@
-import Abstract from '../../abstract.js';
+import AbstractView from '../abstract.js';
 import { formatDate, calculateDuration } from '../../utils/date.js';
 import { capitalize } from '../../utils/common.js';
 
@@ -90,7 +90,7 @@ const createEventItem = ({
   );
 };
 
-class EventItem extends Abstract{
+class EventItem extends AbstractView{
   constructor(event) {
     super();
     this._event = event;

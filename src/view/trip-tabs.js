@@ -1,4 +1,4 @@
-import Abstract from '../abstract.js';
+import AbstractView from './abstract.js';
 
 const createTripTabsTemplate = () =>
   `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -6,7 +6,7 @@ const createTripTabsTemplate = () =>
     <a class="trip-tabs__btn" href="#">Stats</a>
   </nav>`;
 
-class TripTabs extends Abstract {
+class TripTabs extends AbstractView {
   constructor() {
     super();
   }

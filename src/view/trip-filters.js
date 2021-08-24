@@ -1,5 +1,5 @@
 import { capitalize } from '../utils/common.js';
-import Abstract from '../abstract.js';
+import AbstractView from './abstract.js';
 
 const FILTER_TYPES = ['everything', 'future', 'past'];
 const CHECKED = FILTER_TYPES.reduce(
@@ -34,7 +34,7 @@ const createTripFiltersTemplate = () => {
   );
 };
 
-class TripFilter extends Abstract {
+class TripFilter extends AbstractView {
   constructor() {
     super();
   }

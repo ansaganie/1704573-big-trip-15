@@ -1,8 +1,8 @@
-import Abstract from '../../abstract.js';
+import AbstractView from '../abstract.js';
 
 const createEventListTemplate = () => '<ul class="trip-events__list"></ul>';
 
-class EventList extends Abstract{
+class EventList extends AbstractView{
   constructor() {
     super();
   }

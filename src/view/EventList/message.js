@@ -1,9 +1,9 @@
-import Abstract from '../../abstract';
+import AbstractView from '../abstract';
 
 const createMessageTemplate = (message) =>
   `<p class="trip-events__msg">${message}</p>`;
 
-class Message extends Abstract {
+class Message extends AbstractView {
   constructor() {
     super();
     this._filterMessage = {

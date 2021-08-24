@@ -1,4 +1,4 @@
-import Abstract from '../abstract.js';
+import AbstractView from './abstract.js';
 import { createTripInfoDate } from '../utils/date.js';
 
 const createTripInfoTemplate = (hasData, title, date, cost) => (
@@ -15,7 +15,7 @@ const createTripInfoTemplate = (hasData, title, date, cost) => (
       </section>`
 );
 
-class TripInfo extends Abstract{
+class TripInfo extends AbstractView{
   constructor(events) {
     super();
     if (events.length > 0) {
