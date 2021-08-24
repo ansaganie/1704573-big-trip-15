@@ -9,10 +9,10 @@ const Mode = {
 };
 
 class Point {
-  constructor(container, updateData, switchMode) {
+  constructor(container, updateData, closeOpenForm) {
     this._container = container;
     this._updateData = updateData;
-    this._switchMode = switchMode;
+    this._closeOpenForm = closeOpenForm;
 
     this._pointComponent = null;
     this._editComponent = null;
@@ -68,38 +68,37 @@ class Point {
   }
 
   _closeEditForm() {
-    this._editComponent.resetState(this._point);
-    replace(this._pointComponent, this._editComponent);
     this._editComponent.unsetEventHandlers();
+    document.removeEventListener('keydown', this._handleEscKeydown);
+    replace(this._pointComponent, this._editComponent);
     this._mode = Mode.DEFAULT;
   }
 
-  _openEditForm() {
-    replace(this._editComponent, this._pointComponent);
-
-    this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._editComponent.setEscapeKeydownHandler(this._handleEscKeydown);
-    this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
-    this._switchMode();
-    this._mode = Mode.EDITING;
+  _handleFormSubmit(updatedPoint) {
+    this._updateData(updatedPoint);
+    this._closeEditForm();
   }
 
   _handleEscKeydown(evt) {
     if (isEscapePressed(evt)) {
+      this._editComponent.resetState(this._point);
       this._closeEditForm();
     }
   }
 
-  _handleFormSubmit() {
-    this._closeEditForm();
-  }
-
   _handleRollUpClick() {
+    this._editComponent.resetState(this._point);
     this._closeEditForm();
   }
 
   _handleRollDownClick() {
-    this._openEditForm();
+    document.addEventListener('keydown', this._handleEscKeydown);
+    this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
+
+    replace(this._editComponent, this._pointComponent);
+    this._closeOpenForm();
+    this._mode = Mode.EDITING;
   }
 
   _handleFavoriteClick() {

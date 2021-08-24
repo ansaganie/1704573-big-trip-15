@@ -40,7 +40,8 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
 
   const destinationTemplate =
     hasPictures || hasDescription
-      ? new Destination(destination, hasDescription, hasPictures).getTemplate() : '' ;
+      ? new Destination(destination, hasDescription, hasPictures).getTemplate()
+      : '' ;
 
   const eventTypeTemplate = new EventType(type).getTemplate();
 
@@ -108,43 +109,19 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
 };
 
 class EditForm extends Smart {
-  constructor(event) {
+  constructor(pointData) {
     super();
-    this._state = EditForm.convertEventToState(event);
+    this._offerId = 0;
+
+    this._state = this._convertPointDataToState(pointData);
 
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
-    this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
     this._onCityNameChange = this._onCityNameChange.bind(this);
     this._onOffersChange = this._onOffersChange.bind(this);
 
     this._setInnerEventHandlers();
-  }
-
-  static convertEventToState(event) {
-    const offers = event.offers.map((offer) => ({
-      ...offer,
-      id: offer.title.toLowerCase().replaceAll(' ', '-'),
-    }));
-
-    return {
-      ...event,
-      offers,
-      hasOffers: event.offers.length !== 0,
-      hasDescription: event.destination.description.length !== 0,
-      hasPictures: event.destination.pictures.length !== 0,
-      isSaveDisabled: false,
-    };
-  }
-
-  static convertStateToEvent(state) {
-    delete state.hasDescription;
-    delete state.hasPictures;
-    delete state.hasOffers;
-    state.offers.forEach((offer) => delete offer.id);
-
-    return state;
   }
 
   getTemplate() {
@@ -153,14 +130,13 @@ class EditForm extends Smart {
 
   restoreHandlers() {
     this._setInnerEventHandlers();
-    this.setEscapeKeydownHandler(this._callback.pressEscape);
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
   }
 
-  resetState(event) {
+  resetState(pointData) {
     this.updateState(
-      EditForm.convertEventToState(event),
+      this._convertPointDataToState(pointData),
     );
   }
 
@@ -183,18 +159,9 @@ class EditForm extends Smart {
       .addEventListener('submit', this._onFormSubmit);
   }
 
-  setEscapeKeydownHandler(handler) {
-    this._callback.pressEscape = handler;
-    document
-      .addEventListener('keydown', this._onEscapeKeydown);
-  }
-
   unsetEventHandlers() {
-    this._callback.pressEscape = null;
     this._callback.submitForm = null;
     this._callback.clickRollUpButton = null;
-    document
-      .removeEventListener('keydown', this._onEscapeKeydown);
 
     this
       .getElement()
@@ -218,6 +185,31 @@ class EditForm extends Smart {
     }
   }
 
+  _convertPointDataToState(event) {
+    const offers = event.offers.map((offer) => ({
+      ...offer,
+      id: this._offerId++,
+    }));
+
+    return {
+      ...event,
+      offers,
+      hasOffers: event.offers.length !== 0,
+      hasDescription: event.destination.description.length !== 0,
+      hasPictures: event.destination.pictures.length !== 0,
+      isSaveDisabled: false,
+    };
+  }
+
+  _convertStateToPointData(state) {
+    delete state.hasDescription;
+    delete state.hasPictures;
+    delete state.hasOffers;
+    state.offers.forEach((offer) => delete offer.id);
+
+    return state;
+  }
+
   _onRollUpButtonClick(evt) {
     evt.preventDefault();
     this._callback.clickRollUpButton(evt);
@@ -225,16 +217,18 @@ class EditForm extends Smart {
 
   _onFormSubmit(evt) {
     evt.preventDefault();
-    this._callback.submitForm(evt);
-  }
-
-  _onEscapeKeydown(evt) {
-    this._callback.pressEscape(evt);
+    this._callback.submitForm(
+      this._convertStateToPointData(this._state),
+    );
   }
 
   _onEventTypeChange({ target }) {
-    const offers = offersMock[target.value];
-    offers.forEach((offer) => offer.isChecked = false);
+    const offers = offersMock[target.value].map((offer) => ({
+      ...offer,
+      isChecked: false,
+      id: this._offerId++,
+    }));
+
     const updatedState = {
       offers,
       hasOffers: offers.length !== 0,
@@ -242,20 +236,26 @@ class EditForm extends Smart {
     };
 
     this.updateState(updatedState);
-
     target.checked = false;
   }
 
   _onOffersChange({ target }) {
     if (target.tagName === 'INPUT') {
-      const offers = this._state.offers.slice();
-      offers.forEach((offer) => {
-        if(offer.id === target.id) {
-          offer.isChecked = target.checked;
-        }
-      });
+      const offers = this._state
+        .offers
+        .slice()
+        .map((offer) => {
+          if(offer.id === +target.id) {
+            return {
+              ...offer,
+              isChecked: target.checked,
+            };
+          }
 
-      this.updateState({ offers });
+          return offer;
+        });
+
+      this.updateState({ offers }, true);
     }
   }
 
