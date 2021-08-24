@@ -117,13 +117,20 @@ class EditForm extends Smart {
     this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
     this._onCityNameChange = this._onCityNameChange.bind(this);
+    this._onOffersChange = this._onOffersChange.bind(this);
 
     this._setInnerEventHandlers();
   }
 
   static convertEventToState(event) {
+    const offers = event.offers.map((offer) => ({
+      ...offer,
+      id: offer.title.toLowerCase().replaceAll(' ', '-'),
+    }));
+
     return {
       ...event,
+      offers,
       hasOffers: event.offers.length !== 0,
       hasDescription: event.destination.description.length !== 0,
       hasPictures: event.destination.pictures.length !== 0,
@@ -135,6 +142,8 @@ class EditForm extends Smart {
     delete state.hasDescription;
     delete state.hasPictures;
     delete state.hasOffers;
+    state.offers.forEach((offer) => delete offer.id);
+
     return state;
   }
 
@@ -201,6 +210,12 @@ class EditForm extends Smart {
     this.getElement()
       .querySelector('.event__type-group')
       .addEventListener('change', this._onEventTypeChange);
+    const availableOffers = this.getElement()
+      .querySelector('.event__available-offers');
+
+    if (availableOffers) {
+      availableOffers.addEventListener('change', this._onOffersChange);
+    }
   }
 
   _onRollUpButtonClick(evt) {
@@ -229,6 +244,19 @@ class EditForm extends Smart {
     this.updateState(updatedState);
 
     target.checked = false;
+  }
+
+  _onOffersChange({ target }) {
+    if (target.tagName === 'INPUT') {
+      const offers = this._state.offers.slice();
+      offers.forEach((offer) => {
+        if(offer.id === target.id) {
+          offer.isChecked = target.checked;
+        }
+      });
+
+      this.updateState({ offers });
+    }
   }
 
   _onCityNameChange(evt) {
