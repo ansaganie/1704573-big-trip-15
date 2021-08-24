@@ -1,8 +1,7 @@
 import AbstractView from '../abstract.js';
 
-const createOffers = (offers) =>
-  offers.map(({ id, isChecked, title, price }) =>
-    `<div class="event__offer-selector">
+const createOfferTemplate = ({ id, isChecked, title, price }) => (
+  `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
         id="${id}" type="checkbox"
@@ -12,13 +11,14 @@ const createOffers = (offers) =>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${price}</span>
       </label>
-    </div>`).join('\n');
+    </div>`
+);
 
 const createOffersTemplate = (offers) => (
   `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
     <div class="event__available-offers">
-      ${createOffers(offers)}
+      ${offers.map(createOfferTemplate).join()}
     </div>
   </section>`
 );

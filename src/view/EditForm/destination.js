@@ -1,15 +1,14 @@
 import AbstractView from '../abstract.js';
 
+const createImgTemplate = (picture) => (
+  `<img
+    class="event__photo"
+    src="${picture.src}"
+    alt="${picture.description}">`
+);
+
 const createPicturesTemplate = (pictures) => {
-  const picturesOfDestination = pictures
-    .map(
-      (picture) =>
-        `<img
-          class="event__photo"
-          src="${picture.src}"
-          alt="${picture.description}">`,
-    )
-    .join('\n');
+  const picturesOfDestination = pictures.map(createImgTemplate).join();
 
   return (
     `<div class="event__photos-container">
@@ -20,10 +19,9 @@ const createPicturesTemplate = (pictures) => {
   );
 };
 
-const createDestinationTemplate = (destination, hasDescription, hasPictures) => {
-  const { description, pictures } = destination;
-  const picturesTemplate = hasPictures ? createPicturesTemplate(pictures) : '' ;
-  const descriptionTemplate = hasDescription
+const createDestinationTemplate = ({ description, pictures }, hasDescription = false, hasPictures = false) => {
+  const picturesTemplate = hasPictures === true ? createPicturesTemplate(pictures) : '' ;
+  const descriptionTemplate = hasDescription === true
     ? `<p class="event__destination-description">${description}</p>` : '';
 
   return (

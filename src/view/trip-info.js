@@ -1,10 +1,9 @@
 import AbstractView from './abstract.js';
 import { createTripInfoDate } from '../utils/date.js';
 
-const createTripInfoTemplate = (hasData, title, date, cost) => (
-  !hasData
-    ? ''
-    : `<section class="trip-main__trip-info  trip-info">
+const createTripInfoTemplate = (hasInfo = false, title, date, cost) => (
+  hasInfo === true
+    ? `<section class="trip-main__trip-info  trip-info">
         <div class="trip-info__main">
           <h1 class="trip-info__title">${title}</h1>
           <p class="trip-info__dates">${date}</p>
@@ -13,13 +12,16 @@ const createTripInfoTemplate = (hasData, title, date, cost) => (
           Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
         </p>
       </section>`
+    : ''
 );
 
 class TripInfo extends AbstractView{
   constructor(events) {
     super();
+    this._hasInfo = false;
+
     if (events.length > 0) {
-      this._hasData = true;
+      this._hasInfo = true;
       this._title = events
         .map(({ destination }) => destination.name)
         .join(' &mdash; ');
@@ -32,14 +34,12 @@ class TripInfo extends AbstractView{
       const endDate = events[events.length - 1].dateTo;
 
       this._date =  createTripInfoDate(startDate, endDate);
-    } else {
-      this._hasData = false;
     }
   }
 
   getTemplate() {
     return createTripInfoTemplate(
-      this._hasData,
+      this._hasInfo,
       this._title,
       this._date,
       this._cost,
