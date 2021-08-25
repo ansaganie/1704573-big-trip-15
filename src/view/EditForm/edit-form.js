@@ -1,7 +1,7 @@
 import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
-import { formatDate, isBefore } from '../../utils/date.js';
+import { equals, formatDate, isBefore } from '../../utils/date.js';
 import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
@@ -256,21 +256,25 @@ class EditForm extends SmartView {
   }
 
   _dateFromChangeHandler([userDate]) {
-    const update = {
-      dateFrom: userDate,
-    };
+    if (!equals(userDate, this._state.dateFrom)) {
+      const update = {
+        dateFrom: userDate,
+      };
 
-    if (isBefore(this._state.dateTo, userDate)) {
-      update.dateTo = userDate;
+      if (isBefore(this._state.dateTo, userDate)) {
+        update.dateTo = userDate;
+      }
+
+      this.updateState(update);
     }
-
-    this.updateState(update);
   }
 
   _dateToChangeHandler([userDate]) {
-    this.updateState({
-      dateTo: userDate,
-    });
+    if (!equals(userDate, this._state.dateTo)) {
+      this.updateState({
+        dateTo: userDate,
+      });
+    }
   }
 
   _onRollUpButtonClick(evt) {

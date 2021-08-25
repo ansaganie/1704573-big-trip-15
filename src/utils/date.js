@@ -102,11 +102,14 @@ const calculateDuration = (first, second) => {
 
 const isBefore = (first, second) => dayjs(first).isBefore(dayjs(second));
 
+const equals = (first, second) => dayjs(first).isSame(dayjs(second));
+
 export {
   formatDate,
   getRandomDateFrom,
   getDateTo,
   createTripInfoDate,
   calculateDuration,
-  isBefore
+  isBefore,
+  equals
 };
