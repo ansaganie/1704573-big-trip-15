@@ -100,10 +100,13 @@ const calculateDuration = (first, second) => {
   return dayjs(max).diff(dayjs(min), 'minutes');
 };
 
+const isBefore = (first, second) => dayjs(first).isBefore(dayjs(second));
+
 export {
   formatDate,
   getRandomDateFrom,
   getDateTo,
   createTripInfoDate,
-  calculateDuration
+  calculateDuration,
+  isBefore
 };

@@ -8,7 +8,7 @@ const createImgTemplate = (picture) => (
 );
 
 const createPicturesTemplate = (pictures) => {
-  const picturesOfDestination = pictures.map(createImgTemplate).join();
+  const picturesOfDestination = pictures.map(createImgTemplate).join('');
 
   return (
     `<div class="event__photos-container">

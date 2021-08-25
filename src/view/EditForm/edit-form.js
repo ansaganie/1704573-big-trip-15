@@ -1,13 +1,17 @@
 import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
-import { formatDate } from '../../utils/date.js';
+import { formatDate, isBefore } from '../../utils/date.js';
 import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
 import SmartView from '../smart.js';
 import { getRandomDestination } from '../../mock/destination.js';
+import flatpickr from 'flatpickr';
+
+import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -93,7 +97,8 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
               name="event-price" value="${basePrice}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit" ${isSaveDisabled ? 'disabled' : ''}>Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit"
+            ${isSaveDisabled || !dateFrom || !dateTo ? 'disabled' : ''}>Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -112,6 +117,8 @@ class EditForm extends SmartView {
   constructor(pointData) {
     super();
     this._offerId = 0;
+    this._datePickerFrom = null;
+    this._datePickerTo = null;
 
     this._state = this._convertPointDataToState(pointData);
 
@@ -120,7 +127,10 @@ class EditForm extends SmartView {
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
     this._onCityNameChange = this._onCityNameChange.bind(this);
     this._onOffersChange = this._onOffersChange.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
+    this._setDatePicker();
     this._setInnerEventHandlers();
   }
 
@@ -129,6 +139,7 @@ class EditForm extends SmartView {
   }
 
   restoreHandlers() {
+    this._setDatePicker();
     this._setInnerEventHandlers();
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
@@ -173,6 +184,40 @@ class EditForm extends SmartView {
       .removeEventListener('click', this._onRollUpButtonClick);
   }
 
+  _setDatePicker() {
+    if (this._datePickerFrom || this._datePickerTo) {
+      this._datePickerFrom.destroy();
+      this._datePickerTo.destroy();
+    }
+
+    this._datePickerFrom = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateFrom,
+        enableTime: true,
+        closeOnSelect: false,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        onClose: this._dateFromChangeHandler,
+      },
+    );
+
+    this._datePickerTo = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateTo,
+        enableTime: true,
+        closeOnSelect: false,
+        minDate: this._state.dateFrom,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        onClose: this._dateToChangeHandler,
+      },
+    );
+  }
+
   _setInnerEventHandlers() {
     this.getElement()
       .querySelector('.event__type-group')
@@ -208,6 +253,24 @@ class EditForm extends SmartView {
     state.offers.forEach((offer) => delete offer.id);
 
     return state;
+  }
+
+  _dateFromChangeHandler([userDate]) {
+    const update = {
+      dateFrom: userDate,
+    };
+
+    if (isBefore(this._state.dateTo, userDate)) {
+      update.dateTo = userDate;
+    }
+
+    this.updateState(update);
+  }
+
+  _dateToChangeHandler([userDate]) {
+    this.updateState({
+      dateTo: userDate,
+    });
   }
 
   _onRollUpButtonClick(evt) {
