@@ -1,4 +1,4 @@
-import { getDateTo, getRandomDateFrom } from '../utils/date.js';
+import { getRandomDateTo, getRandomDateFrom } from '../utils/date.js';
 import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import { getRandomDestination } from './destination.js';
 import { offers } from './offer';
@@ -27,7 +27,7 @@ const generatePoint = () => {
     id: eventId++,
     basePrice: getRandomInteger(MIN_PRICE, MAX_PRICE),
     dateFrom,
-    dateTo: getDateTo(dateFrom),
+    dateTo: getRandomDateTo(dateFrom),
     destination: getRandomDestination(getRandomElement(CITY_NAMES)),
     isFavorite: false,
     offers: offers[type],
