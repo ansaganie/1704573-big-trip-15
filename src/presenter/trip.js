@@ -1,6 +1,6 @@
-import TripSortView from '../view/trip-sort.js';
-import EventListView from '../view/EventList/event-list.js';
-import NoEventView from '../view/EventList/message.js';
+import SortView from '../view/trip-sort.js';
+import TripListView from '../view/TripList/trip-list.js';
+import NoPointView from '../view/TripList/message.js';
 import PointPresenter from './point.js';
 import { render } from '../utils/render.js';
 import { updateArray } from '../utils/common.js';
@@ -12,15 +12,15 @@ const SortType = {
   PRICE: 'sort-price',
 };
 
-class Event {
+class Trip {
   constructor(
     tripListContainer,
   ) {
     this._tripListContainer = tripListContainer;
 
-    this._listComponent = new EventListView();
-    this._noEventComponent = new NoEventView();
-    this._sortComponent = new TripSortView();
+    this._listComponent = new TripListView();
+    this._noPointComponent = new NoPointView();
+    this._sortComponent = new SortView();
 
     this._currentFilter = 'everything';
     this._currentSortType = SortType.DAY;
@@ -34,10 +34,10 @@ class Event {
   init(pointsData) {
     this._pointsData = pointsData.slice();
     this._sortPoints(this._currentSortType);
-    this._renderEvent();
+    this._renderTrip();
   }
 
-  _clearEvent() {
+  _clearTripList() {
     this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.clear();
   }
@@ -51,21 +51,21 @@ class Event {
     this._pointPresenters.get(updatedPoint.id).init(updatedPoint);
   }
 
-  _renderPoint(container, event) {
+  _renderPoint(container, point) {
     const pointPresenter = new PointPresenter(
       container,
       this._updatePointsData,
       this._handleModeChange,
     );
 
-    this._pointPresenters.set(event.id, pointPresenter);
-    pointPresenter.init(event);
+    this._pointPresenters.set(point.id, pointPresenter);
+    pointPresenter.init(point);
   }
 
-  _renderNoEvent() {
-    this._noEventComponent.setFilterType(this._currentFilter);
+  _renderNoPoint() {
+    this._noPointComponent.setFilterType(this._currentFilter);
 
-    render(this._tripListContainer, this._noEventComponent);
+    render(this._tripListContainer, this._noPointComponent);
   }
 
   _sortByDate(first, second) {
@@ -108,8 +108,8 @@ class Event {
     }
 
     this._sortPoints(sortType);
-    this._clearEvent();
-    this._renderEvent();
+    this._clearTripList();
+    this._renderTrip();
   }
 
   _renderSort() {
@@ -118,9 +118,9 @@ class Event {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _renderEvent() {
+  _renderTrip() {
     if (this._pointsData.length === 0) {
-      this._renderNoEvent();
+      this._renderNoPoint();
     } else {
       this._renderSort();
       this._pointsData.forEach(
@@ -132,4 +132,4 @@ class Event {
   }
 }
 
-export default Event;
+export default Trip;

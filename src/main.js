@@ -1,13 +1,13 @@
 import TripTabsView from './view/trip-tabs.js';
 import TripFilterView from './view/trip-filters.js';
 import TripInfoView from './view/trip-info.js';
-import EventPresenter from './presenter/event.js';
+import TripPresenter from './presenter/trip.js';
 import { generatePoints } from './mock/event.js';
 import { render, RenderPosition } from './utils/render.js';
 
-const EVENT_ITEMS_COUNT = 15;
+const TRIP_POINTS_COUNT = 15;
 
-const randomEvents = generatePoints(EVENT_ITEMS_COUNT);
+const randomPoints = generatePoints(TRIP_POINTS_COUNT);
 
 const infoContainer = document.querySelector('.trip-main');
 const tabsContainer = infoContainer.querySelector(
@@ -15,18 +15,19 @@ const tabsContainer = infoContainer.querySelector(
 );
 const filterContainer = infoContainer.querySelector('.trip-controls__filters');
 
-const tripEventsElement = document.querySelector('.trip-events');
+const tripContainer = document.querySelector('.trip-events');
 
 const tabsComponent = new TripTabsView();
 const filtersComponent = new TripFilterView();
-const infoComponent = new TripInfoView(randomEvents);
+const infoComponent = new TripInfoView(randomPoints);
 
 render(tabsContainer, tabsComponent);
 render(filterContainer, filtersComponent);
 render(infoContainer, infoComponent, RenderPosition.AFTERBEGIN);
 
-const eventPresenter = new EventPresenter(
-  tripEventsElement,
+const tripPresenter = new TripPresenter(
+  tripContainer,
 );
 
-eventPresenter.init(randomEvents);
+tripPresenter.init(randomPoints);
+
