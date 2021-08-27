@@ -1,12 +1,17 @@
 import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
-import { formatDate } from '../../utils/date.js';
-import DestinationList from './destination-list.js';
+import { equals, formatDate, isBefore } from '../../utils/date.js';
+import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
-import Abstract from '../../abstract.js';
+import SmartView from '../smart.js';
+import { getRandomDestination } from '../../mock/destination.js';
+import flatpickr from 'flatpickr';
+
+import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
 
 const BLANK_EVENT = {
   type: 'taxi',
@@ -22,10 +27,26 @@ const BLANK_EVENT = {
 };
 
 const createEditFormTemplate = (event = BLANK_EVENT) => {
-  const { type, offers, destination, dateFrom, dateTo, basePrice } = event;
-  const offersTemplate = new Offers(offers).getTemplate();
-  const destinationListTemplate = new DestinationList(CITY_NAMES).getTemplate();
-  const destinationTemplate = new Destination(destination).getTemplate();
+  const {
+    type,
+    offers,
+    destination,
+    dateFrom,
+    dateTo,
+    basePrice,
+    hasDescription,
+    hasPictures,
+    hasOffers,
+    isSaveDisabled,
+  } = event;
+  const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
+  const destinationListTemplate = new CityNames(CITY_NAMES).getTemplate();
+
+  const destinationTemplate =
+    hasPictures || hasDescription
+      ? new Destination(destination, hasDescription, hasPictures).getTemplate()
+      : '' ;
+
   const eventTypeTemplate = new EventType(type).getTemplate();
 
   return (
@@ -76,7 +97,8 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
               name="event-price" value="${basePrice}">
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit"
+            ${isSaveDisabled || !dateFrom || !dateTo ? 'disabled' : ''}>Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -91,32 +113,42 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
   );
 };
 
-class EditForm extends Abstract{
-  constructor(event) {
+class EditForm extends SmartView {
+  constructor(pointData) {
     super();
-    this._event = event;
+    this._offerId = 0;
+    this._datePickerFrom = null;
+    this._datePickerTo = null;
+
+    this._state = this._convertPointDataToState(pointData);
+
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
-    this._onEscapeKeydown = this._onEscapeKeydown.bind(this);
+    this._onEventTypeChange = this._onEventTypeChange.bind(this);
+    this._onCityNameChange = this._onCityNameChange.bind(this);
+    this._onOffersChange = this._onOffersChange.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+
+    this._setDatePicker();
+    this._setInnerEventHandlers();
   }
 
   getTemplate() {
-    return createEditFormTemplate(this._event);
+    return createEditFormTemplate(this._state);
   }
 
-  _onRollUpButtonClick(evt) {
-    evt.preventDefault();
-    this._callback.clickRollUpButton(evt);
+  restoreHandlers() {
+    this._setDatePicker();
+    this._setInnerEventHandlers();
+    this.setFormSubmitHandler(this._callback.submitForm);
+    this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
   }
 
-  _onFormSubmit(evt) {
-    evt.preventDefault();
-    this._callback.submitForm(evt);
-  }
-
-  _onEscapeKeydown(evt) {
-    evt.preventDefault();
-    this._callback.pressEscape(evt);
+  resetState(pointData) {
+    this.updateState(
+      this._convertPointDataToState(pointData),
+    );
   }
 
   setRollUpButtonClickHandler(handler) {
@@ -125,6 +157,10 @@ class EditForm extends Abstract{
       .getElement()
       .querySelector('.event__rollup-btn')
       .addEventListener('click', this._onRollUpButtonClick);
+    this
+      .getElement()
+      .querySelector('.event__input--destination')
+      .addEventListener('change', this._onCityNameChange);
   }
 
   setFormSubmitHandler(handler) {
@@ -134,31 +170,185 @@ class EditForm extends Abstract{
       .addEventListener('submit', this._onFormSubmit);
   }
 
-  setEscapeKeydownHandler(handler) {
-    this._callback.pressEscape = handler;
-    document
-      .addEventListener('keydown', this._onEscapeKeydown);
-  }
-
-  unsetEscapeKeydownHandler() {
-    this._callback.pressEscape = null;
-    document
-      .removeEventListener('keydown', this._onEscapeKeydown);
-  }
-
-  unsetFormSubmitHandler() {
+  unsetEventHandlers() {
     this._callback.submitForm = null;
+    this._callback.clickRollUpButton = null;
+
     this
       .getElement()
       .removeEventListener('submit', this._onFormSubmit);
-  }
 
-  unsetRollUpButtonClickHandler() {
-    this._callback.clickRollUpButton = null;
     this
       .getElement()
       .querySelector('.event__rollup-btn')
       .removeEventListener('click', this._onRollUpButtonClick);
+  }
+
+  _setDatePicker() {
+    if (this._datePickerFrom || this._datePickerTo) {
+      this._datePickerFrom.destroy();
+      this._datePickerTo.destroy();
+    }
+
+    this._datePickerFrom = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateFrom,
+        enableTime: true,
+        closeOnSelect: false,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        onClose: this._dateFromChangeHandler,
+      },
+    );
+
+    this._datePickerTo = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateTo,
+        enableTime: true,
+        closeOnSelect: false,
+        minDate: this._state.dateFrom,
+        // eslint-disable-next-line camelcase
+        time_24hr: true,
+        onClose: this._dateToChangeHandler,
+      },
+    );
+  }
+
+  _setInnerEventHandlers() {
+    this.getElement()
+      .querySelector('.event__type-group')
+      .addEventListener('change', this._onEventTypeChange);
+    const availableOffers = this.getElement()
+      .querySelector('.event__available-offers');
+
+    if (availableOffers) {
+      availableOffers.addEventListener('change', this._onOffersChange);
+    }
+  }
+
+  _convertPointDataToState(event) {
+    const offers = event.offers.map((offer) => ({
+      ...offer,
+      id: this._offerId++,
+    }));
+
+    return {
+      ...event,
+      offers,
+      hasOffers: event.offers.length !== 0,
+      hasDescription: event.destination.description.length !== 0,
+      hasPictures: event.destination.pictures.length !== 0,
+      isSaveDisabled: false,
+    };
+  }
+
+  _convertStateToPointData(state) {
+    delete state.hasDescription;
+    delete state.hasPictures;
+    delete state.hasOffers;
+    state.offers.forEach((offer) => delete offer.id);
+
+    return state;
+  }
+
+  _dateFromChangeHandler([userDate]) {
+    if (!equals(userDate, this._state.dateFrom)) {
+      const update = {
+        dateFrom: userDate,
+      };
+
+      if (isBefore(this._state.dateTo, userDate)) {
+        update.dateTo = userDate;
+      }
+
+      this.updateState(update);
+    }
+  }
+
+  _dateToChangeHandler([userDate]) {
+    if (!equals(userDate, this._state.dateTo)) {
+      this.updateState({
+        dateTo: userDate,
+      });
+    }
+  }
+
+  _onRollUpButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.clickRollUpButton(evt);
+  }
+
+  _onFormSubmit(evt) {
+    evt.preventDefault();
+    this._callback.submitForm(
+      this._convertStateToPointData(this._state),
+    );
+  }
+
+  _onEventTypeChange({ target }) {
+    const offers = offersMock[target.value].map((offer) => ({
+      ...offer,
+      isChecked: false,
+      id: this._offerId++,
+    }));
+
+    const updatedState = {
+      offers,
+      hasOffers: offers.length !== 0,
+      type: target.value,
+    };
+
+    this.updateState(updatedState);
+    target.checked = false;
+  }
+
+  _onOffersChange({ target }) {
+    if (target.tagName === 'INPUT') {
+      const offers = this._state
+        .offers
+        .slice()
+        .map((offer) => {
+          if(offer.id === +target.id) {
+            return {
+              ...offer,
+              isChecked: target.checked,
+            };
+          }
+
+          return offer;
+        });
+
+      this.updateState({ offers }, true);
+    }
+  }
+
+  _onCityNameChange(evt) {
+    const cityName = evt.target.value;
+
+    if (CITY_NAMES.includes(cityName)) {
+      const destination = getRandomDestination(cityName);
+      const updatedState = {
+        destination,
+        hasDescription: destination.description.length !== 0,
+        hasPictures: destination.pictures.length !== 0,
+        isSaveDisabled: false,
+      };
+
+      this.updateState(updatedState);
+    } else {
+      this.updateState({
+        destination: {
+          name: cityName,
+        },
+        hasDescription: false,
+        hasPictures: false,
+        isSaveDisabled: true,
+      });
+    }
   }
 }
 

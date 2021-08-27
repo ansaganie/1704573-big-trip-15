@@ -16,5 +16,13 @@ module.exports = {
     contentBase: outputPath,
     watchContentBase: true,
     port
+  },
+  module: {
+    rules: [
+        {
+            test: /\.css$/i,
+            use: ['style-loader', 'css-loader']
+        }
+    ]
   }
 }

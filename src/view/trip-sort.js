@@ -1,4 +1,4 @@
-import Abstract from '../abstract.js';
+import AbstractView from './abstract.js';
 import { capitalize } from '../utils/common.js';
 
 const SORT_TYPES = ['day', 'event', 'time', 'price', 'offer'];
@@ -35,7 +35,7 @@ const createTripSortTemplate = () => {
   );
 };
 
-class TripSort extends Abstract {
+class TripSort extends AbstractView {
   constructor() {
     super();
 

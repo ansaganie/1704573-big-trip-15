@@ -1,6 +1,6 @@
 import { capitalize } from '../../utils/common.js';
-import { POINT_TYPE } from '../../mock/event.js';
-import Abstract from '../../abstract.js';
+import AbstractView from '../abstract.js';
+import { POINT_TYPE } from '../../utils/const.js';
 
 export const createEventTypeTemplate = (type) => {
   const CHECKED = POINT_TYPE.reduce(
@@ -43,7 +43,7 @@ export const createEventTypeTemplate = (type) => {
   );
 };
 
-class EventType extends Abstract {
+class EventType extends AbstractView {
   constructor(type) {
     super();
     this._type = type;
