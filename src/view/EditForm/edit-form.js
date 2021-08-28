@@ -37,6 +37,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
     hasDescription,
     hasPictures,
     hasOffers,
+    hasBasePrice,
     hasCityName,
   } = event;
   const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
@@ -48,7 +49,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
       : '' ;
 
   const eventTypeTemplate = new EventType(type).getTemplate();
-  const isSaveDisabled = !hasCityName || !dateFrom || !dateTo;
+  const isSaveDisabled = !hasBasePrice || !hasCityName || !dateFrom || !dateTo;
 
   return (
     `<li class="trip-events__item">
@@ -120,17 +121,20 @@ class EditForm extends SmartView {
     this._offerId = 0;
     this._datePickerFrom = null;
     this._datePickerTo = null;
+    this._numberPattern = /^\D+$/;
 
     this._state = this._convertPointDataToState(pointData);
 
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
+
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
     this._onCityNameChange = this._onCityNameChange.bind(this);
     this._onOffersChange = this._onOffersChange.bind(this);
+    this._onPriceChange = this._onPriceChange.bind(this);
     this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
-    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
 
     this._setDatePicker();
     this._setInnerEventHandlers();
@@ -231,6 +235,10 @@ class EditForm extends SmartView {
     this.getElement()
       .querySelector('.event__type-group')
       .addEventListener('change', this._onEventTypeChange);
+    this.getElement()
+      .querySelector('.event__input--price')
+      .addEventListener('change', this._onPriceChange);
+
     const availableOffers = this.getElement()
       .querySelector('.event__available-offers');
 
@@ -251,6 +259,7 @@ class EditForm extends SmartView {
       hasOffers: event.offers.length !== 0,
       hasDescription: event.destination.description.length !== 0,
       hasPictures: event.destination.pictures.length !== 0,
+      hasBasePrice: true,
       hasCityName: true,
     };
   }
@@ -259,6 +268,7 @@ class EditForm extends SmartView {
     delete this._state.hasDescription;
     delete this._state.hasPictures;
     delete this._state.hasOffers;
+    delete this._state.basePrice;
     this._state.offers.forEach((offer) => delete offer.id);
 
     return this._state;
@@ -284,6 +294,21 @@ class EditForm extends SmartView {
         dateTo: userDate,
       });
     }
+  }
+
+  _onPriceChange({ target }) {
+    const value = target.value;
+
+    const update = {
+      basePrice: value,
+      hasBasePrice: true,
+    };
+
+    if (value.length === 0 || this._numberPattern.test(value)) {
+      update.hasBasePrice = false;
+    }
+
+    this.updateState(update);
   }
 
   _onRollUpButtonClick(evt) {
@@ -342,8 +367,8 @@ class EditForm extends SmartView {
     }
   }
 
-  _onCityNameChange(evt) {
-    const cityName = evt.target.value;
+  _onCityNameChange({ target }) {
+    const cityName = target.value;
 
     if (CITY_NAMES.includes(cityName)) {
       const destination = getRandomDestination(cityName);
