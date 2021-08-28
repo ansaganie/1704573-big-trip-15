@@ -24,6 +24,7 @@ class Point {
     this._handleRollUpClick = this._handleRollUpClick.bind(this);
     this._handleRollDownClick = this._handleRollDownClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(point) {
@@ -85,6 +86,14 @@ class Point {
     this._closeEditForm();
   }
 
+  _handleDeleteClick(deletedPoint) {
+    this._updateModel(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      deletedPoint,
+    );
+  }
+
   _handleEscKeydown(evt) {
     if (isEscapePressed(evt)) {
       this._editComponent.resetState(this._point);
@@ -101,6 +110,7 @@ class Point {
     document.addEventListener('keydown', this._handleEscKeydown);
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
+    this._editComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     replace(this._editComponent, this._pointComponent);
     this._closeOpenForm();

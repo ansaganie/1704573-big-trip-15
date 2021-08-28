@@ -129,6 +129,7 @@ class EditForm extends SmartView {
     this._onOffersChange = this._onOffersChange.bind(this);
     this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
 
     this._setDatePicker();
     this._setInnerEventHandlers();
@@ -168,6 +169,14 @@ class EditForm extends SmartView {
     this
       .getElement()
       .addEventListener('submit', this._onFormSubmit);
+  }
+
+  setDeleteClickHandler(handler) {
+    this._callback.clickDelete = handler;
+    this
+      .getElement()
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this._onDeleteButtonClick);
   }
 
   unsetEventHandlers() {
@@ -279,12 +288,19 @@ class EditForm extends SmartView {
 
   _onRollUpButtonClick(evt) {
     evt.preventDefault();
-    this._callback.clickRollUpButton(evt);
+    this._callback.clickRollUpButton();
   }
 
   _onFormSubmit(evt) {
     evt.preventDefault();
     this._callback.submitForm(
+      this._convertStateToPointData(this._state),
+    );
+  }
+
+  _onDeleteButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.clickDelete(
       this._convertStateToPointData(this._state),
     );
   }
