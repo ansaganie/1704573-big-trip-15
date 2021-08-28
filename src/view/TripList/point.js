@@ -27,7 +27,7 @@ const createEventScheduleTemplate = (dateFrom, dateTo) =>
       </time>
     </p>
     <p class="event__duration">
-      ${calculateDuration(dateTo, dateFrom )}M
+      ${calculateDuration(dateTo, dateFrom)}
     </p>
   </div>`;
 

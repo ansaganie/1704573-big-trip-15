@@ -9,12 +9,14 @@ const MIN_PRICE = 5000;
 let eventId = 0;
 
 const CITY_NAMES = [
-  'Paris',
-  'London',
   'Lisbon',
   'Oslo',
+  'Moscow',
+  'Nairobi',
   'Helsinki',
-  'Rio de Janeiro',
+  'Denver',
+  'Stockholm',
+  'Rio',
   'Tokio',
   'Berlin',
 ];

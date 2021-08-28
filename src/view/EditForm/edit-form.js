@@ -279,7 +279,7 @@ class EditForm extends SmartView {
     delete this._state.hasDescription;
     delete this._state.hasPictures;
     delete this._state.hasOffers;
-    delete this._state.basePrice;
+    delete this._state.hasBasePrice;
     this._state.offers.forEach((offer) => delete offer.id);
 
     return this._state;
