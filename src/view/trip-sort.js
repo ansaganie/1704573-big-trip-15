@@ -6,10 +6,7 @@ const DISABLED = SORT_TYPES.reduce((obj, elem) => ({ ...obj, [elem]: '' }), {});
 DISABLED['event'] = 'disabled';
 DISABLED['offer'] = 'disabled';
 
-const CHECKED = SORT_TYPES.reduce((obj, elem) => ({ ...obj, [elem]: '' }), {});
-CHECKED['day'] = 'checked';
-
-const createTripSortTemplate = () => {
+const createTripSortTemplate = (currentSortType) => {
   const sortTemplates = SORT_TYPES.map(
     (sortType) =>
       `<div class="trip-sort__item  trip-sort__item--${sortType}">
@@ -18,7 +15,7 @@ const createTripSortTemplate = () => {
             class="trip-sort__input  visually-hidden"
             type="radio" name="trip-sort"
             value="sort-${sortType}"
-            ${CHECKED[sortType]}
+            ${`sort-${sortType}` === currentSortType ? 'checked' : ''}
             ${DISABLED[sortType]}>
           <label
             class="trip-sort__btn"
@@ -36,9 +33,9 @@ const createTripSortTemplate = () => {
 };
 
 class TripSort extends AbstractView {
-  constructor() {
+  constructor(sortType) {
     super();
-
+    this._currentSortType = sortType;
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
   }
 
@@ -57,7 +54,7 @@ class TripSort extends AbstractView {
   }
 
   getTemplate() {
-    return createTripSortTemplate();
+    return createTripSortTemplate(this._currentSortType);
   }
 }
 
