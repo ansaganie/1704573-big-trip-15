@@ -1,4 +1,4 @@
-import PointView from '../view/EventList/event-item.js';
+import PointView from '../view/TripList/point.js';
 import FormView from '../view/EditForm/edit-form.js';
 import { remove, render, replace } from '../utils/render.js';
 import { isEscapePressed } from '../utils/common.js';

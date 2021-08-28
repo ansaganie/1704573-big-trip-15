@@ -1,7 +1,7 @@
 import { capitalize } from '../../utils/common.js';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
-import { equals, formatDate, isBefore } from '../../utils/date.js';
+import { isDateEquals, formatDate, isBefore } from '../../utils/date.js';
 import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
@@ -37,7 +37,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
     hasDescription,
     hasPictures,
     hasOffers,
-    isSaveDisabled,
+    hasCityName,
   } = event;
   const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
   const destinationListTemplate = new CityNames(CITY_NAMES).getTemplate();
@@ -48,6 +48,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
       : '' ;
 
   const eventTypeTemplate = new EventType(type).getTemplate();
+  const isSaveDisabled = !hasCityName || !dateFrom || !dateTo;
 
   return (
     `<li class="trip-events__item">
@@ -98,7 +99,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit"
-            ${isSaveDisabled || !dateFrom || !dateTo ? 'disabled' : ''}>Save</button>
+            ${isSaveDisabled ? 'disabled' : ''}>Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
           <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
@@ -190,15 +191,18 @@ class EditForm extends SmartView {
       this._datePickerTo.destroy();
     }
 
+    const pickerConfig = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      closeOnSelect: false,
+      'time_24hr': true,
+    };
+
     this._datePickerFrom = flatpickr(
       this.getElement().querySelector('#event-start-time-1'),
       {
-        dateFormat: 'd/m/y H:i',
+        ...pickerConfig,
         defaultDate: this._state.dateFrom,
-        enableTime: true,
-        closeOnSelect: false,
-        // eslint-disable-next-line camelcase
-        time_24hr: true,
         onClose: this._dateFromChangeHandler,
       },
     );
@@ -206,13 +210,9 @@ class EditForm extends SmartView {
     this._datePickerTo = flatpickr(
       this.getElement().querySelector('#event-end-time-1'),
       {
-        dateFormat: 'd/m/y H:i',
+        ...pickerConfig,
         defaultDate: this._state.dateTo,
-        enableTime: true,
-        closeOnSelect: false,
         minDate: this._state.dateFrom,
-        // eslint-disable-next-line camelcase
-        time_24hr: true,
         onClose: this._dateToChangeHandler,
       },
     );
@@ -242,21 +242,21 @@ class EditForm extends SmartView {
       hasOffers: event.offers.length !== 0,
       hasDescription: event.destination.description.length !== 0,
       hasPictures: event.destination.pictures.length !== 0,
-      isSaveDisabled: false,
+      hasCityName: true,
     };
   }
 
-  _convertStateToPointData(state) {
-    delete state.hasDescription;
-    delete state.hasPictures;
-    delete state.hasOffers;
-    state.offers.forEach((offer) => delete offer.id);
+  _convertStateToPointData() {
+    delete this._state.hasDescription;
+    delete this._state.hasPictures;
+    delete this._state.hasOffers;
+    this._state.offers.forEach((offer) => delete offer.id);
 
-    return state;
+    return this._state;
   }
 
   _dateFromChangeHandler([userDate]) {
-    if (!equals(userDate, this._state.dateFrom)) {
+    if (!isDateEquals(userDate, this._state.dateFrom)) {
       const update = {
         dateFrom: userDate,
       };
@@ -270,7 +270,7 @@ class EditForm extends SmartView {
   }
 
   _dateToChangeHandler([userDate]) {
-    if (!equals(userDate, this._state.dateTo)) {
+    if (!isDateEquals(userDate, this._state.dateTo)) {
       this.updateState({
         dateTo: userDate,
       });
@@ -335,7 +335,7 @@ class EditForm extends SmartView {
         destination,
         hasDescription: destination.description.length !== 0,
         hasPictures: destination.pictures.length !== 0,
-        isSaveDisabled: false,
+        hasCityName: true,
       };
 
       this.updateState(updatedState);
@@ -346,7 +346,7 @@ class EditForm extends SmartView {
         },
         hasDescription: false,
         hasPictures: false,
-        isSaveDisabled: true,
+        hasCityName: false,
       });
     }
   }

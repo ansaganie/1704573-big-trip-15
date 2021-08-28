@@ -50,7 +50,7 @@ const createEventItem = ({
         <time
           class="event__date"
           datetime="${formatDate(dateFrom, 'yyyy-mm-dd')}">
-            ${formatDate(dateFrom, 'MMM dd')}
+            ${formatDate(dateFrom, 'MMM DD')}
         </time>
         <div class="event__type">
           <img
