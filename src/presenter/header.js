@@ -1,7 +1,7 @@
 import MenuView from '../view/trip-tabs.js';
 import FilterView from '../view/trip-filters.js';
 import InfoView from '../view/trip-info.js';
-import { remove, render, RenderPosition, replace } from '../utils/render.js';
+import { remove, render, RenderPosition } from '../utils/render.js';
 import { UpdateType } from '../utils/const.js';
 import { createTripInfoDate } from '../utils/date.js';
 
@@ -51,17 +51,13 @@ class Header {
   }
 
   _renderInfo() {
-    const prevInfoComponent = this._infoComponent;
-
     this._infoComponent = new InfoView(this._getInfo());
+    render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
+  }
 
-    if (prevInfoComponent === null) {
-      render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
-      return;
-    }
-
-    replace(this._infoComponent, prevInfoComponent);
-    remove(prevInfoComponent);
+  _clearInfo() {
+    remove(this._infoComponent);
+    this._infoComponent = null;
   }
 
   _renderHeader() {
@@ -79,7 +75,10 @@ class Header {
   }
 
   _handlePointsModelUpdate() {
-    this._renderInfo();
+    this._clearInfo();
+    if (this._pointsModel.getPoints().length > 0) {
+      this._renderInfo();
+    }
   }
 
   _getInfo() {
@@ -88,19 +87,24 @@ class Header {
       .slice()
       .sort(this._sortByDate);
 
-    const startDate = points[0].dateFrom;
-    const endDate = points[points.length - 1].dateTo;
-    const hasInfo = points.length > 0;
+    if (points.length > 0) {
+      const startDate = points[0].dateFrom;
+      const endDate = points[points.length - 1].dateTo;
+
+      return {
+        title: points
+          .map(({ destination }) => destination.name)
+          .join(' &mdash; '),
+        cost: points
+          .map(({ basePrice }) => basePrice)
+          .reduce((acc, price) => acc + price),
+        date: createTripInfoDate(startDate, endDate),
+        hasInfo: true,
+      };
+    }
 
     return {
-      title: points
-        .map(({ destination }) => destination.name)
-        .join(' &mdash; '),
-      cost: points
-        .map(({ basePrice }) => basePrice)
-        .reduce((acc, price) => acc + price),
-      date: createTripInfoDate(startDate, endDate),
-      hasInfo,
+      hasInfo: false,
     };
   }
 }

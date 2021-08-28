@@ -111,8 +111,7 @@ class Trip {
   }
 
   _renderNoPoint() {
-    this._noPointComponent = new NoPointView();
-    this._noPointComponent.setFilterType(this._currentFilter);
+    this._noPointComponent = new NoPointView(this._filterModel.getFilterType());
 
     render(this._tripListContainer, this._noPointComponent);
   }

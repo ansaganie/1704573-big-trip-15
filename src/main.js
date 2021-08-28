@@ -13,7 +13,6 @@ const menuContainer = infoContainer.querySelector(
   '.trip-controls__navigation',
 );
 const filterContainer = infoContainer.querySelector('.trip-controls__filters');
-
 const tripContainer = document.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
@@ -29,12 +28,11 @@ const headerPresenter = new HeaderPresenter(
   filterModel,
 );
 
-headerPresenter.init();
-
 const tripPresenter = new TripPresenter(
   tripContainer,
   pointsModel,
   filterModel,
 );
 
+headerPresenter.init();
 tripPresenter.init();
