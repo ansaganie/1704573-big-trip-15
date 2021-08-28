@@ -2,6 +2,7 @@ import PointView from '../view/TripList/point.js';
 import FormView from '../view/EditForm/edit-form.js';
 import { remove, render, replace } from '../utils/render.js';
 import { isEscapePressed } from '../utils/common.js';
+import { UpdateType, UserAction } from '../utils/const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -9,9 +10,9 @@ const Mode = {
 };
 
 class Point {
-  constructor(container, updateData, closeOpenForm) {
+  constructor(container, updateModel, closeOpenForm) {
     this._container = container;
-    this._updateData = updateData;
+    this._updateModel = updateModel;
     this._closeOpenForm = closeOpenForm;
 
     this._pointComponent = null;
@@ -75,7 +76,12 @@ class Point {
   }
 
   _handleFormSubmit(updatedPoint) {
-    this._updateData(updatedPoint);
+    this._updateModel(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      updatedPoint,
+    );
+
     this._closeEditForm();
   }
 
@@ -102,9 +108,13 @@ class Point {
   }
 
   _handleFavoriteClick() {
-    const updatedPoint = { ...this._point };
-    updatedPoint.isFavorite = !this._point.isFavorite;
-    this._updateData(updatedPoint);
+    const update = { ...this._point };
+    update.isFavorite = !this._point.isFavorite;
+    this._updateModel(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      update,
+    );
   }
 }
 
