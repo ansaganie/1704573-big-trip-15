@@ -121,7 +121,7 @@ class EditForm extends SmartView {
     this._offerId = 0;
     this._datePickerFrom = null;
     this._datePickerTo = null;
-    this._numberPattern = /^\D+$/;
+    this._numberPattern = /^\d+$/;
 
     this._state = this._convertPointDataToState(pointData);
 
@@ -310,12 +310,14 @@ class EditForm extends SmartView {
     const value = target.value;
 
     const update = {
-      basePrice: value,
-      hasBasePrice: true,
+      hasBasePrice: false,
     };
 
-    if (value.length === 0 || this._numberPattern.test(value)) {
-      update.hasBasePrice = false;
+    if (value.length !== 0 && this._numberPattern.test(value)) {
+      update.hasBasePrice = true;
+      update.basePrice = +value;
+    } else {
+      update.basePrice = value;
     }
 
     this.updateState(update);

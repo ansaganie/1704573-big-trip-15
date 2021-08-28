@@ -3,8 +3,8 @@ import TripListView from '../view/TripList/trip-list.js';
 import NoPointView from '../view/TripList/message.js';
 import PointPresenter from './point.js';
 import { remove, render } from '../utils/render.js';
-import { calculateDuration } from '../utils/date.js';
-import { UpdateType, UserAction } from '../utils/const.js';
+import { calculateDuration, isFuture, isPast } from '../utils/date.js';
+import { UpdateType, UserAction, FilterType } from '../utils/const.js';
 
 const SortType = {
   DAY: 'sort-day',
@@ -16,9 +16,11 @@ class Trip {
   constructor(
     tripListContainer,
     pointsModel,
+    filterModel,
   ) {
     this._tripListContainer = tripListContainer;
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
 
     this._sortComponent = null;
     this._noPointComponent = null;
@@ -32,15 +34,29 @@ class Trip {
     this._handleModelUpdate = this._handleModelUpdate.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._filters = {
+      [FilterType.EVERYTHING]: () => true,
+      [FilterType.FUTURE]: (point) => isFuture(point.dateTo),
+      [FilterType.PAST]: (point) => isPast(point.dateTo),
+    };
   }
 
   init() {
     this._pointsModel.addObserver(this._handleModelUpdate);
+    this._filterModel.addObserver(this._handleModelUpdate);
     this._renderTrip();
   }
 
   _getPoints() {
-    const points = this._pointsModel.getPoints().slice();
+    const points = this._pointsModel
+      .getPoints()
+      .slice()
+      .filter(
+        this._filters[this._filterModel.getFilterType()],
+      );
+
+
     switch (this._currentSortType) {
       case SortType.DAY:
         return points.sort(this._sortByDate);

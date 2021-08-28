@@ -2,28 +2,23 @@ import { capitalize } from '../utils/common.js';
 import AbstractView from './abstract.js';
 
 const FILTER_TYPES = ['everything', 'future', 'past'];
-const CHECKED = FILTER_TYPES.reduce(
-  (obj, elem) => ({ ...obj, [elem]: '' }),
-  {},
-);
-CHECKED['everything'] = 'checked';
 
-const createTripFiltersTemplate = () => {
+const createTripFiltersTemplate = (currentFilterType) => {
   const filterTemplates = FILTER_TYPES.map(
     (filterType) =>
       `<div class="trip-filters__filter">
-          <input
-            id="filter-${filterType}"
-            class="trip-filters__filter-input  visually-hidden"
-            type="radio" name="trip-filter"
-            value="${filterType}"
-            ${CHECKED[filterType]}>
-          <label
-            class="trip-filters__filter-label"
-            for="filter-${filterType}">
-            ${capitalize(filterType)}
-          </label>
-        </div>`,
+        <input
+          id="filter-${filterType}"
+          class="trip-filters__filter-input  visually-hidden"
+          type="radio" name="trip-filter"
+          value="${filterType}"
+          ${filterType === currentFilterType ? 'checked' : ''}>
+        <label
+          class="trip-filters__filter-label"
+          for="filter-${filterType}">
+          ${capitalize(filterType)}
+        </label>
+      </div>`,
   ).join('\n');
 
   return (
@@ -35,12 +30,26 @@ const createTripFiltersTemplate = () => {
 };
 
 class TripFilter extends AbstractView {
-  constructor() {
+  constructor(filterType) {
     super();
+
+    this._currentFilterType = filterType;
+
+    this._onFilterTypeChange = this._onFilterTypeChange.bind(this);
   }
 
   getTemplate() {
-    return createTripFiltersTemplate();
+    return createTripFiltersTemplate(this._currentFilterType);
+  }
+
+  _onFilterTypeChange({ target }) {
+    this._callback.changeFilterType(target.value);
+  }
+
+  setFilterTypeChangeHandler(handler) {
+    this._callback.changeFilterType = handler;
+    this.getElement()
+      .addEventListener('change', this._onFilterTypeChange);
   }
 }
 

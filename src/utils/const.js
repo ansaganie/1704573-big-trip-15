@@ -22,9 +22,16 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export {
   POINT_TYPE,
   UserAction,
-  UpdateType
+  UpdateType,
+  FilterType
 };
 
