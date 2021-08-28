@@ -3,14 +3,8 @@ import TripListView from '../view/TripList/trip-list.js';
 import NoPointView from '../view/TripList/message.js';
 import PointPresenter from './point.js';
 import { remove, render } from '../utils/render.js';
-import { calculateDuration, isFuture, isPast } from '../utils/date.js';
-import { UpdateType, UserAction, FilterType } from '../utils/const.js';
-
-const SortType = {
-  DAY: 'sort-day',
-  TIME: 'sort-time',
-  PRICE: 'sort-price',
-};
+import { calculateDiff, isFuture, isPast } from '../utils/date.js';
+import { UpdateType, UserAction, FilterType, SortType } from '../utils/const.js';
 
 class Trip {
   constructor(
@@ -129,8 +123,8 @@ class Trip {
 
   _sortByTime(first, second) {
     return (
-      calculateDuration(second.dateFrom, second.dateTo) -
-      calculateDuration(first.dateFrom, first.dateTo)
+      calculateDiff(second.dateFrom, second.dateTo) -
+      calculateDiff(first.dateFrom, first.dateTo)
     );
   }
 

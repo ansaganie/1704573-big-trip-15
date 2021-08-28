@@ -28,10 +28,17 @@ const FilterType = {
   PAST: 'past',
 };
 
+const SortType = {
+  DAY: 'sort-day',
+  TIME: 'sort-time',
+  PRICE: 'sort-price',
+};
+
 export {
   POINT_TYPE,
   UserAction,
   UpdateType,
-  FilterType
+  FilterType,
+  SortType
 };
 
