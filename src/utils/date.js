@@ -79,6 +79,10 @@ const isBefore = (first, second) => dayjs(first).isBefore(dayjs(second));
 
 const isDateEquals = (first, second) => dayjs(first).isSame(dayjs(second));
 
+const isFuture = (date) => dayjs().isBefore(date);
+
+const isPast = (date) => dayjs().isAfter(date);
+
 export {
   formatDate,
   getRandomDateFrom,
@@ -86,5 +90,7 @@ export {
   createTripInfoDate,
   calculateDuration,
   isBefore,
-  isDateEquals
+  isDateEquals,
+  isFuture,
+  isPast
 };
