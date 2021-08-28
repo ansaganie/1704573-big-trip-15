@@ -2,6 +2,7 @@ import TripTabsView from './view/trip-tabs.js';
 import TripFilterView from './view/trip-filters.js';
 import TripInfoView from './view/trip-info.js';
 import TripPresenter from './presenter/trip.js';
+import PointsModel from './model/points.js';
 import { generatePoints } from './mock/event.js';
 import { render, RenderPosition } from './utils/render.js';
 
@@ -25,9 +26,13 @@ render(tabsContainer, tabsComponent);
 render(filterContainer, filtersComponent);
 render(infoContainer, infoComponent, RenderPosition.AFTERBEGIN);
 
+const pointsModel = new PointsModel();
+pointsModel.setPoints(randomPoints);
+
 const tripPresenter = new TripPresenter(
   tripContainer,
+  pointsModel,
 );
 
-tripPresenter.init(randomPoints);
+tripPresenter.init();
 
