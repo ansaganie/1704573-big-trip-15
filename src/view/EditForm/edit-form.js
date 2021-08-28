@@ -198,6 +198,17 @@ class EditForm extends SmartView {
       .removeEventListener('click', this._onRollUpButtonClick);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this._datePickerFrom || this._datePickerTo) {
+      this._datePickerFrom.destroy();
+      this._datePickerFrom = null;
+      this._datePickerTo.destroy();
+      this._datePickerTo = null;
+    }
+  }
+
   _setDatePicker() {
     if (this._datePickerFrom || this._datePickerTo) {
       this._datePickerFrom.destroy();
