@@ -77,9 +77,34 @@ class Point {
   }
 
   _handleFormSubmit(updatedPoint) {
+    const { dateFrom, dateTo, basePrice, type, offers} = this._point;
+
+    let isOffersChanged = false;
+
+    if (type !== updatedPoint.type) {
+      isOffersChanged = true;
+    } else {
+      for(let i = 0; i < offers.length; i++) {
+        const first = offers[i];
+        const second = updatedPoint.offers.find((offer) => first.id === offer.id);
+
+        if (first.isChecked !== second.isChecked) {
+          isOffersChanged = true;
+          break;
+        }
+      }
+    }
+
+    const isMinorUpdate =
+      dateFrom !== updatedPoint.dateFrom ||
+      dateTo !== updatedPoint.dateTo ||
+      basePrice !== updatedPoint.basePrice ||
+      type !== updatedPoint.type ||
+      isOffersChanged;
+
     this._updateModel(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       updatedPoint,
     );
 
