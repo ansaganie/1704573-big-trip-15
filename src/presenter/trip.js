@@ -59,6 +59,19 @@ class Trip {
     this._newPointPresenter.init();
   }
 
+  destroy() {
+    this._clearTripList({
+      resetSortType: true,
+    });
+
+    remove(this._listComponent);
+
+    this._pointsModel.removeObserver(this._handleModelUpdate);
+    this._filterModel.removeObserver(this._handleModelUpdate);
+
+    this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
+  }
+
   _getPoints() {
     const points = this._pointsModel.getPoints()
       .filter(this._filters[this._filterModel.getFilterType()]);

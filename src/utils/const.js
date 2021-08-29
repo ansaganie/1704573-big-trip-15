@@ -41,12 +41,18 @@ const SortType = {
   PRICE: 'sort-price',
 };
 
+const MenuType = {
+  TABLE: 'TABLE',
+  STATS: 'STATS',
+};
+
 export {
   POINT_TYPE,
   FILTER_MESSAGE,
   UserAction,
   UpdateType,
   FilterType,
-  SortType
+  SortType,
+  MenuType
 };
 
