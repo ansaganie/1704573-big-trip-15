@@ -2,6 +2,7 @@ import SortView from '../view/trip-sort.js';
 import TripListView from '../view/TripList/trip-list.js';
 import NoPointView from '../view/TripList/message.js';
 import PointPresenter from './point.js';
+import NewPointPresenter from './new-point.js';
 import { remove, render } from '../utils/render.js';
 import { calculateDiff, isFuture, isPast } from '../utils/date.js';
 import { UpdateType, UserAction, FilterType, SortType } from '../utils/const.js';
@@ -19,6 +20,8 @@ class Trip {
     this._sortComponent = null;
     this._noPointComponent = null;
     this._listComponent = new TripListView();
+
+    this._newPointPresenter = null;
 
     this._currentFilter = 'everything';
     this._currentSortType = SortType.DAY;
@@ -40,6 +43,16 @@ class Trip {
     this._pointsModel.addObserver(this._handleModelUpdate);
     this._filterModel.addObserver(this._handleModelUpdate);
     this._renderTrip();
+  }
+
+  createNewPoint() {
+    this._newPointPresenter = new NewPointPresenter(
+      this._listComponent,
+      this._handleViewUpdate,
+      this._handleModeChange,
+    );
+
+    this._newPointPresenter.init();
   }
 
   _getPoints() {
@@ -66,6 +79,10 @@ class Trip {
   }
 
   _handleModeChange() {
+    if (this._newPointPresenter) {
+      this._newPointPresenter.destroy();
+    }
+
     this._pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
@@ -152,6 +169,10 @@ class Trip {
   _clearTripList({ resetSortType = false } = {}) {
     this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.clear();
+
+    if (this._newPointPresenter) {
+      this._newPointPresenter.destroy();
+    }
 
     remove(this._sortComponent);
     remove(this._noPointComponent);

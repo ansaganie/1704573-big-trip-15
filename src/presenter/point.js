@@ -121,6 +121,7 @@ class Point {
 
   _handleEscKeydown(evt) {
     if (isEscapePressed(evt)) {
+      evt.preventDefault();
       this._editComponent.resetState(this._point);
       this._closeEditForm();
     }

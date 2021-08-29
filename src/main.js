@@ -9,9 +9,7 @@ const TRIP_POINTS_COUNT = 15;
 const randomPoints = generatePoints(TRIP_POINTS_COUNT);
 
 const infoContainer = document.querySelector('.trip-main');
-const menuContainer = infoContainer.querySelector(
-  '.trip-controls__navigation',
-);
+const menuContainer = infoContainer.querySelector('.trip-controls__navigation');
 const filterContainer = infoContainer.querySelector('.trip-controls__filters');
 const tripContainer = document.querySelector('.trip-events');
 
@@ -36,3 +34,10 @@ const tripPresenter = new TripPresenter(
 
 headerPresenter.init();
 tripPresenter.init();
+
+const newPointButton = infoContainer.querySelector('.trip-main__event-add-btn');
+
+newPointButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  tripPresenter.createNewPoint();
+});

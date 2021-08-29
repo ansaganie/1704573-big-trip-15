@@ -9,6 +9,7 @@ import Offers from './offer.js';
 import SmartView from '../smart.js';
 import { getRandomDestination } from '../../mock/destination.js';
 import flatpickr from 'flatpickr';
+import { nanoid } from 'nanoid';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
@@ -118,7 +119,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
 class EditForm extends SmartView {
   constructor(pointData) {
     super();
-    this._offerId = 0;
+
     this._datePickerFrom = null;
     this._datePickerTo = null;
     this._numberPattern = /^\d+$/;
@@ -259,19 +260,21 @@ class EditForm extends SmartView {
   }
 
   _convertPointDataToState(event) {
-    const offers = event.offers.map((offer) => ({
+    const { offers, destination } = event;
+
+    const offersWithId = offers.map((offer) => ({
       ...offer,
-      id: this._offerId++,
+      id: nanoid(),
     }));
 
     return {
       ...event,
-      offers,
-      hasOffers: event.offers.length !== 0,
-      hasDescription: event.destination.description.length !== 0,
-      hasPictures: event.destination.pictures.length !== 0,
+      offers: offersWithId,
+      hasOffers: offers.length !== 0,
+      hasDescription: destination.description.length !== 0,
+      hasPictures: destination.pictures.length !== 0,
+      hasCityName: destination.name.length !== 0,
       hasBasePrice: true,
-      hasCityName: true,
     };
   }
 
@@ -347,7 +350,7 @@ class EditForm extends SmartView {
     const offers = offersMock[target.value].map((offer) => ({
       ...offer,
       isChecked: false,
-      id: this._offerId++,
+      id: nanoid(),
     }));
 
     const updatedState = {
@@ -366,7 +369,7 @@ class EditForm extends SmartView {
         .offers
         .slice()
         .map((offer) => {
-          if(offer.id === +target.id) {
+          if(offer.id === target.id) {
             return {
               ...offer,
               isChecked: target.checked,
