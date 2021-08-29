@@ -42,7 +42,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
     hasCityName,
   } = event;
   const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
-  const destinationListTemplate = new CityNames(CITY_NAMES).getTemplate();
+  const cityListTemplate = new CityNames(CITY_NAMES).getTemplate();
 
   const destinationTemplate =
     hasPictures || hasDescription
@@ -66,8 +66,9 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
               id="event-destination-1" type="text"
               name="event-destination"
               value="${destination.name}"
-              list="destination-list-1">
-            ${destinationListTemplate}
+              list="destination-list-1"
+              autocomplete="off">
+            ${cityListTemplate}
           </div>
 
           <div class="event__field-group  event__field-group--time">
@@ -96,7 +97,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
             <input
               class="event__input  event__input--price"
               id="event-price-1"
-              type="text"
+              type="number"
               name="event-price" value="${basePrice}">
           </div>
 
@@ -150,6 +151,7 @@ class EditForm extends SmartView {
     this._setInnerEventHandlers();
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
+    this.setDeleteClickHandler(this._callback.clickDelete);
   }
 
   resetState(pointData) {
@@ -399,7 +401,7 @@ class EditForm extends SmartView {
     } else {
       this.updateState({
         destination: {
-          name: cityName,
+          name: '',
         },
         hasDescription: false,
         hasPictures: false,
