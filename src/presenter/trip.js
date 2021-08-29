@@ -46,13 +46,14 @@ class Trip {
     this._renderTrip();
   }
 
-  createNewPoint() {
+  createNewPoint(enableNewPointButton) {
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointPresenter = new NewPointPresenter(
       this._listComponent,
       this._handleViewUpdate,
       this._handleModeChange,
+      enableNewPointButton,
     );
 
     this._newPointPresenter.init();

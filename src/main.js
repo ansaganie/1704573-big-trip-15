@@ -18,26 +18,20 @@ pointsModel.setPoints(randomPoints);
 
 const filterModel = new FilterModel();
 
-const headerPresenter = new HeaderPresenter(
-  filterContainer,
-  menuContainer,
-  infoContainer,
-  pointsModel,
-  filterModel,
-);
-
 const tripPresenter = new TripPresenter(
   tripContainer,
   pointsModel,
   filterModel,
 );
 
+const headerPresenter = new HeaderPresenter(
+  filterContainer,
+  menuContainer,
+  infoContainer,
+  pointsModel,
+  filterModel,
+  tripPresenter,
+);
+
 headerPresenter.init();
 tripPresenter.init();
-
-const newPointButton = infoContainer.querySelector('.trip-main__event-add-btn');
-
-newPointButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  tripPresenter.createNewPoint();
-});
