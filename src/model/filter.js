@@ -10,7 +10,7 @@ class Filter extends AbstractObserverable {
 
   setFilterType(updateType, filterType) {
     this._currentFilterType = filterType;
-    this._notifyAll(updateType, filterType);
+    this._notifyAll(updateType);
   }
 
   getFilterType() {

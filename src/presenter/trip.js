@@ -5,14 +5,15 @@ import PointPresenter from './point.js';
 import NewPointPresenter from './new-point.js';
 import { remove, render } from '../utils/render.js';
 import { calculateDiff, isFuture, isPast } from '../utils/date.js';
-import { UpdateType, UserAction, FilterType, SortType } from '../utils/const.js';
+import {
+  UpdateType,
+  UserAction,
+  FilterType,
+  SortType
+} from '../utils/const.js';
 
 class Trip {
-  constructor(
-    tripListContainer,
-    pointsModel,
-    filterModel,
-  ) {
+  constructor(tripListContainer, pointsModel, filterModel) {
     this._tripListContainer = tripListContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
@@ -46,6 +47,8 @@ class Trip {
   }
 
   createNewPoint() {
+    this._currentSortType = SortType.DAY;
+    this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointPresenter = new NewPointPresenter(
       this._listComponent,
       this._handleViewUpdate,
@@ -56,13 +59,8 @@ class Trip {
   }
 
   _getPoints() {
-    const points = this._pointsModel
-      .getPoints()
-      .slice()
-      .filter(
-        this._filters[this._filterModel.getFilterType()],
-      );
-
+    const points = this._pointsModel.getPoints()
+      .filter(this._filters[this._filterModel.getFilterType()]);
 
     switch (this._currentSortType) {
       case SortType.DAY:
@@ -87,7 +85,7 @@ class Trip {
   }
 
   _handleViewUpdate(userAction, updateType, update) {
-    switch(userAction) {
+    switch (userAction) {
       case UserAction.ADD_POINT:
         this._pointsModel.add(updateType, update);
         break;
@@ -101,7 +99,7 @@ class Trip {
   }
 
   _handleModelUpdate(updateType, update) {
-    switch(updateType) {
+    switch (updateType) {
       case UpdateType.PATCH:
         this._pointPresenters.get(update.id).init(update);
         break;
@@ -110,7 +108,9 @@ class Trip {
         this._renderTrip();
         break;
       case UpdateType.MAJOR:
-        this._clearTripList({ resetSortType: true});
+        this._clearTripList({
+          resetSortType: true,
+        });
         this._renderTrip();
         break;
     }
@@ -165,7 +165,6 @@ class Trip {
     render(this._tripListContainer, this._sortComponent);
   }
 
-
   _clearTripList({ resetSortType = false } = {}) {
     this._pointPresenters.forEach((presenter) => presenter.destroy());
     this._pointPresenters.clear();
@@ -192,9 +191,7 @@ class Trip {
       this._renderNoPoint();
     } else {
       this._renderSort();
-      points.forEach(
-        (point) => this._renderPoint(this._listComponent, point),
-      );
+      points.forEach((point) => this._renderPoint(this._listComponent, point));
 
       render(this._tripListContainer, this._listComponent);
     }

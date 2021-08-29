@@ -76,6 +76,7 @@ class Header {
 
   _handlePointsModelUpdate() {
     this._clearInfo();
+    this._renderFilter();
     if (this._pointsModel.getPoints().length > 0) {
       this._renderInfo();
     }
