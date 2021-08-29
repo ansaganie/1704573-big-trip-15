@@ -2,7 +2,7 @@ import MenuView from '../view/trip-tabs.js';
 import FilterView from '../view/trip-filters.js';
 import InfoView from '../view/trip-info.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
-import { UpdateType } from '../utils/const.js';
+import { MenuType, UpdateType } from '../utils/const.js';
 import { createTripInfoDate } from '../utils/date.js';
 
 class Header {
@@ -12,15 +12,17 @@ class Header {
     infoContainer,
     pointsModel,
     filterModel,
+    tripPresenter,
   ) {
     this._filterContainer = filterContainer;
     this._menuContainer = menuContainer;
     this._infoContainer = infoContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
+    this._tripPresenter = tripPresenter;
 
     this._filterComponent = null;
-    this._menuComponent = new MenuView();
+    this._menuComponent = null;
     this._infoComponent = null;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
@@ -28,8 +30,25 @@ class Header {
   }
 
   init() {
+    this._newPointButton = this._infoContainer.querySelector(
+      '.trip-main__event-add-btn',
+    );
+    this._handleNewPointClick = this._handleNewPointClick.bind(this);
+    this._newPointButton.addEventListener('click', this._handleNewPointClick);
+
     this._pointsModel.addObserver(this._handlePointsModelUpdate);
     this._renderHeader();
+  }
+
+  _handleNewPointClick(evt) {
+    evt.preventDefault();
+    this._newPointButton.disabled = true;
+    this._handleNewPointFormClose = this._handleNewPointFormClose.bind(this);
+    this._tripPresenter.createNewPoint(this._handleNewPointFormClose);
+  }
+
+  _handleNewPointFormClose() {
+    this._newPointButton.disabled = false;
   }
 
   _sortByDate(first, second) {
@@ -47,6 +66,7 @@ class Header {
   }
 
   _renderMenu() {
+    this._menuComponent = new MenuView(MenuType.TABLE);
     render(this._menuContainer, this._menuComponent);
   }
 
@@ -83,10 +103,7 @@ class Header {
   }
 
   _getInfo() {
-    const points = this._pointsModel
-      .getPoints()
-      .slice()
-      .sort(this._sortByDate);
+    const points = this._pointsModel.getPoints().slice().sort(this._sortByDate);
 
     if (points.length > 0) {
       const startDate = points[0].dateFrom;
