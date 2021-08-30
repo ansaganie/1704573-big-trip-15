@@ -2,6 +2,7 @@ import PointView from '../view/TripList/point.js';
 import FormView from '../view/EditForm/edit-form.js';
 import { remove, render, replace } from '../utils/render.js';
 import { isEscapePressed } from '../utils/common.js';
+import { UpdateType, UserAction } from '../utils/const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -9,9 +10,9 @@ const Mode = {
 };
 
 class Point {
-  constructor(container, updateData, closeOpenForm) {
+  constructor(container, updateModel, closeOpenForm) {
     this._container = container;
-    this._updateData = updateData;
+    this._updateModel = updateModel;
     this._closeOpenForm = closeOpenForm;
 
     this._pointComponent = null;
@@ -23,6 +24,7 @@ class Point {
     this._handleRollUpClick = this._handleRollUpClick.bind(this);
     this._handleRollDownClick = this._handleRollDownClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(point) {
@@ -75,12 +77,51 @@ class Point {
   }
 
   _handleFormSubmit(updatedPoint) {
-    this._updateData(updatedPoint);
+    const { dateFrom, dateTo, basePrice, type, offers} = this._point;
+
+    let isOffersChanged = false;
+
+    if (type !== updatedPoint.type) {
+      isOffersChanged = true;
+    } else {
+      for(let i = 0; i < offers.length; i++) {
+        const first = offers[i];
+        const second = updatedPoint.offers.find((offer) => first.id === offer.id);
+
+        if (first.isChecked !== second.isChecked) {
+          isOffersChanged = true;
+          break;
+        }
+      }
+    }
+
+    const isMinorUpdate =
+      dateFrom !== updatedPoint.dateFrom ||
+      dateTo !== updatedPoint.dateTo ||
+      basePrice !== updatedPoint.basePrice ||
+      type !== updatedPoint.type ||
+      isOffersChanged;
+
+    this._updateModel(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      updatedPoint,
+    );
+
     this._closeEditForm();
+  }
+
+  _handleDeleteClick(deletedPoint) {
+    this._updateModel(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      deletedPoint,
+    );
   }
 
   _handleEscKeydown(evt) {
     if (isEscapePressed(evt)) {
+      evt.preventDefault();
       this._editComponent.resetState(this._point);
       this._closeEditForm();
     }
@@ -95,6 +136,7 @@ class Point {
     document.addEventListener('keydown', this._handleEscKeydown);
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
+    this._editComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     replace(this._editComponent, this._pointComponent);
     this._closeOpenForm();
@@ -102,9 +144,13 @@ class Point {
   }
 
   _handleFavoriteClick() {
-    const updatedPoint = { ...this._point };
-    updatedPoint.isFavorite = !this._point.isFavorite;
-    this._updateData(updatedPoint);
+    const update = { ...this._point };
+    update.isFavorite = !this._point.isFavorite;
+    this._updateModel(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      update,
+    );
   }
 }
 

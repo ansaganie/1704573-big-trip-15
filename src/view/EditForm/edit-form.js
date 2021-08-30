@@ -9,6 +9,7 @@ import Offers from './offer.js';
 import SmartView from '../smart.js';
 import { getRandomDestination } from '../../mock/destination.js';
 import flatpickr from 'flatpickr';
+import { nanoid } from 'nanoid';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
@@ -37,10 +38,11 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
     hasDescription,
     hasPictures,
     hasOffers,
+    hasBasePrice,
     hasCityName,
   } = event;
   const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
-  const destinationListTemplate = new CityNames(CITY_NAMES).getTemplate();
+  const cityListTemplate = new CityNames(CITY_NAMES).getTemplate();
 
   const destinationTemplate =
     hasPictures || hasDescription
@@ -48,7 +50,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
       : '' ;
 
   const eventTypeTemplate = new EventType(type).getTemplate();
-  const isSaveDisabled = !hasCityName || !dateFrom || !dateTo;
+  const isSaveDisabled = !hasBasePrice || !hasCityName || !dateFrom || !dateTo;
 
   return (
     `<li class="trip-events__item">
@@ -64,8 +66,9 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
               id="event-destination-1" type="text"
               name="event-destination"
               value="${destination.name}"
-              list="destination-list-1">
-            ${destinationListTemplate}
+              list="destination-list-1"
+              autocomplete="off">
+            ${cityListTemplate}
           </div>
 
           <div class="event__field-group  event__field-group--time">
@@ -94,7 +97,7 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
             <input
               class="event__input  event__input--price"
               id="event-price-1"
-              type="text"
+              type="number"
               name="event-price" value="${basePrice}">
           </div>
 
@@ -117,17 +120,21 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
 class EditForm extends SmartView {
   constructor(pointData) {
     super();
-    this._offerId = 0;
+
     this._datePickerFrom = null;
     this._datePickerTo = null;
+    this._numberPattern = /^\d+$/;
 
     this._state = this._convertPointDataToState(pointData);
 
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
+
     this._onEventTypeChange = this._onEventTypeChange.bind(this);
     this._onCityNameChange = this._onCityNameChange.bind(this);
     this._onOffersChange = this._onOffersChange.bind(this);
+    this._onPriceChange = this._onPriceChange.bind(this);
     this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
@@ -144,6 +151,7 @@ class EditForm extends SmartView {
     this._setInnerEventHandlers();
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
+    this.setDeleteClickHandler(this._callback.clickDelete);
   }
 
   resetState(pointData) {
@@ -171,6 +179,14 @@ class EditForm extends SmartView {
       .addEventListener('submit', this._onFormSubmit);
   }
 
+  setDeleteClickHandler(handler) {
+    this._callback.clickDelete = handler;
+    this
+      .getElement()
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', this._onDeleteButtonClick);
+  }
+
   unsetEventHandlers() {
     this._callback.submitForm = null;
     this._callback.clickRollUpButton = null;
@@ -183,6 +199,17 @@ class EditForm extends SmartView {
       .getElement()
       .querySelector('.event__rollup-btn')
       .removeEventListener('click', this._onRollUpButtonClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datePickerFrom || this._datePickerTo) {
+      this._datePickerFrom.destroy();
+      this._datePickerFrom = null;
+      this._datePickerTo.destroy();
+      this._datePickerTo = null;
+    }
   }
 
   _setDatePicker() {
@@ -222,6 +249,10 @@ class EditForm extends SmartView {
     this.getElement()
       .querySelector('.event__type-group')
       .addEventListener('change', this._onEventTypeChange);
+    this.getElement()
+      .querySelector('.event__input--price')
+      .addEventListener('change', this._onPriceChange);
+
     const availableOffers = this.getElement()
       .querySelector('.event__available-offers');
 
@@ -231,18 +262,21 @@ class EditForm extends SmartView {
   }
 
   _convertPointDataToState(event) {
-    const offers = event.offers.map((offer) => ({
+    const { offers, destination } = event;
+
+    const offersWithId = offers.map((offer) => ({
       ...offer,
-      id: this._offerId++,
+      id: nanoid(),
     }));
 
     return {
       ...event,
-      offers,
-      hasOffers: event.offers.length !== 0,
-      hasDescription: event.destination.description.length !== 0,
-      hasPictures: event.destination.pictures.length !== 0,
-      hasCityName: true,
+      offers: offersWithId,
+      hasOffers: offers.length !== 0,
+      hasDescription: destination.description.length !== 0,
+      hasPictures: destination.pictures.length !== 0,
+      hasCityName: destination.name.length !== 0,
+      hasBasePrice: true,
     };
   }
 
@@ -250,6 +284,7 @@ class EditForm extends SmartView {
     delete this._state.hasDescription;
     delete this._state.hasPictures;
     delete this._state.hasOffers;
+    delete this._state.hasBasePrice;
     this._state.offers.forEach((offer) => delete offer.id);
 
     return this._state;
@@ -277,9 +312,26 @@ class EditForm extends SmartView {
     }
   }
 
+  _onPriceChange({ target }) {
+    const value = target.value;
+
+    const update = {
+      hasBasePrice: false,
+    };
+
+    if (value.length !== 0 && this._numberPattern.test(value)) {
+      update.hasBasePrice = true;
+      update.basePrice = +value;
+    } else {
+      update.basePrice = value;
+    }
+
+    this.updateState(update);
+  }
+
   _onRollUpButtonClick(evt) {
     evt.preventDefault();
-    this._callback.clickRollUpButton(evt);
+    this._callback.clickRollUpButton();
   }
 
   _onFormSubmit(evt) {
@@ -289,11 +341,18 @@ class EditForm extends SmartView {
     );
   }
 
+  _onDeleteButtonClick(evt) {
+    evt.preventDefault();
+    this._callback.clickDelete(
+      this._convertStateToPointData(this._state),
+    );
+  }
+
   _onEventTypeChange({ target }) {
     const offers = offersMock[target.value].map((offer) => ({
       ...offer,
       isChecked: false,
-      id: this._offerId++,
+      id: nanoid(),
     }));
 
     const updatedState = {
@@ -312,7 +371,7 @@ class EditForm extends SmartView {
         .offers
         .slice()
         .map((offer) => {
-          if(offer.id === +target.id) {
+          if(offer.id === target.id) {
             return {
               ...offer,
               isChecked: target.checked,
@@ -326,8 +385,8 @@ class EditForm extends SmartView {
     }
   }
 
-  _onCityNameChange(evt) {
-    const cityName = evt.target.value;
+  _onCityNameChange({ target }) {
+    const cityName = target.value;
 
     if (CITY_NAMES.includes(cityName)) {
       const destination = getRandomDestination(cityName);
@@ -342,7 +401,7 @@ class EditForm extends SmartView {
     } else {
       this.updateState({
         destination: {
-          name: cityName,
+          name: '',
         },
         hasDescription: false,
         hasPictures: false,

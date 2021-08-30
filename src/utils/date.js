@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
 import { getRandomInteger } from './common.js';
+
+dayjs.extend(duration);
 
 const MIN_MONTH = -2;
 const MAX_MONTH = 2;
@@ -8,23 +11,13 @@ const MAX_DAY_MONTH = 30;
 const MIN_HOUR = 0;
 const MAX_HOUR = 23;
 const MIN_QUARTER = 1;
-const MAX_QUARTER = 4;
+const MAX_QUARTER = 8;
 const QUARTER = 15;
-
-const MONTHS = [
-  'JAN',
-  'FEB',
-  'MAR',
-  'APR',
-  'MAY',
-  'JUN',
-  'JUL',
-  'AUG',
-  'SEP',
-  'OCT',
-  'NOV',
-  'DEC',
-];
+const PATTERN = {
+  0: 'D',
+  1: 'H',
+  2: 'M',
+};
 
 const getRandomDateFrom = () => {
   const randomMonth = getRandomInteger(MIN_MONTH, MAX_MONTH);
@@ -44,27 +37,24 @@ const getRandomDateFrom = () => {
 const getRandomDateTo = (date) => {
   const minutes = QUARTER * getRandomInteger(MIN_QUARTER, MAX_QUARTER);
 
-  return dayjs(date).minute(minutes).toDate();
+  return dayjs(date).add(minutes, 'minute').toDate();
 };
 
 const formatDate = (date, format) => dayjs(date).format(format).toString();
 
 const createTripInfoDate = (start, end) => {
-  const startMonth = start.getMonth();
-  const endDate = end.getDate();
-  const endMonth = end.getMonth();
   let result = `${dayjs(start).format('MMM DD')}&nbsp;&mdash;&nbsp;`;
 
-  if (startMonth === endMonth) {
-    result = `${result}${endDate}`;
+  if (start.getMonth() === end.getMonth()) {
+    result = `${result}${end.getDate()}`;
   } else {
-    result = `${result}${MONTHS[endMonth]} ${endDate}`;
+    result = `${result}${dayjs(end).format('MMM DD')}`;
   }
 
   return result;
 };
 
-const calculateDuration = (first, second) => {
+const calculateDiff = (first, second) => {
   if (first === second) {
     return 0;
   }
@@ -72,12 +62,28 @@ const calculateDuration = (first, second) => {
   const min = Math.min(first, second);
   const max = Math.max(first, second);
 
-  return dayjs(max).diff(dayjs(min), 'minutes');
+  return dayjs(max).diff(dayjs(min));
 };
+
+const calculateDuration = (first, second) => dayjs
+  .duration(calculateDiff(first, second))
+  .format('DD-HH-mm')
+  .split('-')
+  .map((value, index) => {
+    if (+value !== 0) {
+      return `${value}${PATTERN[index]} `;
+    }
+
+    return '';
+  }).join('');
 
 const isBefore = (first, second) => dayjs(first).isBefore(dayjs(second));
 
 const isDateEquals = (first, second) => dayjs(first).isSame(dayjs(second));
+
+const isFuture = (date) => dayjs().isBefore(date);
+
+const isPast = (date) => dayjs().isAfter(date);
 
 export {
   formatDate,
@@ -85,6 +91,9 @@ export {
   getRandomDateTo,
   createTripInfoDate,
   calculateDuration,
+  calculateDiff,
   isBefore,
-  isDateEquals
+  isDateEquals,
+  isFuture,
+  isPast
 };
