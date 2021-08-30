@@ -7,16 +7,8 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const getRandomElement = (array) =>
-  array[getRandomInteger(0, array.length - 1)];
-
-const capitalize = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+const getRandomElement = (array) => array[getRandomInteger(0, array.length - 1)];
 
 const isEscapePressed = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export {
-  getRandomInteger,
-  getRandomElement,
-  capitalize,
-  isEscapePressed
-};
+export { getRandomInteger, getRandomElement, isEscapePressed };

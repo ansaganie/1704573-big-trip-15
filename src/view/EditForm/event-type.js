@@ -1,4 +1,4 @@
-import { capitalize } from '../../utils/common.js';
+import { capitalize } from 'lodash';
 import AbstractView from '../abstract.js';
 import { POINT_TYPE } from '../../utils/const.js';
 
