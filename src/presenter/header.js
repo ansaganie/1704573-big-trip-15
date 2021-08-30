@@ -27,6 +27,8 @@ class Header {
     this._newPointButton = this._infoContainer.querySelector(
       '.trip-main__event-add-btn',
     );
+    this._currentMenuType = MenuType.TABLE;
+    this._headerContainer = document.querySelector('.page-body__container.page-header__container');
 
     this._filterComponent = null;
     this._menuComponent = null;
@@ -71,7 +73,7 @@ class Header {
   }
 
   _renderStats() {
-    this._statsComponent  = new StatsView();
+    this._statsComponent  = new StatsView(this._pointsModel.getPoints());
     render(this._mainContainer, this._statsComponent);
   }
 
@@ -92,16 +94,32 @@ class Header {
   }
 
   _handleMenuClick(menuType) {
+    if (this._currentMenuType === menuType) {
+      return;
+    }
+
+    this._currentMenuType = menuType;
+
     switch (menuType) {
       case MenuType.TABLE:
         this._destroyStats();
         this._renderFilter();
         this._tripPresenter.init();
+        this._newPointButton.disabled = false;
+        this._filterComponent.disabled = false;
+        this._headerContainer.classList.remove('hide-after');
+        this._mainContainer.classList.remove('hide-after');
         break;
       case MenuType.STATS:
         this._tripPresenter.destroy();
         this._renderFilter();
         this._renderStats();
+        this._newPointButton.disabled = true;
+        this._filterComponent.getElement()
+          .querySelectorAll('.trip-filters__filter-input')
+          .forEach((input) => input.disabled = true);
+        this._headerContainer.classList.add('hide-after');
+        this._mainContainer.classList.add('hide-after');
         break;
     }
   }
