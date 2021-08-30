@@ -4,7 +4,7 @@ import NoPointView from '../view/TripList/message.js';
 import PointPresenter from './point.js';
 import NewPointPresenter from './new-point.js';
 import { remove, render } from '../utils/render.js';
-import { calculateDiff, isFuture, isPast } from '../utils/date.js';
+import { calculateDiff, isFuture, isPast, isOngoing } from '../utils/date.js';
 import {
   UpdateType,
   UserAction,
@@ -35,8 +35,8 @@ class Trip {
 
     this._filters = {
       [FilterType.EVERYTHING]: () => true,
-      [FilterType.FUTURE]: (point) => isFuture(point.dateTo),
-      [FilterType.PAST]: (point) => isPast(point.dateTo),
+      [FilterType.FUTURE]: ({dateFrom, dateTo}) => isFuture(dateFrom) || isOngoing(dateFrom, dateTo),
+      [FilterType.PAST]: ({dateFrom, dateTo}) => isPast(dateTo) || isOngoing(dateFrom, dateTo),
     };
   }
 
