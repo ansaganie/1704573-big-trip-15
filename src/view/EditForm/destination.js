@@ -3,6 +3,7 @@ import AbstractView from '../abstract.js';
 const createImgTemplate = (picture) => (
   `<img
     class="event__photo"
+    loading="lazy"
     src="${picture.src}"
     alt="${picture.description}">`
 );
