@@ -103,8 +103,9 @@ class Header {
     switch (menuType) {
       case MenuType.TABLE:
         this._destroyStats();
-        this._renderFilter();
         this._tripPresenter.init();
+
+        this._renderFilter();
         this._newPointButton.disabled = false;
         this._filterComponent.disabled = false;
         this._headerContainer.classList.remove('hide-after');
@@ -112,12 +113,13 @@ class Header {
         break;
       case MenuType.STATS:
         this._tripPresenter.destroy();
-        this._renderFilter();
         this._renderStats();
-        this._newPointButton.disabled = true;
-        this._filterComponent.getElement()
+
+        this._filterComponent
+          .getElement()
           .querySelectorAll('.trip-filters__filter-input')
           .forEach((input) => input.disabled = true);
+        this._newPointButton.disabled = true;
         this._headerContainer.classList.add('hide-after');
         this._mainContainer.classList.add('hide-after');
         break;

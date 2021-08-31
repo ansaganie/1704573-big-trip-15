@@ -4,10 +4,14 @@ import { capitalize } from 'lodash';
 
 const createTripTabsTemplate = (currentMenuType) => {
   const tabs = Object.values(MenuType).map((tab) => {
-    const active = tab === currentMenuType ? 'trip-tabs__btn--active' : '';
-    return `<a id="${tab}"
-              class="trip-tabs__btn ${active}"
-              href="#">${capitalize(tab)}</a>`;
+    const isActive = tab === currentMenuType ;
+    return (
+      `<a id="${tab}"
+        class="trip-tabs__btn ${isActive ? 'trip-tabs__btn--active' : ''}"
+        href="#">
+        ${capitalize(tab)}
+      </a>`
+    );
   }).join('');
 
   return (

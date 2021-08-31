@@ -1,82 +1,14 @@
 import { calculateDiff, formatDuration } from '../utils/date';
 import AbstractView from './abstract';
 import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
-const Color = {
-  FONT: '#000000',
-  BACKGROUND: '#ffffff',
-};
-
-const FontSize = {
-  TEXT: 13,
-  TITLE: 23,
-};
-
-const BAR_HEIGHT = 55;
-
-const CANVAS = {
-  plugins: [ChartDataLabels],
-  type: 'horizontalBar',
-};
-
-const OPTIONS = {
-  scales: {
-    yAxes: [{
-      ticks: {
-        fontColor: Color.FONT,
-        padding: 5,
-        fontSize: FontSize.TEXT,
-      },
-      gridLines: {
-        display: false,
-        drawBorder: false,
-      },
-    }],
-    xAxes: [{
-      ticks: {
-        display: false,
-        beginAtZero: true,
-      },
-      gridLines: {
-        display: false,
-        drawBorder: false,
-      },
-    }],
-  },
-  legend: {
-    display: false,
-  },
-  tooltips: {
-    enabled: false,
-  },
-};
-
-const DATASETS = {
-  data: [],
-  backgroundColor: Color.BACKGROUND,
-  hoverBackgroundColor: Color.BACKGROUND,
-  anchor: 'start',
-  barThickness: 44,
-  minBarLength: 50,
-};
-
-const DATALABELS = {
-  font: {
-    size: FontSize.TEXT,
-  },
-  color: Color.FONT,
-  anchor: 'end',
-  align: 'start',
-  formatter: '',
-};
-
-const TITLE = {
-  display: true,
-  fontColor: Color.FONT,
-  fontSize: FontSize.TITLE,
-  position: 'left',
-};
+import {
+  BAR_HEIGHT,
+  CANVAS,
+  OPTIONS,
+  DATASETS,
+  DATALABELS,
+  TITLE
+} from './stats-config.js';
 
 const createStatsTemplate = () =>
   `<section class="statistics">
@@ -117,87 +49,94 @@ class Statistics extends AbstractView {
     const timeElement = this.getElement().querySelector('#time-spend');
 
     const labels = Object.keys(this._props.type).map((typeName) => typeName.toUpperCase());
-    const barCount = labels.length;
+    const chartHeight = BAR_HEIGHT * labels.length;
 
-    moneyElement.height = BAR_HEIGHT * barCount;
-    typeElement.height = BAR_HEIGHT * barCount;
-    timeElement.height = BAR_HEIGHT * barCount;
+    moneyElement.height = chartHeight;
+    typeElement.height = chartHeight;
+    timeElement.height = chartHeight;
 
-    new Chart(moneyElement,
-      {
-        ...CANVAS,
-        data: {
-          labels,
-          datasets: [{
-            ...DATASETS,
-            data: Object.values(money),
-          }],
-        },
-        options: {
-          ...OPTIONS,
-          title: {
-            ...TITLE,
-            text: moneyElement.id.toUpperCase(),
+    const chartConfigs = [
+      [
+        typeElement,
+        {
+          ...CANVAS,
+          data: {
+            labels,
+            datasets: [{
+              ...DATASETS,
+              data: Object.values(type),
+            }],
           },
-          plugins: {
-            datalabels: {
-              ...DATALABELS,
-              formatter: (val) => `€ ${val}`,
+          options: {
+            ...OPTIONS,
+            title: {
+              ...TITLE,
+              text: typeElement.id.toUpperCase(),
+            },
+            plugins: {
+              datalabels: {
+                ...DATALABELS,
+                formatter: (val) => `${val}x`,
+              },
             },
           },
         },
-      },
-    );
-
-    new Chart(typeElement, {
-      ...CANVAS,
-      data: {
-        labels,
-        datasets: [{
-          ...DATASETS,
-          data: Object.values(type),
-        }],
-      },
-      options: {
-        ...OPTIONS,
-        title: {
-          ...TITLE,
-          text: typeElement.id.toUpperCase(),
-        },
-        plugins: {
-          datalabels: {
-            ...DATALABELS,
-            formatter: (val) => `${val}x`,
+      ],
+      [
+        timeElement,
+        {
+          ...CANVAS,
+          data: {
+            labels,
+            datasets: [{
+              ...DATASETS,
+              data: Object.values(timeSpend),
+            }],
           },
-        },
-      },
-    });
-
-    new Chart(timeElement,
-      {
-        ...CANVAS,
-        data: {
-          labels,
-          datasets: [{
-            ...DATASETS,
-            data: Object.values(timeSpend),
-          }],
-        },
-        options: {
-          ...OPTIONS,
-          title: {
-            ...TITLE,
-            text: timeElement.id.toUpperCase(),
-          },
-          plugins: {
-            datalabels: {
-              ...DATALABELS,
-              formatter: (val) => `${formatDuration(val)}`,
+          options: {
+            ...OPTIONS,
+            title: {
+              ...TITLE,
+              text: timeElement.id.toUpperCase(),
+            },
+            plugins: {
+              datalabels: {
+                ...DATALABELS,
+                formatter: (val) => `${formatDuration(val)}`,
+              },
             },
           },
         },
-      },
-    );
+      ],
+      [
+        moneyElement,
+        {
+          ...CANVAS,
+          data: {
+            labels,
+            datasets: [{
+              ...DATASETS,
+              data: Object.values(money),
+            }],
+          },
+          options: {
+            ...OPTIONS,
+            title: {
+              ...TITLE,
+              text: moneyElement.id.toUpperCase(),
+            },
+            plugins: {
+              datalabels: {
+                ...DATALABELS,
+                formatter: (val) => `€ ${val}`,
+              },
+            },
+          },
+        },
+      ],
+    ];
+
+    chartConfigs.forEach((config) => new Chart(...config));
   }
 
   _calculateProps() {
