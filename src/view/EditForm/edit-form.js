@@ -1,4 +1,4 @@
-import { capitalize } from '../../utils/common.js';
+import { capitalize } from 'lodash';
 import { CITY_NAMES } from '../../mock/event.js';
 import { offers as offersMock } from '../../mock/offer.js';
 import { isDateEquals, formatDate, isBefore } from '../../utils/date.js';

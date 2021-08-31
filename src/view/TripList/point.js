@@ -1,6 +1,6 @@
 import AbstractView from '../abstract.js';
-import { formatDate, calculateDuration } from '../../utils/date.js';
-import { capitalize } from '../../utils/common.js';
+import { formatDate, calculateDiff, formatDuration } from '../../utils/date.js';
+import { capitalize } from 'lodash';
 
 const createOfferTemplate = ({ title, price, isChecked }) => (
   isChecked
@@ -27,7 +27,7 @@ const createEventScheduleTemplate = (dateFrom, dateTo) =>
       </time>
     </p>
     <p class="event__duration">
-      ${calculateDuration(dateTo, dateFrom)}
+      ${formatDuration(calculateDiff(dateTo, dateFrom))}
     </p>
   </div>`;
 

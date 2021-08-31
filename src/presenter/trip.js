@@ -4,7 +4,7 @@ import NoPointView from '../view/TripList/message.js';
 import PointPresenter from './point.js';
 import NewPointPresenter from './new-point.js';
 import { remove, render } from '../utils/render.js';
-import { calculateDiff, isFuture, isPast } from '../utils/date.js';
+import { calculateDiff, isFuture, isPast, isOngoing } from '../utils/date.js';
 import {
   UpdateType,
   UserAction,
@@ -35,8 +35,8 @@ class Trip {
 
     this._filters = {
       [FilterType.EVERYTHING]: () => true,
-      [FilterType.FUTURE]: (point) => isFuture(point.dateTo),
-      [FilterType.PAST]: (point) => isPast(point.dateTo),
+      [FilterType.FUTURE]: ({dateFrom, dateTo}) => isFuture(dateFrom) || isOngoing(dateFrom, dateTo),
+      [FilterType.PAST]: ({dateFrom, dateTo}) => isPast(dateTo) || isOngoing(dateFrom, dateTo),
     };
   }
 
@@ -46,16 +46,30 @@ class Trip {
     this._renderTrip();
   }
 
-  createNewPoint() {
+  createNewPoint(enableNewPointButton) {
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointPresenter = new NewPointPresenter(
       this._listComponent,
       this._handleViewUpdate,
       this._handleModeChange,
+      enableNewPointButton,
     );
 
     this._newPointPresenter.init();
+  }
+
+  destroy() {
+    this._clearTripList({
+      resetSortType: true,
+    });
+
+    remove(this._listComponent);
+
+    this._pointsModel.removeObserver(this._handleModelUpdate);
+    this._filterModel.removeObserver(this._handleModelUpdate);
+
+    this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
   }
 
   _getPoints() {

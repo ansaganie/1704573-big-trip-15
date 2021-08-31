@@ -19,10 +19,11 @@ const BLANK_EVENT = {
 };
 
 class NewPoint {
-  constructor(container, updateModel, closeForm) {
+  constructor(container, updateModel, closeForm, enableNewPointButton) {
     this._container = container;
     this._updateModel = updateModel;
     this._closeForm = closeForm;
+    this._enableNewPointButton = enableNewPointButton;
 
     this._editComponent = null;
 
@@ -56,6 +57,7 @@ class NewPoint {
     this._editComponent = null;
 
     document.removeEventListener('keydown', this._handleEscKeydown);
+    this._enableNewPointButton();
   }
 
   _handleDeleteClick() {

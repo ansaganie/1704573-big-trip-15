@@ -1,8 +1,10 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import isBetween from 'dayjs/plugin/isBetween';
 import { getRandomInteger } from './common.js';
 
 dayjs.extend(duration);
+dayjs.extend(isBetween);
 
 const MIN_MONTH = -2;
 const MAX_MONTH = 2;
@@ -65,8 +67,8 @@ const calculateDiff = (first, second) => {
   return dayjs(max).diff(dayjs(min));
 };
 
-const calculateDuration = (first, second) => dayjs
-  .duration(calculateDiff(first, second))
+const formatDuration = (period) => dayjs
+  .duration(period)
   .format('DD-HH-mm')
   .split('-')
   .map((value, index) => {
@@ -85,15 +87,18 @@ const isFuture = (date) => dayjs().isBefore(date);
 
 const isPast = (date) => dayjs().isAfter(date);
 
+const isOngoing = (from, to) => dayjs().isBetween(from, to);
+
 export {
   formatDate,
   getRandomDateFrom,
   getRandomDateTo,
   createTripInfoDate,
-  calculateDuration,
+  formatDuration,
   calculateDiff,
   isBefore,
   isDateEquals,
   isFuture,
-  isPast
+  isPast,
+  isOngoing
 };
