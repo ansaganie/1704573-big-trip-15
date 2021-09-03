@@ -104,17 +104,21 @@ const createEditFormTemplate = (point, cityNames) => {
 
 class EditForm extends SmartView {
   constructor(
-    pointData,
     offersData,
     cityNamesData,
     destinationsData,
+    pointData,
   ) {
     super();
     this._offersData = offersData;
     this._cityNamesData = cityNamesData;
     this._destinationsData = destinationsData;
 
-    this._state = this._convertPointDataToState(pointData);
+    this._state = null;
+
+    if (pointData) {
+      this._state = this._convertPointDataToState(pointData);
+    }
 
     this._datePickerFrom = null;
     this._datePickerTo = null;
@@ -138,11 +142,12 @@ class EditForm extends SmartView {
     if (this._state === null) {
       this._state = this._convertPointDataToState({
         type: 'taxi',
-        offers: this._offersData['taxi'],
+        offers: [],
         destination: this._destinationsData[0],
         dateFrom: new Date(),
         dateTo: new Date(),
         basePrice: 0,
+        isFavorite: false,
       });
     }
 
@@ -281,7 +286,7 @@ class EditForm extends SmartView {
     return {
       ...point,
       offers: offersWithId,
-      hasOffers: offers.length !== 0,
+      hasOffers: offersWithId.length !== 0,
       hasDescription: destination.description.length !== 0,
       hasPictures: destination.pictures.length !== 0,
       hasCityName: destination.name.length !== 0,
@@ -294,6 +299,7 @@ class EditForm extends SmartView {
     delete this._state.hasPictures;
     delete this._state.hasOffers;
     delete this._state.hasBasePrice;
+    delete this._state.hasCityName;
 
     this._state.offers = this._state.offers.filter((offer) => offer.isChecked);
     this._state.offers.forEach((offer) => {

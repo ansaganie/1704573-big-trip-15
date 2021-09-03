@@ -1,9 +1,11 @@
+import Api from '../api/api';
 import AbstractObserverable from '../utils/abstract-observerable';
 
 class Points extends AbstractObserverable {
-  constructor() {
+  constructor(api) {
     super();
     this._points = [];
+    this._api = api;
   }
 
   setPoints(points) {
@@ -31,9 +33,13 @@ class Points extends AbstractObserverable {
   }
 
   add(updateType, newPoint) {
-    this._points = [...this._points, newPoint];
 
-    this._notifyAll(updateType, newPoint);
+    this._api.addPoint(newPoint)
+      .then((point) => {
+        this._points = [...this._points, point];
+        this._notifyAll(updateType, newPoint);
+      })
+      .catch(Api.catchError);
   }
 
   delete(updateType, deletedPoint) {

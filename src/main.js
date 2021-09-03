@@ -54,7 +54,5 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
     tripPresenter.init();
     headerPresenter.init();
   },
-).catch((err) => {
-  throw err;
-});
+).catch(Api.catchError);
 

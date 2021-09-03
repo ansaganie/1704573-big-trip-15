@@ -61,6 +61,9 @@ class Trip {
     this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointPresenter = new NewPointPresenter(
       this._listComponent,
+      this._offersData,
+      this._cityNamesData,
+      this._destinationsData,
       this._handleViewUpdate,
       this._handleModeChange,
       enableNewPointButton,

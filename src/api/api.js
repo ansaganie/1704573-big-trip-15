@@ -20,6 +20,17 @@ class Api {
     this._authKey = authKey;
   }
 
+  addPoint(point) {
+    return this._load({
+      endPoint: EndPoints.POINTS,
+      method: Method.POST,
+      body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON)
+      .then(PointsAdapter.adaptServerToClient);
+  }
+
   getPoints() {
     return this._load({
       endPoint: EndPoints.POINTS,
