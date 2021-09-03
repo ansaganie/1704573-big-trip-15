@@ -1,7 +1,7 @@
-import AbstractObserverable from '../utils/abstract-observerable';
+import AbstractObservable from '../utils/abstract-observable';
 import { FilterType } from '../utils/const';
 
-class Filter extends AbstractObserverable {
+class Filter extends AbstractObservable {
   constructor() {
     super();
 

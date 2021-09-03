@@ -32,7 +32,6 @@ class Trip {
     this._newPointPresenter = null;
 
     this._pointPresenters = new Map();
-    this._currentFilter = FilterType.EVERYTHING;
     this._currentSortType = SortType.DAY;
 
     this._sortComponent = null;

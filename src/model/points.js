@@ -1,7 +1,7 @@
 import Api from '../api/api';
-import AbstractObserverable from '../utils/abstract-observerable';
+import AbstractObservable from '../utils/abstract-observable';
 
-class Points extends AbstractObserverable {
+class Points extends AbstractObservable {
   constructor(api) {
     super();
 
@@ -31,7 +31,7 @@ class Points extends AbstractObserverable {
     const index = this._points.findIndex((point) => point.id === updatedPoint.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting point');
+      throw new Error('Can\'t update nonexistent point');
     }
 
     this._api.updatePoint(updatedPoint)
@@ -52,7 +52,7 @@ class Points extends AbstractObserverable {
     const index = this._points.findIndex((point) => point.id === deletedPoint.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting point');
+      throw new Error('Can\'t delete nonexistent point');
     }
 
     this._api.deletePoint(deletedPoint)

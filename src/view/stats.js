@@ -1,14 +1,7 @@
 import { calculateDiff, formatDuration } from '../utils/date';
 import AbstractView from './abstract';
 import Chart from 'chart.js';
-import {
-  BAR_HEIGHT,
-  CANVAS,
-  OPTIONS,
-  DATASETS,
-  DATALABELS,
-  TITLE
-} from './stats-config.js';
+import {BAR_HEIGHT, getStatsConfig} from './stats-config.js';
 
 const createStatsTemplate = () =>
   `<section class="statistics">
@@ -43,6 +36,10 @@ class Statistics extends AbstractView {
   }
 
   _renderStatsCharts() {
+    const moneyFormatter = (val) => `€ ${val}`;
+    const typeFormatter = (val) => `${val}x`;
+    const timeSpendFormatter = (val) => `${formatDuration(val)}`;
+
     const { money, type, timeSpend } = this._props;
     const moneyElement = this.getElement().querySelector('#money');
     const typeElement = this.getElement().querySelector('#type');
@@ -56,84 +53,9 @@ class Statistics extends AbstractView {
     timeElement.height = chartHeight;
 
     const chartConfigs = [
-      [
-        typeElement,
-        {
-          ...CANVAS,
-          data: {
-            labels,
-            datasets: [{
-              ...DATASETS,
-              data: Object.values(type),
-            }],
-          },
-          options: {
-            ...OPTIONS,
-            title: {
-              ...TITLE,
-              text: typeElement.id.toUpperCase(),
-            },
-            plugins: {
-              datalabels: {
-                ...DATALABELS,
-                formatter: (val) => `${val}x`,
-              },
-            },
-          },
-        },
-      ],
-      [
-        timeElement,
-        {
-          ...CANVAS,
-          data: {
-            labels,
-            datasets: [{
-              ...DATASETS,
-              data: Object.values(timeSpend),
-            }],
-          },
-          options: {
-            ...OPTIONS,
-            title: {
-              ...TITLE,
-              text: timeElement.id.toUpperCase(),
-            },
-            plugins: {
-              datalabels: {
-                ...DATALABELS,
-                formatter: (val) => `${formatDuration(val)}`,
-              },
-            },
-          },
-        },
-      ],
-      [
-        moneyElement,
-        {
-          ...CANVAS,
-          data: {
-            labels,
-            datasets: [{
-              ...DATASETS,
-              data: Object.values(money),
-            }],
-          },
-          options: {
-            ...OPTIONS,
-            title: {
-              ...TITLE,
-              text: moneyElement.id.toUpperCase(),
-            },
-            plugins: {
-              datalabels: {
-                ...DATALABELS,
-                formatter: (val) => `€ ${val}`,
-              },
-            },
-          },
-        },
-      ],
+      getStatsConfig(moneyElement, labels, money, moneyFormatter),
+      getStatsConfig(typeElement, labels, type, typeFormatter),
+      getStatsConfig(timeElement, labels, timeSpend, timeSpendFormatter),
     ];
 
     chartConfigs.forEach((config) => new Chart(...config));
