@@ -12,7 +12,9 @@ class AbstractObserverable {
   }
 
   _notifyAll(updateType, update) {
-    this._observers.forEach((observer) => observer(updateType, update));
+    this._observers.forEach((observer) => {
+      observer(updateType, update);
+    });
   }
 }
 

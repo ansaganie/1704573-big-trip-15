@@ -44,6 +44,8 @@ class Header {
   init() {
     this._newPointButton.addEventListener('click', this._handleNewPointClick);
     this._pointsModel.addObserver(this._handlePointsModelUpdate);
+    this._filterModel.addObserver(this._handlePointsModelUpdate);
+
     this._renderHeader();
   }
 
@@ -83,6 +85,13 @@ class Header {
   }
 
   _clearInfo() {
+    if (
+      this._infoComponent === null ||
+      this._infoComponent.getElement() === null
+    ) {
+      return;
+    }
+
     remove(this._infoComponent);
     this._infoComponent = null;
   }

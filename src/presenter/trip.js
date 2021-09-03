@@ -133,6 +133,7 @@ class Trip {
   }
 
   _handleNewPointFormClose() {
+    this._clearTripList();
     this._renderTrip();
   }
 
