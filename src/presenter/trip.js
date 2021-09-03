@@ -161,6 +161,16 @@ class Trip {
     render(this._tripListContainer, this._loadingComponent);
   }
 
+  hideLoading() {
+    this._isLoading = false;
+    remove(this._loadingComponent);
+    this._loadingComponent = null;
+  }
+
+  showServerError() {
+    render(this._tripListContainer, new MessageView(Messages.SERVER_ERROR));
+  }
+
   _sortByDate(first, second) {
     return new Date(first.dateFrom) - new Date(second.dateFrom);
   }
@@ -230,8 +240,7 @@ class Trip {
 
   _renderTrip() {
     if (this._isLoading) {
-      this._isLoading = false;
-      remove(this._loadingComponent);
+      this.hideLoading();
     }
 
     const points = this._getPoints();

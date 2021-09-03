@@ -17,6 +17,7 @@ const Messages = {
   FUTURE: 'There are no past events now',
   PAST: 'There are no future events now',
   LOADING: 'Loading...',
+  SERVER_ERROR: 'Something went wrong. </br> Please try to refresh the page',
 };
 
 const UserAction = {

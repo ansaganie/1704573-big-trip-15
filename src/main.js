@@ -54,5 +54,9 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
     tripPresenter.init();
     headerPresenter.init();
   },
-).catch(Api.catchError);
+).catch((err) => {
+  tripPresenter.hideLoading();
+  tripPresenter.showServerError();
+  throw err;
+});
 
