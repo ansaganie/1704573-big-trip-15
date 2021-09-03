@@ -3,20 +3,6 @@ import { UpdateType, UserAction } from '../utils/const.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import FormView from '../view/EditForm/edit-form.js';
 import { nanoid } from 'nanoid';
-import { offers } from '../mock/offer.js';
-
-const BLANK_EVENT = {
-  type: 'taxi',
-  offers: offers['taxi'],
-  destination: {
-    name: '',
-    description: '',
-    pictures: [],
-  },
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  basePrice: 0,
-};
 
 class NewPoint {
   constructor(container, updateModel, closeForm, enableNewPointButton) {
@@ -38,7 +24,7 @@ class NewPoint {
       return;
     }
     this._closeForm();
-    this._editComponent = new FormView(BLANK_EVENT);
+    this._editComponent = new FormView();
     this._editComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);

@@ -13,10 +13,18 @@ import {
 } from '../utils/const.js';
 
 class Trip {
-  constructor(tripListContainer, pointsModel, filterModel) {
+  constructor(
+    tripListContainer,
+    pointsModel,
+    filterModel,
+    offers,
+    destinations,
+  ) {
     this._tripListContainer = tripListContainer;
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
+    this._offers = offers;
+    this._destinations = destinations;
 
     this._sortComponent = null;
     this._noPointComponent = null;
@@ -127,12 +135,21 @@ class Trip {
         });
         this._renderTrip();
         break;
+      case UpdateType.INIT:
+        this._clearTripList({
+          resetSortType: true,
+        });
+        this._renderTrip();
+        break;
     }
   }
 
   _renderPoint(container, point) {
     const pointPresenter = new PointPresenter(
       container,
+      this._offers,
+      this._destinations.map(({name}) => name),
+      this._destinations,
       this._handleViewUpdate,
       this._handleModeChange,
     );

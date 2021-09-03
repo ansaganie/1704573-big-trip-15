@@ -1,4 +1,5 @@
 import AbstractObserverable from '../utils/abstract-observerable';
+import { UpdateType } from '../utils/const';
 
 class Points extends AbstractObserverable {
   constructor() {
@@ -8,6 +9,7 @@ class Points extends AbstractObserverable {
 
   setPoints(points) {
     this._points = points.slice();
+    this._notifyAll(UpdateType.INIT);
   }
 
   getPoints() {

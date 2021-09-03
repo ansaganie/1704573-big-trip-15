@@ -10,8 +10,18 @@ const Mode = {
 };
 
 class Point {
-  constructor(container, updateModel, closeOpenForm) {
+  constructor(
+    container,
+    offers,
+    cityNames,
+    destinations,
+    updateModel,
+    closeOpenForm,
+  ) {
     this._container = container;
+    this._offers = offers;
+    this._cityNames = cityNames;
+    this._destinations = destinations;
     this._updateModel = updateModel;
     this._closeOpenForm = closeOpenForm;
 
@@ -34,7 +44,12 @@ class Point {
     const prevPointEditComponent = this._editComponent;
 
     this._pointComponent = new PointView(point);
-    this._editComponent = new FormView(point);
+    this._editComponent = new FormView(
+      this._point,
+      this._offers,
+      this._cityNames,
+      this._destinations,
+    );
 
     this._pointComponent.setRollDownButtonClickHandler(
       this._handleRollDownClick,
