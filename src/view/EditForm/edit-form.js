@@ -12,7 +12,7 @@ import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
 import { NUMBER_PATTERN } from '../../utils/const.js';
 
-const createEditFormTemplate = (point, cityNames) => {
+const createEditFormTemplate = (point, cityNames, types) => {
   const {
     type,
     offers,
@@ -34,7 +34,7 @@ const createEditFormTemplate = (point, cityNames) => {
       ? new Destination(destination, hasDescription, hasPictures).getTemplate()
       : '' ;
 
-  const eventTypeTemplate = new EventType(type).getTemplate();
+  const eventTypeTemplate = new EventType(type, types).getTemplate();
   const isSaveDisabled = !hasBasePrice || !hasCityName || !dateFrom || !dateTo;
 
   return (
@@ -154,6 +154,7 @@ class EditForm extends SmartView {
     return createEditFormTemplate(
       this._state,
       this._cityNamesData,
+      Object.keys(this._offersData),
     );
   }
 

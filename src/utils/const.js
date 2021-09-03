@@ -1,17 +1,5 @@
 const NUMBER_PATTERN = /^\d+$/;
 
-const POINT_TYPE = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant',
-];
-
 const Messages = {
   EVERYTHING: 'Click New Event to create your first point',
   FUTURE: 'There are no past events now',
@@ -52,7 +40,6 @@ const MenuType = {
 
 export {
   NUMBER_PATTERN,
-  POINT_TYPE,
   Messages,
   UserAction,
   UpdateType,
