@@ -41,12 +41,20 @@ class Api {
 
   updatePoint(point) {
     return this._load({
-      url: `points/${point.id}`,
+      endPoint: `${EndPoints.POINTS}/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then(PointsAdapter.adaptServerToClient);
+  }
+
+  deletePoint(point) {
+    return this._load({
+      endPoint: `${EndPoints.POINTS}/${point.id}`,
+      method: Method.DELETE,
+    });
   }
 
   getOffers() {

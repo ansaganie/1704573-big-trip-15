@@ -111,16 +111,16 @@ class Trip {
     this._pointPresenters.forEach((presenter) => presenter.resetView());
   }
 
-  _handleViewUpdate(userAction, updateType, update) {
+  _handleViewUpdate(userAction, updateType, updatedPoint) {
     switch (userAction) {
       case UserAction.ADD_POINT:
-        this._pointsModel.add(updateType, update);
+        this._pointsModel.add(updateType, updatedPoint);
         break;
       case UserAction.UPDATE_POINT:
-        this._pointsModel.update(updateType, update);
+        this._pointsModel.update(updateType, updatedPoint);
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.delete(updateType, update);
+        this._pointsModel.delete(updateType, updatedPoint);
         break;
     }
   }
@@ -226,7 +226,6 @@ class Trip {
     this._pointPresenters.set(point.id, pointPresenter);
 
     pointPresenter.init(point);
-
   }
 
   _renderTrip() {

@@ -16,24 +16,27 @@ class Points extends AbstractObserverable {
     return this._points;
   }
 
-  update(updateType, update) {
-    const index = this._points.findIndex((point) => point.id === update.id);
+  update(updateType, updatedPoint) {
+    const index = this._points.findIndex((point) => point.id === updatedPoint.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
 
-    this._points = [
-      ...this._points.slice(0, index),
-      update,
-      ...this._points.slice(index + 1),
-    ];
+    this._api.updatePoint(updatedPoint)
+      .then((point) => {
+        this._points = [
+          ...this._points.slice(0, index),
+          point,
+          ...this._points.slice(index + 1),
+        ];
 
-    this._notifyAll(updateType, update);
+        this._notifyAll(updateType, point);
+      })
+      .catch(Api.catchError);
   }
 
   add(updateType, newPoint) {
-
     this._api.addPoint(newPoint)
       .then((point) => {
         this._points = [...this._points, point];
@@ -49,12 +52,16 @@ class Points extends AbstractObserverable {
       throw new Error('Can\'t delete unexisting point');
     }
 
-    this._points = [
-      ...this._points.slice(0, index),
-      ...this._points.slice(index + 1),
-    ];
+    this._api.deletePoint(deletedPoint)
+      .then(() => {
+        this._points = [
+          ...this._points.slice(0, index),
+          ...this._points.slice(index + 1),
+        ];
 
-    this._notifyAll(updateType);
+        this._notifyAll(updateType);
+      })
+      .catch(Api.catchError);
   }
 }
 

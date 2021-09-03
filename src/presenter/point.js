@@ -98,16 +98,11 @@ class Point {
 
     if (type !== updatedPoint.type) {
       isOffersChanged = true;
-    } else {
-      for(let i = 0; i < offers.length; i++) {
-        const first = offers[i];
-        const second = updatedPoint.offers.find((offer) => first.id === offer.id);
-
-        if (first.isChecked !== second.isChecked) {
-          isOffersChanged = true;
-          break;
-        }
-      }
+    } else if (
+      JSON.stringify(offers) !==
+      JSON.stringify(updatedPoint.offers)
+    ) {
+      isOffersChanged = true;
     }
 
     const isMinorUpdate =

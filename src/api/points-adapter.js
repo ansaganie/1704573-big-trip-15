@@ -8,8 +8,6 @@ class PointsAdapter {
       isFavorite: unit['is_favorite'],
     };
 
-    adaptedUnit.offers.forEach((offer) => offer.isChecked = true);
-
     delete adaptedUnit['base_price'];
     delete adaptedUnit['date_from'];
     delete adaptedUnit['date_to'];
