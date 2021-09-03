@@ -1,7 +1,9 @@
 class OffersAdapter {
   static adaptServerToClient(offers) {
-    return offers.reduce((obj, offer) =>
-      ({...obj, [offer.type]: offer.offers}) , {});
+    return offers.reduce(
+      (obj, offer) => ({ ...obj, [offer.type]: offer.offers }),
+      {},
+    );
   }
 }
 

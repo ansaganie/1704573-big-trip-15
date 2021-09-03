@@ -1,18 +1,6 @@
 import OffersAdapter from './offers-adapter.js';
 import PointsAdapter from './points-adapter.js';
-
-const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE',
-};
-
-const EndPoints = {
-  OFFERS: 'offers',
-  POINTS: 'points',
-  DESTINATIONS: 'destinations',
-};
+import { HttpMethod, EndPoints } from '../utils/const.js';
 
 class Api {
   constructor(mainUrl, authKey) {
@@ -23,9 +11,9 @@ class Api {
   addPoint(point) {
     return this._load({
       endPoint: EndPoints.POINTS,
-      method: Method.POST,
+      method: HttpMethod.POST,
       body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
-      headers: new Headers({'Content-Type': 'application/json'}),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
     })
       .then(Api.toJSON)
       .then(PointsAdapter.adaptServerToClient);
@@ -34,17 +22,19 @@ class Api {
   getPoints() {
     return this._load({
       endPoint: EndPoints.POINTS,
-    }).then(Api.toJSON)
-      .then((points) => points
-        .map((point) => PointsAdapter.adaptServerToClient(point)));
+    })
+      .then(Api.toJSON)
+      .then((points) =>
+        points.map((point) => PointsAdapter.adaptServerToClient(point)),
+      );
   }
 
   updatePoint(point) {
     return this._load({
       endPoint: `${EndPoints.POINTS}/${point.id}`,
-      method: Method.PUT,
+      method: HttpMethod.PUT,
       body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
-      headers: new Headers({'Content-Type': 'application/json'}),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
     })
       .then(Api.toJSON)
       .then(PointsAdapter.adaptServerToClient);
@@ -53,14 +43,15 @@ class Api {
   deletePoint(point) {
     return this._load({
       endPoint: `${EndPoints.POINTS}/${point.id}`,
-      method: Method.DELETE,
+      method: HttpMethod.DELETE,
     });
   }
 
   getOffers() {
     return this._load({
       endPoint: EndPoints.OFFERS,
-    }).then((Api.toJSON))
+    })
+      .then(Api.toJSON)
       .then(OffersAdapter.adaptServerToClient);
   }
 
@@ -72,16 +63,13 @@ class Api {
 
   _load({
     endPoint,
-    method = Method.GET,
+    method = HttpMethod.GET,
     body = null,
     headers = new Headers(),
   }) {
     headers.append('Authorization', this._authKey);
 
-    return fetch(
-      `${this._mainUrl}/${endPoint}`,
-      { method, body, headers },
-    )
+    return fetch(`${this._mainUrl}/${endPoint}`, { method, body, headers })
       .then(Api.checkStatus)
       .catch(Api.catchError);
   }

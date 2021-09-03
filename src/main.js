@@ -50,7 +50,9 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
     offersModel.setOffers(offers);
     destinationsModel.setDestination(destinations);
     pointsModel.setPoints(points);
+
     document.querySelector('.trip-main__event-add-btn').disabled = false;
+    tripPresenter.hideLoading();
     tripPresenter.init();
     headerPresenter.init();
   },

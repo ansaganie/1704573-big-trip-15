@@ -11,6 +11,7 @@ class NewPoint {
     destinations,
     updateModel,
     closeOtherForms,
+    handleNewPointFormClose,
     enableNewPointButton,
   ) {
     this._container = container;
@@ -19,6 +20,7 @@ class NewPoint {
     this._destinations = destinations;
     this._updateModel = updateModel;
     this._closeOtherForms = closeOtherForms;
+    this._handleNewPointFormClose = handleNewPointFormClose;
     this._enableNewPointButton = enableNewPointButton;
 
     this._editComponent = null;
@@ -63,10 +65,12 @@ class NewPoint {
 
   _handleDeleteClick() {
     this.destroy();
+    this._handleNewPointFormClose();
   }
 
   _handleRollUpClick() {
     this.destroy();
+    this._handleNewPointFormClose();
   }
 
   _handleEscKeydown(evt) {

@@ -38,6 +38,19 @@ const MenuType = {
   STATS: 'STATS',
 };
 
+const HttpMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+const EndPoints = {
+  OFFERS: 'offers',
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+};
+
 export {
   NUMBER_PATTERN,
   Messages,
@@ -45,6 +58,8 @@ export {
   UpdateType,
   FilterType,
   SortType,
-  MenuType
+  MenuType,
+  HttpMethod,
+  EndPoints
 };
 

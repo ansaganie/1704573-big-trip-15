@@ -156,6 +156,7 @@ class Point {
   _handleFavoriteClick() {
     const update = { ...this._point };
     update.isFavorite = !this._point.isFavorite;
+
     this._updateModel(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
