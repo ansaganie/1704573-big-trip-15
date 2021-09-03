@@ -174,8 +174,10 @@ class Header {
           .map(({ destination }) => destination.name)
           .join(' &mdash; '),
         cost: points
-          .map(({ basePrice }) => basePrice)
-          .reduce((acc, price) => acc + price),
+          .reduce((acc, { basePrice, offers}) => {
+            const offersTotalPrice = offers.reduce((total, { price }) => total + price, 0);
+            return acc + basePrice + offersTotalPrice;
+          }, 0),
         date: createTripInfoDate(startDate, endDate),
         hasInfo: true,
       };
