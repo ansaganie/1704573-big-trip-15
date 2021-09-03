@@ -10,6 +10,7 @@ import { nanoid } from 'nanoid';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
+import { NUMBER_PATTERN } from '../../utils/const.js';
 
 const createEditFormTemplate = (point, cityNames) => {
   const {
@@ -109,14 +110,14 @@ class EditForm extends SmartView {
     destinationsData,
   ) {
     super();
-    this._state = this._convertPointDataToState(pointData);
     this._offersData = offersData;
     this._cityNamesData = cityNamesData;
     this._destinationsData = destinationsData;
 
+    this._state = this._convertPointDataToState(pointData);
+
     this._datePickerFrom = null;
     this._datePickerTo = null;
-    this._numberPattern = /^\d+$/;
 
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
@@ -267,13 +268,15 @@ class EditForm extends SmartView {
   }
 
   _convertPointDataToState(point) {
-    const { offers, destination } = point;
+    const { offers, type, destination } = point;
 
-    const offersWithId = this._offersData.map((offer) => ({
-      ...offer,
-      isChecked: offers.includes(offer),
-      id: nanoid(),
-    }));
+    const offersWithId = this._offersData[type]
+      .map((offer) => ({
+        ...offer,
+        isChecked: offers.some(({title, price}) =>
+          offer.title === title && offer.price === price),
+        id: nanoid(),
+      }));
 
     return {
       ...point,
@@ -330,7 +333,7 @@ class EditForm extends SmartView {
       hasBasePrice: false,
     };
 
-    if (value.length !== 0 && this._numberPattern.test(value)) {
+    if (value.length !== 0 && NUMBER_PATTERN.test(value)) {
       update.hasBasePrice = true;
       update.basePrice = +value;
     } else {
@@ -401,7 +404,7 @@ class EditForm extends SmartView {
 
     if (this._cityNamesData.includes(cityName)) {
       const destination = this._destinationsData
-        .filter((name) => name === cityName);
+        .filter(({ name }) => name === cityName)[0];
       const updatedState = {
         destination,
         hasDescription: destination.description.length !== 0,

@@ -1,3 +1,5 @@
+const NUMBER_PATTERN = /^\d+$/;
+
 const POINT_TYPE = [
   'taxi',
   'bus',
@@ -10,11 +12,11 @@ const POINT_TYPE = [
   'restaurant',
 ];
 
-const FILTER_MESSAGE = {
-  everything: 'Click New Event to create your first point',
-  past: 'There are no past events now',
-  future: 'There are no future events now',
-  loading: 'Loading...',
+const Messages = {
+  EVERYTHING: 'Click New Event to create your first point',
+  FUTURE: 'There are no past events now',
+  PAST: 'There are no future events now',
+  LOADING: 'Loading...',
 };
 
 const UserAction = {
@@ -48,8 +50,9 @@ const MenuType = {
 };
 
 export {
+  NUMBER_PATTERN,
   POINT_TYPE,
-  FILTER_MESSAGE,
+  Messages,
   UserAction,
   UpdateType,
   FilterType,

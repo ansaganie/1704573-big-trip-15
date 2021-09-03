@@ -1,4 +1,8 @@
 class Destination {
+  constructor () {
+    this._destinations = null;
+  }
+
   setDestination(destinations) {
     this._destinations = destinations;
   }

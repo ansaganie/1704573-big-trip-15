@@ -2,7 +2,7 @@ import TripPresenter from './presenter/trip.js';
 import HeaderPresenter from './presenter/header.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
-import Api from './api';
+import Api from './api/api';
 import OfferModel from './model/offers.js';
 import DestinationModel from './model/destination.js';
 
@@ -25,23 +25,12 @@ const offersPromise = api.getOffers();
 const destinationsPromise = api.getDestinations();
 const pointsPromise = api.getPoints();
 
-Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
-  ([offers, destinations, points]) => {
-    offersModel.setOffers(offers);
-    destinationsModel.setDestination(destinations);
-    pointsModel.setPoints(points);
-    document.querySelector('.trip-main__event-add-btn').disabled = false;
-  },
-).catch(() => {
-  //TODO: show error message
-});
-
 const tripPresenter = new TripPresenter(
   tripContainer,
   pointsModel,
   filterModel,
-  offersModel.getOffers(),
-  destinationsModel.getDestinations(),
+  offersModel,
+  destinationsModel,
 );
 
 const headerPresenter = new HeaderPresenter(
@@ -54,5 +43,18 @@ const headerPresenter = new HeaderPresenter(
   tripPresenter,
 );
 
-headerPresenter.init();
-tripPresenter.init();
+tripPresenter.showLoading();
+
+Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
+  ([offers, destinations, points]) => {
+    offersModel.setOffers(offers);
+    destinationsModel.setDestination(destinations);
+    pointsModel.setPoints(points);
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
+    tripPresenter.init();
+    headerPresenter.init();
+  },
+).catch((err) => {
+  throw err;
+});
+

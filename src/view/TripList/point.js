@@ -91,15 +91,15 @@ const createEventItem = ({
 };
 
 class EventItem extends AbstractView{
-  constructor(event) {
+  constructor(point) {
     super();
-    this._event = event;
+    this._point = point;
     this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
-    return createEventItem(this._event);
+    return createEventItem(this._point);
   }
 
   _onRollDownButtonClick(evt) {

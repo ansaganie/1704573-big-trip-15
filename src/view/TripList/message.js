@@ -1,19 +1,16 @@
-import { FILTER_MESSAGE } from '../../utils/const';
 import AbstractView from '../abstract';
 
 const createMessageTemplate = (message) =>
   `<p class="trip-events__msg">${message}</p>`;
 
 class Message extends AbstractView {
-  constructor(filterType) {
+  constructor(message) {
     super();
-    this._currentFilter = filterType;
+    this._currentMessage = message;
   }
 
   getTemplate() {
-    return createMessageTemplate(
-      FILTER_MESSAGE[this._currentFilter],
-    );
+    return createMessageTemplate(this._currentMessage);
   }
 }
 
