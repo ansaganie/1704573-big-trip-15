@@ -266,16 +266,17 @@ class EditForm extends SmartView {
     }
   }
 
-  _convertPointDataToState(event) {
-    const { offers, destination } = event;
+  _convertPointDataToState(point) {
+    const { offers, destination } = point;
 
-    const offersWithId = offers.map((offer) => ({
+    const offersWithId = this._offersData.map((offer) => ({
       ...offer,
+      isChecked: offers.includes(offer),
       id: nanoid(),
     }));
 
     return {
-      ...event,
+      ...point,
       offers: offersWithId,
       hasOffers: offers.length !== 0,
       hasDescription: destination.description.length !== 0,
@@ -290,7 +291,12 @@ class EditForm extends SmartView {
     delete this._state.hasPictures;
     delete this._state.hasOffers;
     delete this._state.hasBasePrice;
-    this._state.offers.forEach((offer) => delete offer.id);
+
+    this._state.offers = this._state.offers.filter((offer) => offer.isChecked);
+    this._state.offers.forEach((offer) => {
+      delete offer.id;
+      delete offer.isChecked;
+    });
 
     return this._state;
   }
