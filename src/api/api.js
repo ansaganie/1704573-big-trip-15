@@ -1,3 +1,6 @@
+import OffersAdapter from './offers-adapter.js';
+import PointsAdapter from './points-adapter.js';
+
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
@@ -20,13 +23,26 @@ class Api {
   getPoints() {
     return this._load({
       endPoint: EndPoints.POINTS,
-    }).then(Api.toJSON);
+    }).then(Api.toJSON)
+      .then((points) => points
+        .map((point) => PointsAdapter.adaptServerToClient(point)));
+  }
+
+  updatePoint(point) {
+    return this._load({
+      url: `points/${point.id}`,
+      method: Method.PUT,
+      body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    })
+      .then(Api.toJSON);
   }
 
   getOffers() {
     return this._load({
       endPoint: EndPoints.OFFERS,
-    }).then((Api.toJSON));
+    }).then((Api.toJSON))
+      .then(OffersAdapter.adaptServerToClient);
   }
 
   getDestinations() {
@@ -52,7 +68,7 @@ class Api {
   }
 
   static checkStatus(response) {
-    if (!response.ok) {
+    if (response.ok === false) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
 
