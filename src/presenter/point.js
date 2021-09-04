@@ -91,7 +91,7 @@ class Point {
     this._mode = Mode.DEFAULT;
   }
 
-  _handleFormSubmit(updatedPoint) {
+  _handleFormSubmit(updatedPoint, showPending, stopPending, showError) {
     const { dateFrom, dateTo, basePrice, type, offers} = this._point;
 
     let isOffersChanged = false;
@@ -116,16 +116,21 @@ class Point {
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       updatedPoint,
+      showError,
+      showPending,
+      stopPending,
+      this._closeEditForm.bind(this),
     );
-
-    this._closeEditForm();
   }
 
-  _handleDeleteClick(deletedPoint) {
+  _handleDeleteClick(deletedPoint, showPending, stopPending, showError) {
     this._updateModel(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
       deletedPoint,
+      showError,
+      showPending,
+      stopPending,
     );
   }
 

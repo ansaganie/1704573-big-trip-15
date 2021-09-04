@@ -134,6 +134,12 @@ class EditForm extends SmartView {
     this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
     this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
+    this._showDeleting = this._showDeleting.bind(this);
+    this._hideDeleting = this._hideDeleting.bind(this);
+    this._showSaving = this._showSaving.bind(this);
+    this._hideSaving = this._hideSaving.bind(this);
+    this._showError = this._showError.bind(this);
+
     this._setDatePicker();
     this._setInnerEventHandlers();
   }
@@ -222,6 +228,45 @@ class EditForm extends SmartView {
       this._datePickerTo.destroy();
       this._datePickerTo = null;
     }
+  }
+
+  _showDeleting() {
+    this.getElement().querySelector('.event__reset-btn').textContent = 'Deleting';
+    this._disableForm();
+  }
+
+  _hideDeleting() {
+    this.getElement().querySelector('.event__reset-btn').textContent = 'Delete';
+    this._enableForm();
+  }
+
+  _showSaving() {
+    this.getElement().querySelector('.event__save-btn').textContent = 'Saving';
+    this._disableForm();
+  }
+
+  _hideSaving() {
+    this.getElement().querySelector('.event__save-btn').textContent = 'Save';
+    this._enableForm();
+  }
+
+  _disableForm() {
+    this.getElement().querySelectorAll('input')
+      .forEach((input) => input.disabled = true);
+    this.getElement().querySelector('.event__reset-btn').disabled = true;
+    this.getElement().querySelector('.event__save-btn').disabled = true;
+  }
+
+  _enableForm() {
+    this.getElement().querySelectorAll('input')
+      .forEach((input) => input.disabled = false);
+    this.getElement().querySelector('.event__reset-btn').disabled = false;
+    this.getElement().querySelector('.event__save-btn').disabled = false;
+  }
+
+  _showError() {
+    this.getElement().classList.add('shake');
+    setTimeout(() => this.getElement().classList.add('shake'), 1000);
   }
 
   _setDatePicker() {
@@ -359,6 +404,9 @@ class EditForm extends SmartView {
     evt.preventDefault();
     this._callback.submitForm(
       this._convertStateToPointData(this._state),
+      this._showSaving,
+      this._hideSaving,
+      this._showError,
     );
   }
 
@@ -366,6 +414,9 @@ class EditForm extends SmartView {
     evt.preventDefault();
     this._callback.clickDelete(
       this._convertStateToPointData(this._state),
+      this._showDeleting,
+      this._hideDeleting,
+      this._showError,
     );
   }
 

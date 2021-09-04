@@ -80,14 +80,16 @@ class NewPoint {
     }
   }
 
-  _handleFormSubmit(newPoint) {
+  _handleFormSubmit(newPoint, showPending, stopPending, showError) {
     this._updateModel(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       { ...newPoint },
+      showPending,
+      stopPending,
+      this.destroy.bind(this),
+      showError,
     );
-
-    this.destroy();
   }
 }
 
