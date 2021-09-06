@@ -136,18 +136,47 @@ class Trip {
     this._renderTrip();
   }
 
-  _handleViewUpdate(userAction, updateType, updatedPoint) {
+  _handleViewUpdate(
+    userAction,
+    updateType,
+    updatedPoint,
+    showError,
+    showPending,
+    hidePending,
+    closeForm,
+
+  ) {
     switch (userAction) {
       case UserAction.ADD_POINT:
-        this._pointsModel.add(updateType, updatedPoint);
+        this._pointsModel.add(
+          updateType,
+          updatedPoint,
+          showPending,
+          hidePending,
+          closeForm,
+          showError,
+        );
         break;
 
       case UserAction.UPDATE_POINT:
-        this._pointsModel.update(updateType, updatedPoint);
+        this._pointsModel.update(
+          updateType,
+          updatedPoint,
+          showPending,
+          hidePending,
+          closeForm,
+          showError,
+        );
         break;
 
       case UserAction.DELETE_POINT:
-        this._pointsModel.delete(updateType, updatedPoint);
+        this._pointsModel.delete(
+          updateType,
+          updatedPoint,
+          showPending,
+          hidePending,
+          showError,
+        );
         break;
     }
   }

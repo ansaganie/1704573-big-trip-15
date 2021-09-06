@@ -1,4 +1,3 @@
-import Api from '../api/api';
 import AbstractObservable from '../utils/abstract-observable';
 
 class Points extends AbstractObservable {
@@ -13,25 +12,42 @@ class Points extends AbstractObservable {
     this._points = points.slice();
   }
 
-  add(updateType, newPoint) {
+  add(updateType, newPoint, showPending, hidePending, closeForm, showError) {
+    if(showPending) {
+      showPending();
+    }
+
     this._api.addPoint(newPoint)
       .then((point) => {
         this._points = [...this._points, point];
 
+        if (hidePending) {
+          hidePending();
+          closeForm();
+        }
+
         this._notifyAll(updateType, newPoint);
       })
-      .catch(Api.catchError);
+      .catch((err) => {
+        hidePending();
+        showError();
+        throw err;
+      });
   }
 
   getPoints() {
     return this._points;
   }
 
-  update(updateType, updatedPoint) {
+  update(updateType, updatedPoint, showPending, hidePending, closeForm, showError) {
     const index = this._points.findIndex((point) => point.id === updatedPoint.id);
 
     if (index === -1) {
       throw new Error('Can\'t update nonexistent point');
+    }
+
+    if(showPending) {
+      showPending();
     }
 
     this._api.updatePoint(updatedPoint)
@@ -42,19 +58,28 @@ class Points extends AbstractObservable {
           ...this._points.slice(index + 1),
         ];
 
+        if (hidePending) {
+          hidePending();
+          closeForm();
+        }
+
         this._notifyAll(updateType, point);
       })
-      .catch(Api.catchError);
+      .catch((err) => {
+        hidePending();
+        showError();
+        throw err;
+      });
   }
 
 
-  delete(updateType, deletedPoint) {
+  delete(updateType, deletedPoint, showPending, hidePending, showError) {
     const index = this._points.findIndex((point) => point.id === deletedPoint.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete nonexistent point');
     }
-
+    showPending();
     this._api.deletePoint(deletedPoint)
       .then(() => {
         this._points = [
@@ -62,9 +87,15 @@ class Points extends AbstractObservable {
           ...this._points.slice(index + 1),
         ];
 
+        hidePending();
+
         this._notifyAll(updateType);
       })
-      .catch(Api.catchError);
+      .catch((err) => {
+        hidePending();
+        showError();
+        throw err;
+      });
   }
 }
 
