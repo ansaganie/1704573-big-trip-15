@@ -139,6 +139,7 @@ class EditForm extends SmartView {
     this._showSaving = this._showSaving.bind(this);
     this._hideSaving = this._hideSaving.bind(this);
     this._showError = this._showError.bind(this);
+    this._removeError = this._removeError.bind(this);
 
     this._setDatePicker();
     this._setInnerEventHandlers();
@@ -264,9 +265,15 @@ class EditForm extends SmartView {
     this.getElement().querySelector('.event__save-btn').disabled = false;
   }
 
+  _removeError() {
+    this.getElement().classList.remove('shake');
+    this._enableForm();
+  }
+
   _showError() {
     this.getElement().classList.add('shake');
-    setTimeout(() => this.getElement().classList.add('shake'), 1000);
+    this._disableForm();
+    setTimeout(this._removeError, 1000);
   }
 
   _setDatePicker() {
