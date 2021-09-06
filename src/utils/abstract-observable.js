@@ -1,4 +1,4 @@
-class AbstractObserverable {
+class AbstractObservable {
   constructor() {
     this._observers = new Set();
   }
@@ -12,8 +12,10 @@ class AbstractObserverable {
   }
 
   _notifyAll(updateType, update) {
-    this._observers.forEach((observer) => observer(updateType, update));
+    this._observers.forEach((observer) => {
+      observer(updateType, update);
+    });
   }
 }
 
-export default AbstractObserverable;
+export default AbstractObservable;

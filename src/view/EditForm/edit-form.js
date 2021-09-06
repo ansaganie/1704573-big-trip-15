@@ -1,33 +1,18 @@
 import { capitalize } from 'lodash';
-import { CITY_NAMES } from '../../mock/event.js';
-import { offers as offersMock } from '../../mock/offer.js';
 import { isDateEquals, formatDate, isBefore } from '../../utils/date.js';
 import CityNames from './city-names.js';
 import Destination from './destination.js';
 import EventType from './event-type.js';
 import Offers from './offer.js';
 import SmartView from '../smart.js';
-import { getRandomDestination } from '../../mock/destination.js';
 import flatpickr from 'flatpickr';
 import { nanoid } from 'nanoid';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 import '../../../node_modules/flatpickr/dist/themes/airbnb.css';
+import { NUMBER_PATTERN } from '../../utils/const.js';
 
-const BLANK_EVENT = {
-  type: 'taxi',
-  offers: offersMock['taxi'],
-  destination: {
-    name: '',
-    description: '',
-    pictures: [],
-  },
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  basePrice: 0,
-};
-
-const createEditFormTemplate = (event = BLANK_EVENT) => {
+const createEditFormTemplate = (point, cityNames, types) => {
   const {
     type,
     offers,
@@ -40,16 +25,16 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
     hasOffers,
     hasBasePrice,
     hasCityName,
-  } = event;
+  } = point;
   const offersTemplate = hasOffers ? new Offers(offers).getTemplate() : '';
-  const cityListTemplate = new CityNames(CITY_NAMES).getTemplate();
+  const cityListTemplate = new CityNames(cityNames).getTemplate();
 
   const destinationTemplate =
     hasPictures || hasDescription
       ? new Destination(destination, hasDescription, hasPictures).getTemplate()
       : '' ;
 
-  const eventTypeTemplate = new EventType(type).getTemplate();
+  const eventTypeTemplate = new EventType(type, types).getTemplate();
   const isSaveDisabled = !hasBasePrice || !hasCityName || !dateFrom || !dateTo;
 
   return (
@@ -118,14 +103,25 @@ const createEditFormTemplate = (event = BLANK_EVENT) => {
 };
 
 class EditForm extends SmartView {
-  constructor(pointData) {
+  constructor(
+    offersData,
+    cityNamesData,
+    destinationsData,
+    pointData,
+  ) {
     super();
+    this._offersData = offersData;
+    this._cityNamesData = cityNamesData;
+    this._destinationsData = destinationsData;
+
+    this._state = null;
+
+    if (pointData) {
+      this._state = this._convertPointDataToState(pointData);
+    }
 
     this._datePickerFrom = null;
     this._datePickerTo = null;
-    this._numberPattern = /^\d+$/;
-
-    this._state = this._convertPointDataToState(pointData);
 
     this._onRollUpButtonClick = this._onRollUpButtonClick.bind(this);
     this._onFormSubmit = this._onFormSubmit.bind(this);
@@ -143,7 +139,23 @@ class EditForm extends SmartView {
   }
 
   getTemplate() {
-    return createEditFormTemplate(this._state);
+    if (this._state === null) {
+      this._state = this._convertPointDataToState({
+        type: 'taxi',
+        offers: [],
+        destination: this._destinationsData[0],
+        dateFrom: new Date(),
+        dateTo: new Date(),
+        basePrice: 0,
+        isFavorite: false,
+      });
+    }
+
+    return createEditFormTemplate(
+      this._state,
+      this._cityNamesData,
+      Object.keys(this._offersData),
+    );
   }
 
   restoreHandlers() {
@@ -261,18 +273,21 @@ class EditForm extends SmartView {
     }
   }
 
-  _convertPointDataToState(event) {
-    const { offers, destination } = event;
+  _convertPointDataToState(point) {
+    const { offers, type, destination } = point;
 
-    const offersWithId = offers.map((offer) => ({
-      ...offer,
-      id: nanoid(),
-    }));
+    const offersWithId = this._offersData[type]
+      .map((offer) => ({
+        ...offer,
+        isChecked: offers.some(({title, price}) =>
+          offer.title === title && offer.price === price),
+        id: nanoid(),
+      }));
 
     return {
-      ...event,
+      ...point,
       offers: offersWithId,
-      hasOffers: offers.length !== 0,
+      hasOffers: offersWithId.length !== 0,
       hasDescription: destination.description.length !== 0,
       hasPictures: destination.pictures.length !== 0,
       hasCityName: destination.name.length !== 0,
@@ -285,7 +300,13 @@ class EditForm extends SmartView {
     delete this._state.hasPictures;
     delete this._state.hasOffers;
     delete this._state.hasBasePrice;
-    this._state.offers.forEach((offer) => delete offer.id);
+    delete this._state.hasCityName;
+
+    this._state.offers = this._state.offers.filter((offer) => offer.isChecked);
+    this._state.offers.forEach((offer) => {
+      delete offer.id;
+      delete offer.isChecked;
+    });
 
     return this._state;
   }
@@ -319,7 +340,7 @@ class EditForm extends SmartView {
       hasBasePrice: false,
     };
 
-    if (value.length !== 0 && this._numberPattern.test(value)) {
+    if (value.length !== 0 && NUMBER_PATTERN.test(value)) {
       update.hasBasePrice = true;
       update.basePrice = +value;
     } else {
@@ -349,7 +370,7 @@ class EditForm extends SmartView {
   }
 
   _onEventTypeChange({ target }) {
-    const offers = offersMock[target.value].map((offer) => ({
+    const offers = this._offersData[target.value].map((offer) => ({
       ...offer,
       isChecked: false,
       id: nanoid(),
@@ -388,8 +409,9 @@ class EditForm extends SmartView {
   _onCityNameChange({ target }) {
     const cityName = target.value;
 
-    if (CITY_NAMES.includes(cityName)) {
-      const destination = getRandomDestination(cityName);
+    if (this._cityNamesData.includes(cityName)) {
+      const destination = this._destinationsData
+        .filter(({ name }) => name === cityName)[0];
       const updatedState = {
         destination,
         hasDescription: destination.description.length !== 0,

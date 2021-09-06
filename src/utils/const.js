@@ -1,20 +1,11 @@
-const POINT_TYPE = [
-  'taxi',
-  'bus',
-  'train',
-  'ship',
-  'drive',
-  'flight',
-  'check-in',
-  'sightseeing',
-  'restaurant',
-];
+const NUMBER_PATTERN = /^\d+$/;
 
-const FILTER_MESSAGE = {
-  everything: 'Click New Event to create your first point',
-  past: 'There are no past events now',
-  future: 'There are no future events now',
-  loading: 'Loading...',
+const Messages = {
+  EVERYTHING: 'Click New Event to create your first point',
+  FUTURE: 'There are no past events now',
+  PAST: 'There are no future events now',
+  LOADING: 'Loading...',
+  SERVER_ERROR: 'Something went wrong. </br> Please try to refresh the page',
 };
 
 const UserAction = {
@@ -27,6 +18,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const FilterType = {
@@ -46,13 +38,28 @@ const MenuType = {
   STATS: 'STATS',
 };
 
+const HttpMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+const EndPoints = {
+  OFFERS: 'offers',
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+};
+
 export {
-  POINT_TYPE,
-  FILTER_MESSAGE,
+  NUMBER_PATTERN,
+  Messages,
   UserAction,
   UpdateType,
   FilterType,
   SortType,
-  MenuType
+  MenuType,
+  HttpMethod,
+  EndPoints
 };
 

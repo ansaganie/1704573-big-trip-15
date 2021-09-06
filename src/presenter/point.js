@@ -10,10 +10,20 @@ const Mode = {
 };
 
 class Point {
-  constructor(container, updateModel, closeOpenForm) {
+  constructor(
+    container,
+    offers,
+    cityNames,
+    destinations,
+    updateModel,
+    closeOtherForms,
+  ) {
     this._container = container;
+    this._offers = offers;
+    this._cityNames = cityNames;
+    this._destinations = destinations;
     this._updateModel = updateModel;
-    this._closeOpenForm = closeOpenForm;
+    this._closeOtherForms = closeOtherForms;
 
     this._pointComponent = null;
     this._editComponent = null;
@@ -34,7 +44,12 @@ class Point {
     const prevPointEditComponent = this._editComponent;
 
     this._pointComponent = new PointView(point);
-    this._editComponent = new FormView(point);
+    this._editComponent = new FormView(
+      this._offers,
+      this._cityNames,
+      this._destinations,
+      this._point,
+    );
 
     this._pointComponent.setRollDownButtonClickHandler(
       this._handleRollDownClick,
@@ -83,16 +98,11 @@ class Point {
 
     if (type !== updatedPoint.type) {
       isOffersChanged = true;
-    } else {
-      for(let i = 0; i < offers.length; i++) {
-        const first = offers[i];
-        const second = updatedPoint.offers.find((offer) => first.id === offer.id);
-
-        if (first.isChecked !== second.isChecked) {
-          isOffersChanged = true;
-          break;
-        }
-      }
+    } else if (
+      JSON.stringify(offers) !==
+      JSON.stringify(updatedPoint.offers)
+    ) {
+      isOffersChanged = true;
     }
 
     const isMinorUpdate =
@@ -139,13 +149,14 @@ class Point {
     this._editComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     replace(this._editComponent, this._pointComponent);
-    this._closeOpenForm();
+    this._closeOtherForms();
     this._mode = Mode.EDITING;
   }
 
   _handleFavoriteClick() {
     const update = { ...this._point };
     update.isFavorite = !this._point.isFavorite;
+
     this._updateModel(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,

@@ -2,13 +2,12 @@ import AbstractView from '../abstract.js';
 import { formatDate, calculateDiff, formatDuration } from '../../utils/date.js';
 import { capitalize } from 'lodash';
 
-const createOfferTemplate = ({ title, price, isChecked }) => (
-  isChecked
-    ? (`<li class="event__offer">
-        <span class="event__offer-title">${title}</span>
-        +€&nbsp;
-        <span class="event__offer-price">${price}</span>
-      </li>`) : ''
+const createOfferTemplate = ({ title, price }) => (
+  `<li class="event__offer">
+    <span class="event__offer-title">${title}</span>
+    +€&nbsp;
+    <span class="event__offer-price">${price}</span>
+  </li>`
 );
 
 const createEventScheduleTemplate = (dateFrom, dateTo) =>
@@ -91,15 +90,15 @@ const createEventItem = ({
 };
 
 class EventItem extends AbstractView{
-  constructor(event) {
+  constructor(point) {
     super();
-    this._event = event;
+    this._point = point;
     this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
   }
 
   getTemplate() {
-    return createEventItem(this._event);
+    return createEventItem(this._point);
   }
 
   _onRollDownButtonClick(evt) {

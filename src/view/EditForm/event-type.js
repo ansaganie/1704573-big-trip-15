@@ -1,16 +1,15 @@
 import { capitalize } from 'lodash';
 import AbstractView from '../abstract.js';
-import { POINT_TYPE } from '../../utils/const.js';
 
-export const createEventTypeTemplate = (type) => {
-  const CHECKED = POINT_TYPE.reduce(
+export const createEventTypeTemplate = (type, types) => {
+  const CHECKED = types.reduce(
     (obj, elem) => ({...obj, [elem]: ''}),
     {},
   );
 
   CHECKED[type] = 'checked';
 
-  const eventTypeItems = POINT_TYPE
+  const eventTypeItems = types
     .map((point) =>
       `<div class="event__type-item">
         <input
@@ -44,13 +43,14 @@ export const createEventTypeTemplate = (type) => {
 };
 
 class EventType extends AbstractView {
-  constructor(type) {
+  constructor(type, types) {
     super();
     this._type = type;
+    this._types = types;
   }
 
   getTemplate() {
-    return createEventTypeTemplate(this._type);
+    return createEventTypeTemplate(this._type, this._types);
   }
 }
 

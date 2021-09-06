@@ -2,27 +2,25 @@ import { isEscapePressed } from '../utils/common.js';
 import { UpdateType, UserAction } from '../utils/const.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import FormView from '../view/EditForm/edit-form.js';
-import { nanoid } from 'nanoid';
-import { offers } from '../mock/offer.js';
-
-const BLANK_EVENT = {
-  type: 'taxi',
-  offers: offers['taxi'],
-  destination: {
-    name: '',
-    description: '',
-    pictures: [],
-  },
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  basePrice: 0,
-};
 
 class NewPoint {
-  constructor(container, updateModel, closeForm, enableNewPointButton) {
+  constructor(
+    container,
+    offers,
+    cityNames,
+    destinations,
+    updateModel,
+    closeOtherForms,
+    handleNewPointFormClose,
+    enableNewPointButton,
+  ) {
     this._container = container;
+    this._offers = offers;
+    this._cityNames = cityNames;
+    this._destinations = destinations;
     this._updateModel = updateModel;
-    this._closeForm = closeForm;
+    this._closeOtherForms = closeOtherForms;
+    this._handleNewPointFormClose = handleNewPointFormClose;
     this._enableNewPointButton = enableNewPointButton;
 
     this._editComponent = null;
@@ -37,8 +35,13 @@ class NewPoint {
     if (this._editComponent !== null) {
       return;
     }
-    this._closeForm();
-    this._editComponent = new FormView(BLANK_EVENT);
+
+    this._closeOtherForms();
+    this._editComponent = new FormView(
+      this._offers,
+      this._cityNames,
+      this._destinations,
+    );
     this._editComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
@@ -62,10 +65,12 @@ class NewPoint {
 
   _handleDeleteClick() {
     this.destroy();
+    this._handleNewPointFormClose();
   }
 
   _handleRollUpClick() {
     this.destroy();
+    this._handleNewPointFormClose();
   }
 
   _handleEscKeydown(evt) {
@@ -79,10 +84,7 @@ class NewPoint {
     this._updateModel(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {
-        ...newPoint,
-        id: nanoid(),
-      },
+      { ...newPoint },
     );
 
     this.destroy();
