@@ -30,6 +30,17 @@ class Trip {
     this._destinationsModel = destinationsModel;
 
     this._newPointPresenter = null;
+    this._userActionHandlers = {
+      [UserAction.ADD_POINT]: (updateType, updatedPoint, pendings) => {
+        this._pointsModel.add(updateType, updatedPoint, pendings);
+      },
+      [UserAction.UPDATE_POINT]: (updateType, updatedPoint, pendings) => {
+        this._pointsModel.update(updateType, updatedPoint, pendings);
+      },
+      [UserAction.DELETE_POINT]: (updateType, updatedPoint, pendings) => {
+        this._pointsModel.delete(updateType, updatedPoint, pendings);
+      },
+    };
 
     this._pointPresenters = new Map();
     this._currentSortType = SortType.DAY;
@@ -136,49 +147,12 @@ class Trip {
     this._renderTrip();
   }
 
-  _handleViewUpdate(
-    userAction,
-    updateType,
-    updatedPoint,
-    showError,
-    showPending,
-    hidePending,
-    closeForm,
-
-  ) {
-    switch (userAction) {
-      case UserAction.ADD_POINT:
-        this._pointsModel.add(
-          updateType,
-          updatedPoint,
-          showPending,
-          hidePending,
-          closeForm,
-          showError,
-        );
-        break;
-
-      case UserAction.UPDATE_POINT:
-        this._pointsModel.update(
-          updateType,
-          updatedPoint,
-          showPending,
-          hidePending,
-          closeForm,
-          showError,
-        );
-        break;
-
-      case UserAction.DELETE_POINT:
-        this._pointsModel.delete(
-          updateType,
-          updatedPoint,
-          showPending,
-          hidePending,
-          showError,
-        );
-        break;
-    }
+  _handleViewUpdate(userAction, updateType, updatedPoint, pendings) {
+    this._userActionHandlers[userAction](
+      updateType,
+      updatedPoint,
+      pendings,
+    );
   }
 
   _handleModelUpdate(updateType, update) {

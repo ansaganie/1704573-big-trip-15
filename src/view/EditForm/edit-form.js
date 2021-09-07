@@ -411,9 +411,11 @@ class EditForm extends SmartView {
     evt.preventDefault();
     this._callback.submitForm(
       this._convertStateToPointData(this._state),
-      this._showSaving,
-      this._hideSaving,
-      this._showError,
+      {
+        showPending: this._showSaving,
+        hidePending: this._hideSaving,
+        showError: this._showError,
+      },
     );
   }
 
@@ -421,9 +423,11 @@ class EditForm extends SmartView {
     evt.preventDefault();
     this._callback.clickDelete(
       this._convertStateToPointData(this._state),
-      this._showDeleting,
-      this._hideDeleting,
-      this._showError,
+      {
+        showPending: this._showDeleting,
+        hidePending: this._hideDeleting,
+        showError: this._showError,
+      },
     );
   }
 

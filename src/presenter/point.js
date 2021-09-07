@@ -91,7 +91,7 @@ class Point {
     this._mode = Mode.DEFAULT;
   }
 
-  _handleFormSubmit(updatedPoint, showPending, stopPending, showError) {
+  _handleFormSubmit(updatedPoint, pendings) {
     const { dateFrom, dateTo, basePrice, type, offers} = this._point;
 
     let isOffersChanged = false;
@@ -112,25 +112,22 @@ class Point {
       type !== updatedPoint.type ||
       isOffersChanged;
 
+    pendings.closeForm = this._closeEditForm.bind(this);
+
     this._updateModel(
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       updatedPoint,
-      showError,
-      showPending,
-      stopPending,
-      this._closeEditForm.bind(this),
+      pendings,
     );
   }
 
-  _handleDeleteClick(deletedPoint, showPending, stopPending, showError) {
+  _handleDeleteClick(deletedPoint, pendings) {
     this._updateModel(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
       deletedPoint,
-      showError,
-      showPending,
-      stopPending,
+      pendings,
     );
   }
 
@@ -158,7 +155,7 @@ class Point {
     this._mode = Mode.EDITING;
   }
 
-  _handleFavoriteClick() {
+  _handleFavoriteClick(pendings) {
     const update = { ...this._point };
     update.isFavorite = !this._point.isFavorite;
 
@@ -166,6 +163,7 @@ class Point {
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       update,
+      pendings,
     );
   }
 }

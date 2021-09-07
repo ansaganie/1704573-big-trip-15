@@ -6,7 +6,7 @@ import Api from './api/api';
 import OfferModel from './model/offers.js';
 import DestinationModel from './model/destination.js';
 
-const MAIN_URL = 'https://15.ecmascript.pages.academy/big-trip';
+const MAIN_URL = 'https://14.ecmascript.pages.academy/big-trip';
 const AUTH_KEY = 'Basic dde64ScQvzaUhkmz';
 const api = new Api(MAIN_URL, AUTH_KEY);
 
@@ -59,6 +59,6 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
 ).catch((err) => {
   tripPresenter.hideLoading();
   tripPresenter.showServerError();
+  pointsModel.setPoints([]);
   throw err;
 });
-

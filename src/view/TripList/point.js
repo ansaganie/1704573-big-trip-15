@@ -92,9 +92,13 @@ const createEventItem = ({
 class EventItem extends AbstractView{
   constructor(point) {
     super();
+
     this._point = point;
+
     this._onRollDownButtonClick = this._onRollDownButtonClick.bind(this);
     this._onFavoriteClick = this._onFavoriteClick.bind(this);
+    this._showFavoriteButtonPending = this._showFavoriteButtonPending.bind(this);
+    this._hideFavoriteButtonPending = this._hideFavoriteButtonPending.bind(this);
   }
 
   getTemplate() {
@@ -106,9 +110,41 @@ class EventItem extends AbstractView{
     this._callback.clickRollDownButton();
   }
 
+  _disableFavoriteButton() {
+    this.getElement()
+      .querySelector('.event__favorite-btn')
+      .disabled = true;
+  }
+
+  _enableFavoriteButton() {
+    this.getElement()
+      .querySelector('.event__favorite-btn')
+      .disabled = false;
+  }
+
+  _showFavoriteButtonPending() {
+    this._disableFavoriteButton();
+    document.body.style.cursor = 'wait';
+    this.getElement()
+      .querySelector('.event__favorite-btn')
+      .style.cursor = 'wait';
+  }
+
+  _hideFavoriteButtonPending() {
+    this._enableFavoriteButton();
+    document.body.style.cursor = 'auto';
+    this.getElement()
+      .querySelector('.event__favorite-btn')
+      .style.cursor = 'auto';
+  }
+
   _onFavoriteClick(evt) {
     evt.preventDefault();
-    this._callback.clickFavorite();
+    this._callback.clickFavorite({
+      showPending: this._showFavoriteButtonPending,
+      hidePending: this._hideFavoriteButtonPending,
+      showError: function() {},
+    });
   }
 
   setRollDownButtonClickHandler(handler) {
