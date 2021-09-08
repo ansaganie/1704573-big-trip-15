@@ -62,3 +62,7 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
   pointsModel.setPoints([]);
   throw err;
 });
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/serviceWorker.js');
+});
