@@ -10,6 +10,7 @@ import PointsStorage from './api/points-storage.js';
 import DestinationsStorage from './api/destinations-storage.js';
 import OffersStorage from './api/offers-storage.js';
 import { isOnline } from './utils/common.js';
+import { toast } from './utils/toast.js';
 
 const MAIN_URL = 'https://14.ecmascript.pages.academy/big-trip';
 const AUTH_KEY = 'Basic dde64ScQvzaUhkmz';
@@ -95,8 +96,12 @@ window.addEventListener('load', () => {
 
 window.addEventListener('online', () => {
   document.title = document.title.replace(' [offline]', '');
+  toast('online', 'green');
+
+  proxyApi.sync();
 });
 
 window.addEventListener('offline', () => {
   document.title += ' [offline]';
+  toast('offline');
 });

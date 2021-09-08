@@ -12,6 +12,23 @@ class ProxyApi {
     this._pointsStorage = pointsStorage;
     this._offersStorage = offersStorage;
     this._destinationsStorage = destinationsStorage;
+
+    this._needToSync = false;
+  }
+
+  static getSyncedPoints(points) {
+    return points.map(({ success, payload }) => {
+      if (success) {
+        return payload.point;
+      }
+    });
+  }
+
+  static convertPointsToStorageStructure(points) {
+    return points.reduce((acc, point) => ({
+      ...acc,
+      [point.id]: point,
+    }), {});
   }
 
   getOffers() {
@@ -61,7 +78,7 @@ class ProxyApi {
     if (isOnline()) {
       return this._api.getPoints()
         .then((points) => {
-          const converted = this._convertPointsToStorageStructure(
+          const converted = ProxyApi.convertPointsToStorageStructure(
             points.map(PointsAdapter.adaptClientToServer),
           );
           this._pointsStorage.setItems(converted);
@@ -89,6 +106,7 @@ class ProxyApi {
       point.id,
       { ...PointsAdapter.adaptClientToServer(point) },
     );
+    this._needToSync = true;
 
     return Promise.resolve(point);
   }
@@ -100,11 +118,25 @@ class ProxyApi {
     return Promise.reject(new Error('Can not delete point in offline'));
   }
 
-  _convertPointsToStorageStructure(points) {
-    return points.reduce((acc, point) => ({
-      ...acc,
-      [point.id]: point,
-    }), {});
+  sync() {
+    if (isOnline() && this._needToSync) {
+      const points = Object.values(this._pointsStorage.getItems()) ;
+
+      return this._api.sync(points)
+        .then((response) => {
+          const createdPoints = ProxyApi.getSyncedPoints(response.created);
+          const updatedPoints = ProxyApi.getSyncedPoints(response.updated);
+
+          const items = ProxyApi.convertPointsToStorageStructure([
+            ...createdPoints,
+            ...updatedPoints,
+          ]);
+
+          this._pointsStorage.setItems(items);
+        });
+    }
+
+    return Promise.reject(new Error('Data sync failed'));
   }
 }
 

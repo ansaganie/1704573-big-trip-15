@@ -1041,8 +1041,12 @@ main {
 .toast-item {
   display: inline-flex;
   margin-bottom: 0.4em;
-  padding: 0.4em;
+  padding: 0.4em 1em;
   border-radius: 0.2em;
   background-color: #fee;
   color: #900;
+}
+
+.green {
+  color: green;
 }

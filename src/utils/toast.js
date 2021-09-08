@@ -4,10 +4,14 @@ const toastContainer = document.createElement('div');
 toastContainer.classList.add('toast-container');
 document.body.append(toastContainer);
 
-const toast = (message) => {
+const toast = (message, addClassName) => {
   const toastItem = document.createElement('div');
   toastItem.textContent = message;
   toastItem.classList.add('toast-item');
+
+  if (addClassName) {
+    toastItem.classList.add(addClassName);
+  }
 
   toastContainer.append(toastItem);
 
