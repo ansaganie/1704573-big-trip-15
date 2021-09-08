@@ -66,9 +66,8 @@ class Api {
       endPoint: EndPoints.POINTS_SYNC,
       method: HttpMethod.POST,
       body: JSON.stringify(data),
-      headers: new Headers({'Content-Type': 'application/json'}),
-    })
-      .then(Api.toJSON);
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    }).then(Api.toJSON);
   }
 
   _load({

@@ -17,8 +17,8 @@ class Points extends AbstractObservable {
 
     showPending();
 
-
-    this._api.addPoint(newPoint)
+    this._api
+      .addPoint(newPoint)
       .then((point) => {
         this._points = [...this._points, point];
 
@@ -49,7 +49,9 @@ class Points extends AbstractObservable {
   update(updateType, updatedPoint, pending) {
     const { showPending, hidePending, showError, closeForm } = pending;
 
-    const index = this._points.findIndex((point) => point.id === updatedPoint.id);
+    const index = this._points.findIndex(
+      (point) => point.id === updatedPoint.id,
+    );
 
     if (index === -1) {
       throw new Error('Can\'t update nonexistent point');
@@ -57,8 +59,8 @@ class Points extends AbstractObservable {
 
     showPending();
 
-
-    this._api.updatePoint(updatedPoint)
+    this._api
+      .updatePoint(updatedPoint)
       .then((point) => {
         this._points = [
           ...this._points.slice(0, index),
@@ -86,11 +88,12 @@ class Points extends AbstractObservable {
       });
   }
 
-
   delete(updateType, deletedPoint, pending) {
     const { showPending, hidePending, showError, closeForm } = pending;
 
-    const index = this._points.findIndex((point) => point.id === deletedPoint.id);
+    const index = this._points.findIndex(
+      (point) => point.id === deletedPoint.id,
+    );
 
     if (index === -1) {
       throw new Error('Can\'t delete nonexistent point');
@@ -98,7 +101,8 @@ class Points extends AbstractObservable {
 
     showPending();
 
-    this._api.deletePoint(deletedPoint)
+    this._api
+      .deletePoint(deletedPoint)
       .then(() => {
         this._points = [
           ...this._points.slice(0, index),

@@ -99,16 +99,13 @@ class Point {
       return;
     }
 
-    const { dateFrom, dateTo, basePrice, type, offers} = this._point;
+    const { dateFrom, dateTo, basePrice, type, offers } = this._point;
 
     let isOffersChanged = false;
 
     if (type !== updatedPoint.type) {
       isOffersChanged = true;
-    } else if (
-      JSON.stringify(offers) !==
-      JSON.stringify(updatedPoint.offers)
-    ) {
+    } else if (JSON.stringify(offers) !== JSON.stringify(updatedPoint.offers)) {
       isOffersChanged = true;
     }
 

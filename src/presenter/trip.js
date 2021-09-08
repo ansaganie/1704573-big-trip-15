@@ -16,7 +16,6 @@ import {
 import { isOnline } from '../utils/common.js';
 import { toast } from '../utils/toast.js';
 
-
 class Trip {
   constructor(
     tripListContainer,
@@ -64,8 +63,8 @@ class Trip {
     this._filterModel.addObserver(this._handleModelUpdate);
 
     this._offersData = this._offersModel.getOffers();
-    this._destinationsData =  this._destinationsModel.getDestinations();
-    this._cityNamesData = this._destinationsData.map(({name}) => name);
+    this._destinationsData = this._destinationsModel.getDestinations();
+    this._cityNamesData = this._destinationsData.map(({ name }) => name);
 
     this._renderTrip();
   }
@@ -92,7 +91,7 @@ class Trip {
 
     this._newPointPresenter.init();
 
-    if(this._listComponent.getElement().parentElement === undefined) {
+    if (this._listComponent.getElement().parentElement === undefined) {
       replace(this._listComponent, this._noPointComponent);
     }
   }
@@ -125,7 +124,8 @@ class Trip {
   }
 
   _getPoints() {
-    const points = this._pointsModel.getPoints()
+    const points = this._pointsModel
+      .getPoints()
       .filter(filters[this._filterModel.getFilterType()]);
 
     switch (this._currentSortType) {
@@ -156,11 +156,7 @@ class Trip {
   }
 
   _handleViewUpdate(userAction, updateType, updatedPoint, pending) {
-    this._userActionHandlers[userAction](
-      updateType,
-      updatedPoint,
-      pending,
-    );
+    this._userActionHandlers[userAction](updateType, updatedPoint, pending);
   }
 
   _handleModelUpdate(updateType, update) {
@@ -241,11 +237,7 @@ class Trip {
 
   _renderNoPoint() {
     this._noPointComponent = new MessageView(
-      Messages[
-        this._filterModel
-          .getFilterType()
-          .toUpperCase()
-      ],
+      Messages[this._filterModel.getFilterType().toUpperCase()],
     );
 
     render(this._tripListContainer, this._noPointComponent);

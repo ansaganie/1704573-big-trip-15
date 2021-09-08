@@ -30,7 +30,9 @@ class Header {
       '.trip-main__event-add-btn',
     );
     this._currentMenuType = MenuType.TABLE;
-    this._headerContainer = document.querySelector('.page-body__container.page-header__container');
+    this._headerContainer = document.querySelector(
+      '.page-body__container.page-header__container',
+    );
 
     this._filterComponent = null;
     this._menuComponent = null;
@@ -77,7 +79,7 @@ class Header {
   }
 
   _renderStats() {
-    this._statsComponent  = new StatsView(this._pointsModel.getPoints());
+    this._statsComponent = new StatsView(this._pointsModel.getPoints());
     render(this._mainContainer, this._statsComponent);
   }
 
@@ -129,7 +131,7 @@ class Header {
         this._filterComponent
           .getElement()
           .querySelectorAll('.trip-filters__filter-input')
-          .forEach((input) => input.disabled = true);
+          .forEach((input) => (input.disabled = true));
         this._newPointButton.disabled = true;
         this._headerContainer.classList.add('hide-after');
         this._mainContainer.classList.add('hide-after');
@@ -182,11 +184,13 @@ class Header {
         title: points
           .map(({ destination }) => destination.name)
           .join(' &mdash; '),
-        cost: points
-          .reduce((acc, { basePrice, offers}) => {
-            const offersTotalPrice = offers.reduce((total, { price }) => total + price, 0);
-            return acc + basePrice + offersTotalPrice;
-          }, 0),
+        cost: points.reduce((acc, { basePrice, offers }) => {
+          const offersTotalPrice = offers.reduce(
+            (total, { price }) => total + price,
+            0,
+          );
+          return acc + basePrice + offersTotalPrice;
+        }, 0),
         date: createTripInfoDate(startDate, endDate),
         hasInfo: true,
       };

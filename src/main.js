@@ -25,7 +25,10 @@ const STORE_KEY_DESTINATIONS = `${DESTINATIONS_PREFIX}-${VERSION}`;
 const api = new Api(MAIN_URL, AUTH_KEY);
 const pointsStorage = new PointsStorage(STORE_KEY_POINTS, window.localStorage);
 const offersStorage = new OffersStorage(STORE_KEY_OFFERS, window.localStorage);
-const destinationsStorage = new DestinationsStorage(STORE_KEY_DESTINATIONS, window.localStorage);
+const destinationsStorage = new DestinationsStorage(
+  STORE_KEY_DESTINATIONS,
+  window.localStorage,
+);
 
 const proxyApi = new ProxyApi(
   api,
@@ -69,8 +72,8 @@ const headerPresenter = new HeaderPresenter(
 
 tripPresenter.showLoading();
 
-Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
-  ([offers, destinations, points]) => {
+Promise.all([offersPromise, destinationsPromise, pointsPromise])
+  .then(([offers, destinations, points]) => {
     offersModel.setOffers(offers);
     destinationsModel.setDestination(destinations);
     pointsModel.setPoints(points);
@@ -79,12 +82,12 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise]).then(
     tripPresenter.hideLoading();
     tripPresenter.init();
     headerPresenter.init();
-  },
-).catch((err) => {
-  tripPresenter.hideLoading();
-  tripPresenter.showServerError();
-  throw err;
-});
+  })
+  .catch((err) => {
+    tripPresenter.hideLoading();
+    tripPresenter.showServerError();
+    throw err;
+  });
 
 if (!isOnline()) {
   document.title += ' [offline]';

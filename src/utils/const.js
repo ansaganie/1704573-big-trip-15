@@ -63,4 +63,3 @@ export {
   HttpMethod,
   EndPoints
 };
-
