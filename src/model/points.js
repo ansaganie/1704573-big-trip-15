@@ -12,8 +12,8 @@ class Points extends AbstractObservable {
     this._points = points.slice();
   }
 
-  add(updateType, newPoint, pendings) {
-    const { showPending, hidePending, showError, closeForm } = pendings;
+  add(updateType, newPoint, pending) {
+    const { showPending, hidePending, showError, closeForm } = pending;
 
     showPending();
 
@@ -46,8 +46,8 @@ class Points extends AbstractObservable {
     return this._points;
   }
 
-  update(updateType, updatedPoint, pendings) {
-    const { showPending, hidePending, showError, closeForm } = pendings;
+  update(updateType, updatedPoint, pending) {
+    const { showPending, hidePending, showError, closeForm } = pending;
 
     const index = this._points.findIndex((point) => point.id === updatedPoint.id);
 
@@ -87,8 +87,8 @@ class Points extends AbstractObservable {
   }
 
 
-  delete(updateType, deletedPoint, pendings) {
-    const { showPending, hidePending, showError, closeForm } = pendings;
+  delete(updateType, deletedPoint, pending) {
+    const { showPending, hidePending, showError, closeForm } = pending;
 
     const index = this._points.findIndex((point) => point.id === deletedPoint.id);
 

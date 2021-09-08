@@ -5,6 +5,8 @@ import StatsView from '../view/stats.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { MenuType, UpdateType } from '../utils/const.js';
 import { createTripInfoDate } from '../utils/date.js';
+import { isOnline } from '../utils/common.js';
+import { toast } from '../utils/toast.js';
 
 class Header {
   constructor(
@@ -137,6 +139,13 @@ class Header {
 
   _handleNewPointClick(evt) {
     evt.preventDefault();
+
+    if (!isOnline()) {
+      toast('You can not create new point offline');
+
+      return;
+    }
+
     this._newPointButton.disabled = true;
     this._handleNewPointFormClose = this._handleNewPointFormClose.bind(this);
     this._tripPresenter.createNewPoint(this._handleNewPointFormClose);

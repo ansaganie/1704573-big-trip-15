@@ -13,6 +13,8 @@ import {
   SortType,
   Messages
 } from '../utils/const.js';
+import { isOnline } from '../utils/common.js';
+import { toast } from '../utils/toast.js';
 
 
 class Trip {
@@ -31,14 +33,14 @@ class Trip {
 
     this._newPointPresenter = null;
     this._userActionHandlers = {
-      [UserAction.ADD_POINT]: (updateType, updatedPoint, pendings) => {
-        this._pointsModel.add(updateType, updatedPoint, pendings);
+      [UserAction.ADD_POINT]: (updateType, updatedPoint, pending) => {
+        this._pointsModel.add(updateType, updatedPoint, pending);
       },
-      [UserAction.UPDATE_POINT]: (updateType, updatedPoint, pendings) => {
-        this._pointsModel.update(updateType, updatedPoint, pendings);
+      [UserAction.UPDATE_POINT]: (updateType, updatedPoint, pending) => {
+        this._pointsModel.update(updateType, updatedPoint, pending);
       },
-      [UserAction.DELETE_POINT]: (updateType, updatedPoint, pendings) => {
-        this._pointsModel.delete(updateType, updatedPoint, pendings);
+      [UserAction.DELETE_POINT]: (updateType, updatedPoint, pending) => {
+        this._pointsModel.delete(updateType, updatedPoint, pending);
       },
     };
 
@@ -69,6 +71,12 @@ class Trip {
   }
 
   createNewPoint(enableNewPointButton) {
+    if (!isOnline()) {
+      toast('You can not create new point offline');
+
+      return;
+    }
+
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointPresenter = new NewPointPresenter(
@@ -84,8 +92,8 @@ class Trip {
 
     this._newPointPresenter.init();
 
-    if(!this._listComponent.parentElement) {
-      replace( this._listComponent, this._noPointComponent);
+    if(this._listComponent.getElement().parentElement === undefined) {
+      replace(this._listComponent, this._noPointComponent);
     }
   }
 
@@ -147,11 +155,11 @@ class Trip {
     this._renderTrip();
   }
 
-  _handleViewUpdate(userAction, updateType, updatedPoint, pendings) {
+  _handleViewUpdate(userAction, updateType, updatedPoint, pending) {
     this._userActionHandlers[userAction](
       updateType,
       updatedPoint,
-      pendings,
+      pending,
     );
   }
 
