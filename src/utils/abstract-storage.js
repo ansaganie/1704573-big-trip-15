@@ -1,4 +1,4 @@
-class Store {
+class AbstractStorage {
   constructor(key, storage) {
     this._key = key;
     this._storage = storage;
@@ -15,23 +15,6 @@ class Store {
   setItems(items) {
     this._storage.setItem(this._key, JSON.stringify(items));
   }
-
-  setItem(key, item) {
-    const items = this.getItems();
-
-    this._storage.setItem(this._key, {
-      ...items,
-      [key]: item,
-    });
-  }
-
-  removeItem(key) {
-    const items = this.getItems();
-
-    delete items[key];
-
-    this.setItems(items);
-  }
 }
 
-export default Store;
+export default AbstractStorage;
