@@ -110,9 +110,11 @@ class ProxyApi {
   }
 
   deletePoint(point) {
-    this._api
-      .deletePoint(point)
-      .then(() => this._pointsStorage.removeItem(point.id));
+    if (isOnline()) {
+      return this._api
+        .deletePoint(point)
+        .then(() => this._pointsStorage.removeItem(point.id));
+    }
 
     return Promise.reject(new Error('Can not delete point in offline'));
   }
