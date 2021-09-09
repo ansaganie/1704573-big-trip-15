@@ -190,7 +190,7 @@ class Header {
       let title;
 
       if (points.length > 3) {
-        title = `${points[0].destination.name} ... ${points[points.length - 1].destination.name}`;
+        title = `${points[0].destination.name} &mdash; ... &mdash; ${points[points.length - 1].destination.name}`;
       } else {
         title = points
           .map(({ destination }) => destination.name)

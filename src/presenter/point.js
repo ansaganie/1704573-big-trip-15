@@ -94,6 +94,7 @@ class Point {
 
   _handleFormSubmit(updatedPoint, pending) {
     if (!isOnline()) {
+      pending.showError();
       toast('You can not update point offline');
 
       return;
@@ -128,7 +129,9 @@ class Point {
 
   _handleDeleteClick(deletedPoint, pending) {
     if (!isOnline()) {
+      pending.showError();
       toast('You can not delete point offline');
+
       return;
     }
 

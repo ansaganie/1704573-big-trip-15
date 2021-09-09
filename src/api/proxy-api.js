@@ -104,6 +104,7 @@ class ProxyApi {
     this._pointsStorage.setItem(point.id, {
       ...PointsAdapter.adaptClientToServer(point),
     });
+
     this._needToSync = true;
 
     return Promise.resolve(point);

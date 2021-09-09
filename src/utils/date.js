@@ -36,19 +36,31 @@ const calculateDiff = (first, second) => {
   return dayjs(max).diff(dayjs(min));
 };
 
-const formatDuration = (period) =>
-  dayjs
+const formatDuration = (period) => {
+  if (period === 0) {
+    return '00M';
+  }
+
+  let isStarted = false;
+
+  return dayjs
     .duration(period)
     .format('DD-HH-mm')
     .split('-')
     .map((value, index) => {
+      if (isStarted) {
+        return `${value}${PATTERN[index]} `;
+      }
+
       if (+value !== 0) {
+        isStarted = true;
         return `${value}${PATTERN[index]} `;
       }
 
       return '';
     })
     .join('');
+};
 
 const isBefore = (first, second) => dayjs(first).isBefore(dayjs(second));
 

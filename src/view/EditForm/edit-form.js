@@ -88,10 +88,10 @@ const createEditFormTemplate = (point, cityNames, types, isNewPoint) => {
 
           <button class="event__save-btn  btn  btn--blue" type="submit"
             ${isSaveDisabled ? 'disabled' : ''}>Save</button>
-          ${isNewPoint ? '' : '<button class="event__reset-btn" type="reset" >Delete</button>'}
-          <button class="event__rollup-btn" type="button">
-            <span class="visually-hidden">Open event</span>
-          </button>
+          <button class="event__reset-btn" type="reset">${isNewPoint ? 'Cancel' : 'Delete'}</button>
+          ${isNewPoint ? '' : `<button class="event__rollup-btn" type="button">
+              <span class="visually-hidden">Close event</span>
+            </button>`}
         </header>
         <section class="event__details">
           ${offersTemplate}
@@ -172,10 +172,10 @@ class EditForm extends SmartView {
     this._setDatePicker();
     this._setInnerEventHandlers();
     this.setFormSubmitHandler(this._callback.submitForm);
-    this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
+    this.setDeleteClickHandler(this._callback.clickDelete);
 
     if (!this._isNewPoint) {
-      this.setDeleteClickHandler(this._callback.clickDelete);
+      this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
     }
   }
 
@@ -220,10 +220,12 @@ class EditForm extends SmartView {
       .getElement()
       .removeEventListener('submit', this._onFormSubmit);
 
-    this
-      .getElement()
-      .querySelector('.event__rollup-btn')
-      .removeEventListener('click', this._onRollUpButtonClick);
+    if (!this._isNewPoint) {
+      this
+        .getElement()
+        .querySelector('.event__rollup-btn')
+        .removeEventListener('click', this._onRollUpButtonClick);
+    }
   }
 
   removeElement() {

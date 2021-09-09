@@ -91,7 +91,7 @@ class Trip {
 
     this._newPointPresenter.init();
 
-    if (this._listComponent.getElement().parentElement === undefined) {
+    if (this._noPointComponent) {
       replace(this._listComponent, this._noPointComponent);
     }
   }

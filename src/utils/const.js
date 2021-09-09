@@ -2,8 +2,8 @@ const NUMBER_PATTERN = /^\d+$/;
 
 const Messages = {
   EVERYTHING: 'Click New Event to create your first point',
-  FUTURE: 'There are no past events now',
-  PAST: 'There are no future events now',
+  FUTURE: 'There are no future events now',
+  PAST: 'There are no past events now',
   LOADING: 'Loading...',
   SERVER_ERROR: 'Something went wrong. </br> Please try to refresh the page',
 };
