@@ -3,10 +3,11 @@ import FilterView from '../view/trip-filters.js';
 import InfoView from '../view/trip-info.js';
 import StatsView from '../view/stats.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
-import { MenuType, UpdateType } from '../utils/const.js';
+import { FilterType, MenuType, UpdateType } from '../utils/const.js';
 import { createTripInfoDate } from '../utils/date.js';
 import { isOnline } from '../utils/common.js';
 import { toast } from '../utils/toast.js';
+import { filters } from '../utils/filters.js';
 
 class Header {
   constructor(
@@ -59,7 +60,13 @@ class Header {
 
   _renderFilter() {
     remove(this._filterComponent);
-    this._filterComponent = new FilterView(this._filterModel.getFilterType());
+
+    const filtersAvailability = this._calculateFiltersAvailability();
+
+    this._filterComponent = new FilterView(
+      this._filterModel.getFilterType(),
+      filtersAvailability,
+    );
     this._filterComponent.setFilterTypeChangeHandler(
       this._handleFilterTypeChange,
     );
@@ -180,10 +187,18 @@ class Header {
       const startDate = points[0].dateFrom;
       const endDate = points[points.length - 1].dateTo;
 
-      return {
-        title: points
+      let title;
+
+      if (points.length > 3) {
+        title = `${points[0].destination.name} ... ${points[points.length - 1].destination.name}`;
+      } else {
+        title = points
           .map(({ destination }) => destination.name)
-          .join(' &mdash; '),
+          .join(' &mdash; ');
+      }
+
+      return {
+        title,
         cost: points.reduce((acc, { basePrice, offers }) => {
           const offersTotalPrice = offers.reduce(
             (total, { price }) => total + price,
@@ -198,6 +213,16 @@ class Header {
 
     return {
       hasInfo: false,
+    };
+  }
+
+  _calculateFiltersAvailability() {
+    const points = this._pointsModel.getPoints().slice();
+
+    return {
+      [FilterType.EVERYTHING]: points.length > 0,
+      [FilterType.PAST]: points.filter(filters[FilterType.PAST]).length > 0,
+      [FilterType.FUTURE]: points.filter(filters[FilterType.FUTURE]).length > 0,
     };
   }
 }

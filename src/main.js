@@ -13,7 +13,7 @@ import { isOnline } from './utils/common.js';
 import { toast } from './utils/toast.js';
 
 const MAIN_URL = 'https://14.ecmascript.pages.academy/big-trip';
-const AUTH_KEY = 'Basic dde64ScQvzaUhkmz';
+const AUTH_KEY = 'Basic dde64ScQvzfaUhkmz';
 const POINTS_PREFIX = 'big-trip--points';
 const OFFERS_PREFIX = 'big-trip--offers';
 const DESTINATIONS_PREFIX = 'big-trip--destinations';

@@ -173,7 +173,10 @@ class EditForm extends SmartView {
     this._setInnerEventHandlers();
     this.setFormSubmitHandler(this._callback.submitForm);
     this.setRollUpButtonClickHandler(this._callback.clickRollUpButton);
-    this.setDeleteClickHandler(this._callback.clickDelete);
+
+    if (!this._isNewPoint) {
+      this.setDeleteClickHandler(this._callback.clickDelete);
+    }
   }
 
   resetState(pointData) {
@@ -257,15 +260,21 @@ class EditForm extends SmartView {
   _disableForm() {
     this.getElement().querySelectorAll('input')
       .forEach((input) => input.disabled = true);
-    this.getElement().querySelector('.event__reset-btn').disabled = true;
     this.getElement().querySelector('.event__save-btn').disabled = true;
+
+    if(!this._isNewPoint) {
+      this.getElement().querySelector('.event__reset-btn').disabled = true;
+    }
   }
 
   _enableForm() {
     this.getElement().querySelectorAll('input')
       .forEach((input) => input.disabled = false);
-    this.getElement().querySelector('.event__reset-btn').disabled = false;
     this.getElement().querySelector('.event__save-btn').disabled = false;
+
+    if(!this._isNewPoint) {
+      this.getElement().querySelector('.event__reset-btn').disabled = false;
+    }
   }
 
   _removeError() {
