@@ -94,7 +94,7 @@ if (!isOnline()) {
 }
 
 window.addEventListener('load', () => {
-  navigator.serviceWorker.register('/serviceWorker.js');
+  navigator.serviceWorker.register('/1704573-big-trip-15/16/serviceWorker.js');
 });
 
 window.addEventListener('online', () => {
