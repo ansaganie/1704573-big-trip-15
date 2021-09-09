@@ -28,7 +28,7 @@ const img = [
   '/1704573-big-trip-15/16/img/icons/transport.png',
 ];
 
-const js = ['/1704573-big-trip-15/16//bundle.js'];
+const js = ['/1704573-big-trip-15/16/bundle.js'];
 
 const files = ['/1704573-big-trip-15/16/', ...styles, ...img, ...fonts, ...js ];
 
