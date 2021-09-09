@@ -30,7 +30,7 @@ const img = [
 
 const js = ['/bundle.js'];
 
-const files = [...styles, ...img, ...fonts, ...js ];
+const files = ['/', ...styles, ...img, ...fonts, ...js ];
 
 const onServiceWorkerInstall = (evt) => {
   evt.waitUntil(
