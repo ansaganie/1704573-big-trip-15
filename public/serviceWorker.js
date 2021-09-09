@@ -4,7 +4,7 @@ const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const HTTP_STATUS_OK = 200;
 const RESPONSE_SAFE_TYPE = 'basic';
 
-const styles = ['/css/style.css'];
+const styles = ['/1704573-big-trip-15/16/css/style.css'];
 const fonts = [
   '/1704573-big-trip-15/16/fonts/Montserrat-Bold.woff2',
   '/1704573-big-trip-15/16/fonts/Montserrat-ExtraBold.woff2',
@@ -28,7 +28,7 @@ const img = [
   '/1704573-big-trip-15/16/img/icons/transport.png',
 ];
 
-const js = ['/bundle.js'];
+const js = ['/1704573-big-trip-15/16//bundle.js'];
 
 const files = ['/1704573-big-trip-15/16/', ...styles, ...img, ...fonts, ...js ];
 
