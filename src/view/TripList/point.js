@@ -111,6 +111,31 @@ class EventItem extends AbstractView{
     this._callback.clickRollDownButton();
   }
 
+  _onFavoriteClick(evt) {
+    evt.preventDefault();
+    this._callback.clickFavorite({
+      showPending: this._showFavoriteButtonPending,
+      hidePending: this._hideFavoriteButtonPending,
+      showError: function() {},
+    });
+  }
+
+  setRollDownButtonClickHandler(handler) {
+    this._callback.clickRollDownButton = handler;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._onRollDownButtonClick);
+  }
+
+  setFavoriteClickHandler(handler) {
+    this._callback.clickFavorite = handler;
+    this
+      .getElement()
+      .querySelector('.event__favorite-btn')
+      .addEventListener('click', this._onFavoriteClick);
+  }
+
   _disableFavoriteButton() {
     this.getElement()
       .querySelector('.event__favorite-btn')
@@ -137,31 +162,6 @@ class EventItem extends AbstractView{
     this.getElement()
       .querySelector('.event__favorite-btn')
       .style.cursor = 'auto';
-  }
-
-  _onFavoriteClick(evt) {
-    evt.preventDefault();
-    this._callback.clickFavorite({
-      showPending: this._showFavoriteButtonPending,
-      hidePending: this._hideFavoriteButtonPending,
-      showError: function() {},
-    });
-  }
-
-  setRollDownButtonClickHandler(handler) {
-    this._callback.clickRollDownButton = handler;
-    this
-      .getElement()
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', this._onRollDownButtonClick);
-  }
-
-  setFavoriteClickHandler(handler) {
-    this._callback.clickFavorite = handler;
-    this
-      .getElement()
-      .querySelector('.event__favorite-btn')
-      .addEventListener('click', this._onFavoriteClick);
   }
 }
 

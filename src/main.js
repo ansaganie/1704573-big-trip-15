@@ -94,7 +94,10 @@ if (!isOnline()) {
 }
 
 window.addEventListener('load', () => {
-  navigator.serviceWorker.register('/serviceWorker.js');
+  navigator.serviceWorker.register('/serviceWorker.js')
+    .catch((err) => {
+      throw err;
+    });
 });
 
 window.addEventListener('online', () => {

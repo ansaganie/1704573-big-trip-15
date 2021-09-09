@@ -8,14 +8,15 @@ class Filter extends AbstractObservable {
     this._currentFilterType = FilterType.EVERYTHING;
   }
 
+  getFilterType() {
+    return this._currentFilterType;
+  }
+
   setFilterType(updateType, filterType) {
     this._currentFilterType = filterType;
     this._notifyAll(updateType);
   }
 
-  getFilterType() {
-    return this._currentFilterType;
-  }
 }
 
 export default Filter;

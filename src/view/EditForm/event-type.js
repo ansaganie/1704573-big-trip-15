@@ -3,7 +3,7 @@ import AbstractView from '../abstract.js';
 
 export const createEventTypeTemplate = (type, types) => {
   const CHECKED = types.reduce(
-    (obj, elem) => ({...obj, [elem]: ''}),
+    (acc, elem) => ({...acc, [elem]: ''}),
     {},
   );
 

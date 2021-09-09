@@ -43,19 +43,16 @@ class Header {
     this._handleNewPointClick = this._handleNewPointClick.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
     this._handlePointsModelUpdate = this._handlePointsModelUpdate.bind(this);
+    this._handleFilterModelUpdate = this._handleFilterModelUpdate.bind(this);
     this._handleMenuClick = this._handleMenuClick.bind(this);
   }
 
   init() {
     this._newPointButton.addEventListener('click', this._handleNewPointClick);
     this._pointsModel.addObserver(this._handlePointsModelUpdate);
-    this._filterModel.addObserver(this._handlePointsModelUpdate);
+    this._filterModel.addObserver(this._handleFilterModelUpdate);
 
     this._renderHeader();
-  }
-
-  _sortByDate(first, second) {
-    return new Date(first.dateFrom) - new Date(second.dateFrom);
   }
 
   _renderFilter() {
@@ -90,6 +87,12 @@ class Header {
     render(this._mainContainer, this._statsComponent);
   }
 
+  _renderHeader() {
+    this._renderInfo();
+    this._renderMenu();
+    this._renderFilter();
+  }
+
   _destroyStats() {
     remove(this._statsComponent);
     this._statsComponent = null;
@@ -107,10 +110,54 @@ class Header {
     this._infoComponent = null;
   }
 
-  _renderHeader() {
-    this._renderInfo();
-    this._renderMenu();
-    this._renderFilter();
+  _sortByDate(first, second) {
+    return new Date(first.dateFrom) - new Date(second.dateFrom);
+  }
+
+  _getInfo() {
+    const points = this._pointsModel.getPoints().slice().sort(this._sortByDate);
+
+    if (points.length > 0) {
+      const startDate = points[0].dateFrom;
+      const endDate = points[points.length - 1].dateTo;
+
+      let title;
+
+      if (points.length > 3) {
+        title = `${points[0].destination.name} &mdash; ... &mdash; ${points[points.length - 1].destination.name}`;
+      } else {
+        title = points
+          .map(({ destination }) => destination.name)
+          .join(' &mdash; ');
+      }
+
+      return {
+        title,
+        cost: points.reduce((acc, { basePrice, offers }) => {
+          const offersTotalPrice = offers.reduce(
+            (total, { price }) => total + price,
+            0,
+          );
+          return acc + basePrice + offersTotalPrice;
+        }, 0),
+        date: createTripInfoDate(startDate, endDate),
+        hasInfo: true,
+      };
+    }
+
+    return {
+      hasInfo: false,
+    };
+  }
+
+  _calculateFiltersAvailability() {
+    const points = this._pointsModel.getPoints().slice();
+
+    return {
+      [FilterType.EVERYTHING]: points.length > 0,
+      [FilterType.PAST]: points.filter(filters[FilterType.PAST]).length > 0,
+      [FilterType.FUTURE]: points.filter(filters[FilterType.FUTURE]).length > 0,
+    };
   }
 
   _handleMenuClick(menuType) {
@@ -131,6 +178,7 @@ class Header {
         this._headerContainer.classList.remove('hide-after');
         this._mainContainer.classList.remove('hide-after');
         break;
+
       case MenuType.STATS:
         this._tripPresenter.destroy();
         this._renderStats();
@@ -180,50 +228,8 @@ class Header {
     }
   }
 
-  _getInfo() {
-    const points = this._pointsModel.getPoints().slice().sort(this._sortByDate);
-
-    if (points.length > 0) {
-      const startDate = points[0].dateFrom;
-      const endDate = points[points.length - 1].dateTo;
-
-      let title;
-
-      if (points.length > 3) {
-        title = `${points[0].destination.name} &mdash; ... &mdash; ${points[points.length - 1].destination.name}`;
-      } else {
-        title = points
-          .map(({ destination }) => destination.name)
-          .join(' &mdash; ');
-      }
-
-      return {
-        title,
-        cost: points.reduce((acc, { basePrice, offers }) => {
-          const offersTotalPrice = offers.reduce(
-            (total, { price }) => total + price,
-            0,
-          );
-          return acc + basePrice + offersTotalPrice;
-        }, 0),
-        date: createTripInfoDate(startDate, endDate),
-        hasInfo: true,
-      };
-    }
-
-    return {
-      hasInfo: false,
-    };
-  }
-
-  _calculateFiltersAvailability() {
-    const points = this._pointsModel.getPoints().slice();
-
-    return {
-      [FilterType.EVERYTHING]: points.length > 0,
-      [FilterType.PAST]: points.filter(filters[FilterType.PAST]).length > 0,
-      [FilterType.FUTURE]: points.filter(filters[FilterType.FUTURE]).length > 0,
-    };
+  _handleFilterModelUpdate() {
+    this._renderFilter();
   }
 }
 

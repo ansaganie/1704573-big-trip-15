@@ -2,7 +2,7 @@ import AbstractView from './abstract.js';
 import { capitalize } from 'lodash';
 
 const SORT_TYPES = ['day', 'event', 'time', 'price', 'offer'];
-const DISABLED = SORT_TYPES.reduce((obj, elem) => ({ ...obj, [elem]: '' }), {});
+const DISABLED = SORT_TYPES.reduce((acc, elem) => ({ ...acc, [elem]: '' }), {});
 DISABLED['event'] = 'disabled';
 DISABLED['offer'] = 'disabled';
 

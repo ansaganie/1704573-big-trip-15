@@ -11,24 +11,6 @@ class ProxyApi {
     this._needToSync = false;
   }
 
-  static getSyncedPoints(points) {
-    return points.map(({ success, payload }) => {
-      if (success) {
-        return payload.point;
-      }
-    });
-  }
-
-  static convertPointsToStorageStructure(points) {
-    return points.reduce(
-      (acc, point) => ({
-        ...acc,
-        [point.id]: point,
-      }),
-      {},
-    );
-  }
-
   getOffers() {
     const storedOffers = this._offersStorage.getItems();
 
@@ -124,9 +106,9 @@ class ProxyApi {
     if (isOnline() && this._needToSync) {
       const points = Object.values(this._pointsStorage.getItems());
 
-      return this._api.sync(points).then((response) => {
-        const createdPoints = ProxyApi.getSyncedPoints(response.created);
-        const updatedPoints = ProxyApi.getSyncedPoints(response.updated);
+      return this._api.sync(points).then(({ created, updated }) => {
+        const createdPoints = ProxyApi.getSyncedPoints(created);
+        const updatedPoints = ProxyApi.getSyncedPoints(updated);
 
         const items = ProxyApi.convertPointsToStorageStructure([
           ...createdPoints,
@@ -138,6 +120,24 @@ class ProxyApi {
     }
 
     return Promise.reject(new Error('Data sync failed'));
+  }
+
+  static getSyncedPoints(points) {
+    return points.map(({ success, payload }) => {
+      if (success) {
+        return payload.point;
+      }
+    });
+  }
+
+  static convertPointsToStorageStructure(points) {
+    return points.reduce(
+      (acc, point) => ({
+        ...acc,
+        [point.id]: point,
+      }),
+      {},
+    );
   }
 }
 

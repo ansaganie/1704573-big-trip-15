@@ -1,6 +1,19 @@
 import OffersAdapter from './offers-adapter.js';
 import PointsAdapter from './points-adapter.js';
-import { HttpMethod, EndPoints } from '../utils/const.js';
+
+const HttpMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+const EndPoints = {
+  OFFERS: 'offers',
+  POINTS: 'points',
+  DESTINATIONS: 'destinations',
+  POINTS_SYNC: 'points/sync',
+};
 
 class Api {
   constructor(mainUrl, authKey) {

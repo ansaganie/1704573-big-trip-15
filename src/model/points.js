@@ -8,6 +8,10 @@ class Points extends AbstractObservable {
     this._api = api;
   }
 
+  getPoints() {
+    return this._points;
+  }
+
   setPoints(points) {
     this._points = points.slice();
   }
@@ -40,10 +44,6 @@ class Points extends AbstractObservable {
         showError();
         throw err;
       });
-  }
-
-  getPoints() {
-    return this._points;
   }
 
   update(updateType, updatedPoint, pending) {
