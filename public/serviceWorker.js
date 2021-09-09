@@ -6,31 +6,31 @@ const RESPONSE_SAFE_TYPE = 'basic';
 
 const styles = ['/css/style.css'];
 const fonts = [
-  '/fonts/Montserrat-Bold.woff2',
-  '/fonts/Montserrat-ExtraBold.woff2',
-  '/fonts/Montserrat-Medium.woff2',
-  '/fonts/Montserrat-Regular.woff2',
-  '/fonts/Montserrat-SemiBold.woff2',
+  '/1704573-big-trip-15/16/fonts/Montserrat-Bold.woff2',
+  '/1704573-big-trip-15/16/fonts/Montserrat-ExtraBold.woff2',
+  '/1704573-big-trip-15/16/fonts/Montserrat-Medium.woff2',
+  '/1704573-big-trip-15/16/fonts/Montserrat-Regular.woff2',
+  '/1704573-big-trip-15/16/fonts/Montserrat-SemiBold.woff2',
 ];
 const img = [
-  '/img/header-bg.png',
-  '/img/header-bg@2x.png',
-  '/img/logo.png',
-  '/img/icons/bus.png',
-  '/img/icons/check-in.png',
-  '/img/icons/drive.png',
-  '/img/icons/flight.png',
-  '/img/icons/restaurant.png',
-  '/img/icons/ship.png',
-  '/img/icons/sightseeing.png',
-  '/img/icons/taxi.png',
-  '/img/icons/train.png',
-  '/img/icons/transport.png',
+  '/1704573-big-trip-15/16/img/header-bg.png',
+  '/1704573-big-trip-15/16/img/header-bg@2x.png',
+  '/1704573-big-trip-15/16/img/logo.png',
+  '/1704573-big-trip-15/16/img/icons/bus.png',
+  '/1704573-big-trip-15/16/img/icons/check-in.png',
+  '/1704573-big-trip-15/16/img/icons/drive.png',
+  '/1704573-big-trip-15/16/img/icons/flight.png',
+  '/1704573-big-trip-15/16/img/icons/restaurant.png',
+  '/1704573-big-trip-15/16/img/icons/ship.png',
+  '/1704573-big-trip-15/16/img/icons/sightseeing.png',
+  '/1704573-big-trip-15/16/img/icons/taxi.png',
+  '/1704573-big-trip-15/16/img/icons/train.png',
+  '/1704573-big-trip-15/16/img/icons/transport.png',
 ];
 
 const js = ['/bundle.js'];
 
-const files = ['/', ...styles, ...img, ...fonts, ...js ];
+const files = ['/1704573-big-trip-15/16/', ...styles, ...img, ...fonts, ...js ];
 
 const onServiceWorkerInstall = (evt) => {
   evt.waitUntil(
