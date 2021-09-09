@@ -1,6 +1,7 @@
-import { isEscapePressed } from '../utils/common.js';
+import { isEscapePressed, isOnline } from '../utils/common.js';
 import { UpdateType, UserAction } from '../utils/const.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
+import { toast } from '../utils/toast.js';
 import FormView from '../view/EditForm/edit-form.js';
 
 class NewPoint {
@@ -26,7 +27,6 @@ class NewPoint {
     this._editComponent = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleEscKeydown = this._handleEscKeydown.bind(this);
     this._handleRollUpClick = this._handleRollUpClick.bind(this);
   }
@@ -42,7 +42,6 @@ class NewPoint {
       this._cityNames,
       this._destinations,
     );
-    this._editComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
 
@@ -63,11 +62,6 @@ class NewPoint {
     this._enableNewPointButton();
   }
 
-  _handleDeleteClick() {
-    this.destroy();
-    this._handleNewPointFormClose();
-  }
-
   _handleRollUpClick() {
     this.destroy();
     this._handleNewPointFormClose();
@@ -80,15 +74,20 @@ class NewPoint {
     }
   }
 
-  _handleFormSubmit(newPoint, showPending, stopPending, showError) {
+  _handleFormSubmit(newPoint, pending) {
+    if (!isOnline()) {
+      toast('You can not add new point offline');
+
+      return;
+    }
+
+    pending.closeForm = this.destroy.bind(this);
+
     this._updateModel(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       { ...newPoint },
-      showPending,
-      stopPending,
-      this.destroy.bind(this),
-      showError,
+      pending,
     );
   }
 }

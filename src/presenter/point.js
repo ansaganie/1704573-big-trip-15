@@ -1,8 +1,9 @@
 import PointView from '../view/TripList/point.js';
 import FormView from '../view/EditForm/edit-form.js';
 import { remove, render, replace } from '../utils/render.js';
-import { isEscapePressed } from '../utils/common.js';
+import { isEscapePressed, isOnline } from '../utils/common.js';
 import { UpdateType, UserAction } from '../utils/const.js';
+import { toast } from '../utils/toast.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -91,17 +92,20 @@ class Point {
     this._mode = Mode.DEFAULT;
   }
 
-  _handleFormSubmit(updatedPoint, showPending, stopPending, showError) {
-    const { dateFrom, dateTo, basePrice, type, offers} = this._point;
+  _handleFormSubmit(updatedPoint, pending) {
+    if (!isOnline()) {
+      toast('You can not update point offline');
+
+      return;
+    }
+
+    const { dateFrom, dateTo, basePrice, type, offers } = this._point;
 
     let isOffersChanged = false;
 
     if (type !== updatedPoint.type) {
       isOffersChanged = true;
-    } else if (
-      JSON.stringify(offers) !==
-      JSON.stringify(updatedPoint.offers)
-    ) {
+    } else if (JSON.stringify(offers) !== JSON.stringify(updatedPoint.offers)) {
       isOffersChanged = true;
     }
 
@@ -112,25 +116,27 @@ class Point {
       type !== updatedPoint.type ||
       isOffersChanged;
 
+    pending.closeForm = this._closeEditForm.bind(this);
+
     this._updateModel(
       UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       updatedPoint,
-      showError,
-      showPending,
-      stopPending,
-      this._closeEditForm.bind(this),
+      pending,
     );
   }
 
-  _handleDeleteClick(deletedPoint, showPending, stopPending, showError) {
+  _handleDeleteClick(deletedPoint, pending) {
+    if (!isOnline()) {
+      toast('You can not delete point offline');
+      return;
+    }
+
     this._updateModel(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
       deletedPoint,
-      showError,
-      showPending,
-      stopPending,
+      pending,
     );
   }
 
@@ -158,7 +164,7 @@ class Point {
     this._mode = Mode.EDITING;
   }
 
-  _handleFavoriteClick() {
+  _handleFavoriteClick(pending) {
     const update = { ...this._point };
     update.isFavorite = !this._point.isFavorite;
 
@@ -166,6 +172,7 @@ class Point {
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       update,
+      pending,
     );
   }
 }

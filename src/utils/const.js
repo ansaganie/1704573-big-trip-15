@@ -49,6 +49,7 @@ const EndPoints = {
   OFFERS: 'offers',
   POINTS: 'points',
   DESTINATIONS: 'destinations',
+  POINTS_SYNC: 'points/sync',
 };
 
 export {
@@ -62,4 +63,3 @@ export {
   HttpMethod,
   EndPoints
 };
-

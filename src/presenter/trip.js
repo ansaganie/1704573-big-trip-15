@@ -13,7 +13,8 @@ import {
   SortType,
   Messages
 } from '../utils/const.js';
-
+import { isOnline } from '../utils/common.js';
+import { toast } from '../utils/toast.js';
 
 class Trip {
   constructor(
@@ -30,6 +31,17 @@ class Trip {
     this._destinationsModel = destinationsModel;
 
     this._newPointPresenter = null;
+    this._userActionHandlers = {
+      [UserAction.ADD_POINT]: (updateType, updatedPoint, pending) => {
+        this._pointsModel.add(updateType, updatedPoint, pending);
+      },
+      [UserAction.UPDATE_POINT]: (updateType, updatedPoint, pending) => {
+        this._pointsModel.update(updateType, updatedPoint, pending);
+      },
+      [UserAction.DELETE_POINT]: (updateType, updatedPoint, pending) => {
+        this._pointsModel.delete(updateType, updatedPoint, pending);
+      },
+    };
 
     this._pointPresenters = new Map();
     this._currentSortType = SortType.DAY;
@@ -51,13 +63,19 @@ class Trip {
     this._filterModel.addObserver(this._handleModelUpdate);
 
     this._offersData = this._offersModel.getOffers();
-    this._destinationsData =  this._destinationsModel.getDestinations();
-    this._cityNamesData = this._destinationsData.map(({name}) => name);
+    this._destinationsData = this._destinationsModel.getDestinations();
+    this._cityNamesData = this._destinationsData.map(({ name }) => name);
 
     this._renderTrip();
   }
 
   createNewPoint(enableNewPointButton) {
+    if (!isOnline()) {
+      toast('You can not create new point offline');
+
+      return;
+    }
+
     this._currentSortType = SortType.DAY;
     this._filterModel.setFilterType(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointPresenter = new NewPointPresenter(
@@ -73,8 +91,8 @@ class Trip {
 
     this._newPointPresenter.init();
 
-    if(!this._listComponent.parentElement) {
-      replace( this._listComponent, this._noPointComponent);
+    if (this._listComponent.getElement().parentElement === undefined) {
+      replace(this._listComponent, this._noPointComponent);
     }
   }
 
@@ -106,7 +124,8 @@ class Trip {
   }
 
   _getPoints() {
-    const points = this._pointsModel.getPoints()
+    const points = this._pointsModel
+      .getPoints()
       .filter(filters[this._filterModel.getFilterType()]);
 
     switch (this._currentSortType) {
@@ -136,49 +155,8 @@ class Trip {
     this._renderTrip();
   }
 
-  _handleViewUpdate(
-    userAction,
-    updateType,
-    updatedPoint,
-    showError,
-    showPending,
-    hidePending,
-    closeForm,
-
-  ) {
-    switch (userAction) {
-      case UserAction.ADD_POINT:
-        this._pointsModel.add(
-          updateType,
-          updatedPoint,
-          showPending,
-          hidePending,
-          closeForm,
-          showError,
-        );
-        break;
-
-      case UserAction.UPDATE_POINT:
-        this._pointsModel.update(
-          updateType,
-          updatedPoint,
-          showPending,
-          hidePending,
-          closeForm,
-          showError,
-        );
-        break;
-
-      case UserAction.DELETE_POINT:
-        this._pointsModel.delete(
-          updateType,
-          updatedPoint,
-          showPending,
-          hidePending,
-          showError,
-        );
-        break;
-    }
+  _handleViewUpdate(userAction, updateType, updatedPoint, pending) {
+    this._userActionHandlers[userAction](updateType, updatedPoint, pending);
   }
 
   _handleModelUpdate(updateType, update) {
@@ -259,11 +237,7 @@ class Trip {
 
   _renderNoPoint() {
     this._noPointComponent = new MessageView(
-      Messages[
-        this._filterModel
-          .getFilterType()
-          .toUpperCase()
-      ],
+      Messages[this._filterModel.getFilterType().toUpperCase()],
     );
 
     render(this._tripListContainer, this._noPointComponent);
