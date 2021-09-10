@@ -1,6 +1,10 @@
 import OffersAdapter from './offers-adapter.js';
 import PointsAdapter from './points-adapter.js';
 
+const CONTENT_TYPE_JSON = {
+  'Content-Type': 'application/json',
+};
+
 const HttpMethod = {
   GET: 'GET',
   PUT: 'PUT',
@@ -26,7 +30,7 @@ class Api {
       endPoint: EndPoints.POINTS,
       method: HttpMethod.POST,
       body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
+      headers: new Headers(CONTENT_TYPE_JSON),
     })
       .then(Api.toJSON)
       .then(PointsAdapter.adaptServerToClient);
@@ -47,7 +51,7 @@ class Api {
       endPoint: `${EndPoints.POINTS}/${point.id}`,
       method: HttpMethod.PUT,
       body: JSON.stringify(PointsAdapter.adaptClientToServer(point)),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
+      headers: new Headers(CONTENT_TYPE_JSON),
     })
       .then(Api.toJSON)
       .then(PointsAdapter.adaptServerToClient);
@@ -79,7 +83,7 @@ class Api {
       endPoint: EndPoints.POINTS_SYNC,
       method: HttpMethod.POST,
       body: JSON.stringify(data),
-      headers: new Headers({ 'Content-Type': 'application/json' }),
+      headers: new Headers(CONTENT_TYPE_JSON),
     }).then(Api.toJSON);
   }
 

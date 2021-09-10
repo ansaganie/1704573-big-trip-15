@@ -1,6 +1,12 @@
 import { isOnline } from '../utils/common.js';
 import PointsAdapter from './points-adapter.js';
 
+const ErrorMessage = {
+  ADD: 'Can not add point in offline',
+  SYNC: 'Data sync failed',
+  DELETE: 'Can not delete point in offline',
+};
+
 class ProxyApi {
   constructor(api, pointsStorage, offersStorage, destinationsStorage) {
     this._api = api;
@@ -51,7 +57,7 @@ class ProxyApi {
       });
     }
 
-    return Promise.reject(new Error('Can not add point in offline'));
+    return Promise.reject(new Error(ErrorMessage.ADD));
   }
 
   getPoints() {
@@ -99,7 +105,7 @@ class ProxyApi {
         .then(() => this._pointsStorage.removeItem(point.id));
     }
 
-    return Promise.reject(new Error('Can not delete point in offline'));
+    return Promise.reject(new Error(ErrorMessage.DELETE));
   }
 
   sync() {
@@ -119,7 +125,7 @@ class ProxyApi {
       });
     }
 
-    return Promise.reject(new Error('Data sync failed'));
+    return Promise.reject(new Error(ErrorMessage.SYNC));
   }
 
   static getSyncedPoints(points) {

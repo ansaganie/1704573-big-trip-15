@@ -6,13 +6,14 @@ import NewPointPresenter from './new-point.js';
 import { filters } from '../utils/filters.js';
 import { remove, render, replace } from '../utils/render.js';
 import { sortByDate, sortByPrice, sortByTime } from '../utils/points-sort.js';
+import { isOnline } from '../utils/common.js';
+import { toast } from '../utils/toast.js';
 import {
   UpdateType,
   UserAction,
-  FilterType
+  FilterType,
+  OfflineErrorMessage
 } from '../utils/const.js';
-import { isOnline } from '../utils/common.js';
-import { toast } from '../utils/toast.js';
 
 const SortType = {
   DAY: 'sort-day',
@@ -83,7 +84,7 @@ class Trip {
 
   createNewPoint(enableNewPointButton) {
     if (!isOnline()) {
-      toast('You can not create new point offline');
+      toast(OfflineErrorMessage.CREATE);
 
       return;
     }

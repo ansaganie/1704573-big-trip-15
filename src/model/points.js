@@ -1,5 +1,10 @@
 import AbstractObservable from '../utils/abstract-observable';
 
+const ErrorMessage = {
+  UPDATE: 'Can\'t update nonexistent point',
+  DELETE: 'Can\'t delete nonexistent point',
+};
+
 class Points extends AbstractObservable {
   constructor(api) {
     super();
@@ -54,7 +59,7 @@ class Points extends AbstractObservable {
     );
 
     if (index === -1) {
-      throw new Error('Can\'t update nonexistent point');
+      throw new Error(ErrorMessage.UPDATE);
     }
 
     showPending();
@@ -96,7 +101,7 @@ class Points extends AbstractObservable {
     );
 
     if (index === -1) {
-      throw new Error('Can\'t delete nonexistent point');
+      throw new Error(ErrorMessage.DELETE);
     }
 
     showPending();

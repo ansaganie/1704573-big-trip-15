@@ -1,5 +1,5 @@
 import { isEscapePressed, isOnline } from '../utils/common.js';
-import { UpdateType, UserAction } from '../utils/const.js';
+import { OfflineErrorMessage, UpdateType, UserAction } from '../utils/const.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { toast } from '../utils/toast.js';
 import FormView from '../view/EditForm/edit-form.js';
@@ -77,7 +77,7 @@ class NewPoint {
   _handleFormSubmit(newPoint, pending) {
     if (!isOnline()) {
       pending.showError();
-      toast('You can not add new point offline');
+      toast(OfflineErrorMessage.ADD);
 
       return;
     }
