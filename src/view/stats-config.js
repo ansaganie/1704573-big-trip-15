@@ -1,5 +1,5 @@
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { cloneDeep} from 'lodash';
+import { cloneDeep } from 'lodash';
 
 const BAR_HEIGHT = 55;
 
@@ -13,26 +13,23 @@ const FontSize = {
   TITLE: 23,
 };
 
-const getStatsConfig = (
-  element,
-  labels,
-  property,
-  formatter,
-) => [
+const getStatsConfig = (element, labels, property, formatter) => [
   element,
   cloneDeep({
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
       labels,
-      datasets: [{
-        data: Object.values(property),
-        backgroundColor: Color.BACKGROUND,
-        hoverBackgroundColor: Color.BACKGROUND,
-        anchor: 'start',
-        barThickness: 44,
-        minBarLength: 50,
-      }],
+      datasets: [
+        {
+          data: Object.values(property),
+          backgroundColor: Color.BACKGROUND,
+          hoverBackgroundColor: Color.BACKGROUND,
+          anchor: 'start',
+          barThickness: 44,
+          minBarLength: 50,
+        },
+      ],
     },
     options: {
       plugins: {
@@ -54,27 +51,31 @@ const getStatsConfig = (
         text: element.id.toUpperCase(),
       },
       scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: Color.FONT,
-            padding: 5,
-            fontSize: FontSize.TEXT,
+        yAxes: [
+          {
+            ticks: {
+              fontColor: Color.FONT,
+              padding: 5,
+              fontSize: FontSize.TEXT,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false,
+            },
           },
-          gridLines: {
-            display: false,
-            drawBorder: false,
+        ],
+        xAxes: [
+          {
+            ticks: {
+              display: false,
+              beginAtZero: true,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false,
+            },
           },
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true,
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false,
-          },
-        }],
+        ],
       },
       legend: {
         display: false,
@@ -83,8 +84,7 @@ const getStatsConfig = (
         enabled: false,
       },
     },
-  })
-  ,
+  }),
 ];
 
 export { getStatsConfig, BAR_HEIGHT };

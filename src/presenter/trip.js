@@ -6,15 +6,28 @@ import NewPointPresenter from './new-point.js';
 import { filters } from '../utils/filters.js';
 import { remove, render, replace } from '../utils/render.js';
 import { sortByDate, sortByPrice, sortByTime } from '../utils/points-sort.js';
+import { isOnline } from '../utils/common.js';
+import { toast } from '../utils/toast.js';
 import {
   UpdateType,
   UserAction,
   FilterType,
-  SortType,
-  Messages
+  OfflineErrorMessage
 } from '../utils/const.js';
-import { isOnline } from '../utils/common.js';
-import { toast } from '../utils/toast.js';
+
+const SortType = {
+  DAY: 'sort-day',
+  TIME: 'sort-time',
+  PRICE: 'sort-price',
+};
+
+const Messages = {
+  EVERYTHING: 'Click New Event to create your first point',
+  FUTURE: 'There are no future events now',
+  PAST: 'There are no past events now',
+  LOADING: 'Loading...',
+  SERVER_ERROR: 'Something went wrong. </br> Please try to refresh the page',
+};
 
 class Trip {
   constructor(
@@ -71,7 +84,7 @@ class Trip {
 
   createNewPoint(enableNewPointButton) {
     if (!isOnline()) {
-      toast('You can not create new point offline');
+      toast(OfflineErrorMessage.CREATE);
 
       return;
     }
@@ -91,7 +104,7 @@ class Trip {
 
     this._newPointPresenter.init();
 
-    if (this._listComponent.getElement().parentElement === undefined) {
+    if (this._noPointComponent) {
       replace(this._listComponent, this._noPointComponent);
     }
   }
@@ -142,50 +155,6 @@ class Trip {
     return points;
   }
 
-  _handleModeChange() {
-    if (this._newPointPresenter) {
-      this._newPointPresenter.destroy();
-    }
-
-    this._pointPresenters.forEach((presenter) => presenter.resetView());
-  }
-
-  _handleNewPointFormClose() {
-    this._clearTripList();
-    this._renderTrip();
-  }
-
-  _handleViewUpdate(userAction, updateType, updatedPoint, pending) {
-    this._userActionHandlers[userAction](updateType, updatedPoint, pending);
-  }
-
-  _handleModelUpdate(updateType, update) {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this._pointPresenters.get(update.id).init(update);
-        break;
-
-      case UpdateType.MINOR:
-        this._clearTripList();
-        this._renderTrip();
-        break;
-
-      case UpdateType.MAJOR:
-        this._clearTripList({ resetSortType: true });
-        this._renderTrip();
-        break;
-    }
-  }
-
-  _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
-
-    this._currentSortType = sortType;
-    this._clearTripList();
-    this._renderTrip();
-  }
 
   _clearTripList({ resetSortType = false } = {}) {
     this._pointPresenters.forEach((presenter) => presenter.destroy());
@@ -248,6 +217,51 @@ class Trip {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
     render(this._tripListContainer, this._sortComponent);
+  }
+
+  _handleModeChange() {
+    if (this._newPointPresenter) {
+      this._newPointPresenter.destroy();
+    }
+
+    this._pointPresenters.forEach((presenter) => presenter.resetView());
+  }
+
+  _handleNewPointFormClose() {
+    this._clearTripList();
+    this._renderTrip();
+  }
+
+  _handleViewUpdate(userAction, updateType, updatedPoint, pending) {
+    this._userActionHandlers[userAction](updateType, updatedPoint, pending);
+  }
+
+  _handleModelUpdate(updateType, update) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._pointPresenters.get(update.id).init(update);
+        break;
+
+      case UpdateType.MINOR:
+        this._clearTripList();
+        this._renderTrip();
+        break;
+
+      case UpdateType.MAJOR:
+        this._clearTripList({ resetSortType: true });
+        this._renderTrip();
+        break;
+    }
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._currentSortType = sortType;
+    this._clearTripList();
+    this._renderTrip();
   }
 }
 

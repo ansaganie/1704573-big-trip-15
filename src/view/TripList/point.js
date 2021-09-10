@@ -1,6 +1,7 @@
 import AbstractView from '../abstract.js';
 import { formatDate, calculateDiff, formatDuration } from '../../utils/date.js';
 import { capitalize } from 'lodash';
+import he from 'he';
 
 const createOfferTemplate = ({ title, price }) => (
   `<li class="event__offer">
@@ -65,7 +66,7 @@ const createEventItem = ({
         </h3>
         ${createEventScheduleTemplate(dateFrom, dateTo)}
         <p class="event__price">
-          €&nbsp;<span class="event__price-value">${basePrice}</span>
+          €&nbsp;<span class="event__price-value">${he.encode(basePrice.toString())}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
@@ -110,6 +111,31 @@ class EventItem extends AbstractView{
     this._callback.clickRollDownButton();
   }
 
+  _onFavoriteClick(evt) {
+    evt.preventDefault();
+    this._callback.clickFavorite({
+      showPending: this._showFavoriteButtonPending,
+      hidePending: this._hideFavoriteButtonPending,
+      showError: function() {},
+    });
+  }
+
+  setRollDownButtonClickHandler(handler) {
+    this._callback.clickRollDownButton = handler;
+    this
+      .getElement()
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this._onRollDownButtonClick);
+  }
+
+  setFavoriteClickHandler(handler) {
+    this._callback.clickFavorite = handler;
+    this
+      .getElement()
+      .querySelector('.event__favorite-btn')
+      .addEventListener('click', this._onFavoriteClick);
+  }
+
   _disableFavoriteButton() {
     this.getElement()
       .querySelector('.event__favorite-btn')
@@ -136,31 +162,6 @@ class EventItem extends AbstractView{
     this.getElement()
       .querySelector('.event__favorite-btn')
       .style.cursor = 'auto';
-  }
-
-  _onFavoriteClick(evt) {
-    evt.preventDefault();
-    this._callback.clickFavorite({
-      showPending: this._showFavoriteButtonPending,
-      hidePending: this._hideFavoriteButtonPending,
-      showError: function() {},
-    });
-  }
-
-  setRollDownButtonClickHandler(handler) {
-    this._callback.clickRollDownButton = handler;
-    this
-      .getElement()
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', this._onRollDownButtonClick);
-  }
-
-  setFavoriteClickHandler(handler) {
-    this._callback.clickFavorite = handler;
-    this
-      .getElement()
-      .querySelector('.event__favorite-btn')
-      .addEventListener('click', this._onFavoriteClick);
   }
 }
 

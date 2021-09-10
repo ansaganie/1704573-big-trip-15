@@ -18,7 +18,7 @@ class AbstractStorage {
     const storageValue = this._storage.getItem(this._key);
     const serialized = JSON.stringify(items);
 
-    if (isEqual(storageValue, serialized)) {
+    if (!isEqual(storageValue, serialized)) {
       this._storage.setItem(this._key, serialized);
     }
   }

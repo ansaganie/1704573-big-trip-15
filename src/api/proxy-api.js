@@ -1,6 +1,12 @@
 import { isOnline } from '../utils/common.js';
 import PointsAdapter from './points-adapter.js';
 
+const ErrorMessage = {
+  ADD: 'Can not add point in offline',
+  SYNC: 'Data sync failed',
+  DELETE: 'Can not delete point in offline',
+};
+
 class ProxyApi {
   constructor(api, pointsStorage, offersStorage, destinationsStorage) {
     this._api = api;
@@ -9,24 +15,6 @@ class ProxyApi {
     this._destinationsStorage = destinationsStorage;
 
     this._needToSync = false;
-  }
-
-  static getSyncedPoints(points) {
-    return points.map(({ success, payload }) => {
-      if (success) {
-        return payload.point;
-      }
-    });
-  }
-
-  static convertPointsToStorageStructure(points) {
-    return points.reduce(
-      (acc, point) => ({
-        ...acc,
-        [point.id]: point,
-      }),
-      {},
-    );
   }
 
   getOffers() {
@@ -69,7 +57,7 @@ class ProxyApi {
       });
     }
 
-    return Promise.reject(new Error('Can not add point in offline'));
+    return Promise.reject(new Error(ErrorMessage.ADD));
   }
 
   getPoints() {
@@ -104,6 +92,7 @@ class ProxyApi {
     this._pointsStorage.setItem(point.id, {
       ...PointsAdapter.adaptClientToServer(point),
     });
+
     this._needToSync = true;
 
     return Promise.resolve(point);
@@ -116,16 +105,16 @@ class ProxyApi {
         .then(() => this._pointsStorage.removeItem(point.id));
     }
 
-    return Promise.reject(new Error('Can not delete point in offline'));
+    return Promise.reject(new Error(ErrorMessage.DELETE));
   }
 
   sync() {
     if (isOnline() && this._needToSync) {
       const points = Object.values(this._pointsStorage.getItems());
 
-      return this._api.sync(points).then((response) => {
-        const createdPoints = ProxyApi.getSyncedPoints(response.created);
-        const updatedPoints = ProxyApi.getSyncedPoints(response.updated);
+      return this._api.sync(points).then(({ created, updated }) => {
+        const createdPoints = ProxyApi.getSyncedPoints(created);
+        const updatedPoints = ProxyApi.getSyncedPoints(updated);
 
         const items = ProxyApi.convertPointsToStorageStructure([
           ...createdPoints,
@@ -136,7 +125,25 @@ class ProxyApi {
       });
     }
 
-    return Promise.reject(new Error('Data sync failed'));
+    return Promise.reject(new Error(ErrorMessage.SYNC));
+  }
+
+  static getSyncedPoints(points) {
+    return points.map(({ success, payload }) => {
+      if (success) {
+        return payload.point;
+      }
+    });
+  }
+
+  static convertPointsToStorageStructure(points) {
+    return points.reduce(
+      (acc, point) => ({
+        ...acc,
+        [point.id]: point,
+      }),
+      {},
+    );
   }
 }
 

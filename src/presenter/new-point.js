@@ -1,5 +1,5 @@
 import { isEscapePressed, isOnline } from '../utils/common.js';
-import { UpdateType, UserAction } from '../utils/const.js';
+import { OfflineErrorMessage, UpdateType, UserAction } from '../utils/const.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { toast } from '../utils/toast.js';
 import FormView from '../view/EditForm/edit-form.js';
@@ -28,7 +28,7 @@ class NewPoint {
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleEscKeydown = this._handleEscKeydown.bind(this);
-    this._handleRollUpClick = this._handleRollUpClick.bind(this);
+    this._handleCancelClick = this._handleCancelClick.bind(this);
   }
 
   init() {
@@ -43,7 +43,7 @@ class NewPoint {
       this._destinations,
     );
     this._editComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._editComponent.setRollUpButtonClickHandler(this._handleRollUpClick);
+    this._editComponent.setDeleteClickHandler(this._handleCancelClick);
 
     render(this._container, this._editComponent, RenderPosition.AFTERBEGIN);
 
@@ -62,7 +62,7 @@ class NewPoint {
     this._enableNewPointButton();
   }
 
-  _handleRollUpClick() {
+  _handleCancelClick() {
     this.destroy();
     this._handleNewPointFormClose();
   }
@@ -76,7 +76,8 @@ class NewPoint {
 
   _handleFormSubmit(newPoint, pending) {
     if (!isOnline()) {
-      toast('You can not add new point offline');
+      pending.showError();
+      toast(OfflineErrorMessage.ADD);
 
       return;
     }

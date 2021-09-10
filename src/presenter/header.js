@@ -3,10 +3,20 @@ import FilterView from '../view/trip-filters.js';
 import InfoView from '../view/trip-info.js';
 import StatsView from '../view/stats.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
-import { MenuType, UpdateType } from '../utils/const.js';
 import { createTripInfoDate } from '../utils/date.js';
 import { isOnline } from '../utils/common.js';
 import { toast } from '../utils/toast.js';
+import { filters } from '../utils/filters.js';
+import { sortByDate } from '../utils/points-sort.js';
+import {
+  CssClassNames,
+  FilterType,
+  MenuType,
+  OfflineErrorMessage,
+  UpdateType
+} from '../utils/const.js';
+
+const MAX_HEADER_LENGTH = 3;
 
 class Header {
   constructor(
@@ -27,11 +37,11 @@ class Header {
     this._tripPresenter = tripPresenter;
 
     this._newPointButton = this._infoContainer.querySelector(
-      '.trip-main__event-add-btn',
+      CssClassNames.NEW_POINT_BUTTON,
     );
     this._currentMenuType = MenuType.TABLE;
     this._headerContainer = document.querySelector(
-      '.page-body__container.page-header__container',
+      CssClassNames.HEADER_CONTAINER,
     );
 
     this._filterComponent = null;
@@ -42,24 +52,28 @@ class Header {
     this._handleNewPointClick = this._handleNewPointClick.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
     this._handlePointsModelUpdate = this._handlePointsModelUpdate.bind(this);
+    this._handleFilterModelUpdate = this._handleFilterModelUpdate.bind(this);
     this._handleMenuClick = this._handleMenuClick.bind(this);
+    this._calculateTotalPrice = this._calculateTotalPrice.bind(this);
   }
 
   init() {
     this._newPointButton.addEventListener('click', this._handleNewPointClick);
     this._pointsModel.addObserver(this._handlePointsModelUpdate);
-    this._filterModel.addObserver(this._handlePointsModelUpdate);
+    this._filterModel.addObserver(this._handleFilterModelUpdate);
 
     this._renderHeader();
   }
 
-  _sortByDate(first, second) {
-    return new Date(first.dateFrom) - new Date(second.dateFrom);
-  }
-
   _renderFilter() {
     remove(this._filterComponent);
-    this._filterComponent = new FilterView(this._filterModel.getFilterType());
+
+    const filtersAvailability = this._calculateFiltersAvailability();
+
+    this._filterComponent = new FilterView(
+      this._filterModel.getFilterType(),
+      filtersAvailability,
+    );
     this._filterComponent.setFilterTypeChangeHandler(
       this._handleFilterTypeChange,
     );
@@ -83,6 +97,12 @@ class Header {
     render(this._mainContainer, this._statsComponent);
   }
 
+  _renderHeader() {
+    this._renderInfo();
+    this._renderMenu();
+    this._renderFilter();
+  }
+
   _destroyStats() {
     remove(this._statsComponent);
     this._statsComponent = null;
@@ -100,10 +120,59 @@ class Header {
     this._infoComponent = null;
   }
 
-  _renderHeader() {
-    this._renderInfo();
-    this._renderMenu();
-    this._renderFilter();
+  _calculateOffersTotalPrice(total, { price }) {
+    return total + price;
+  }
+
+  _calculateTotalPrice(acc, { basePrice, offers }) {
+    const offersTotalPrice = offers.reduce(
+      this._calculateOffersTotalPrice,
+      0,
+    );
+
+    return acc + basePrice + offersTotalPrice;
+  }
+
+  _getInfo() {
+    const points = this._pointsModel.getPoints().slice().sort(sortByDate);
+
+    if (points.length > 0) {
+      const startDate = points[0].dateFrom;
+      const endDate = points[points.length - 1].dateTo;
+
+      let title;
+
+      if (points.length > MAX_HEADER_LENGTH) {
+        title = `${points[0].destination.name}
+        &mdash; ... &mdash;
+        ${points[points.length - 1].destination.name}`;
+      } else {
+        title = points
+          .map(({ destination }) => destination.name)
+          .join(' &mdash; ');
+      }
+
+      return {
+        title,
+        cost: points.reduce(this._calculateTotalPrice, 0),
+        date: createTripInfoDate(startDate, endDate),
+        hasInfo: true,
+      };
+    }
+
+    return {
+      hasInfo: false,
+    };
+  }
+
+  _calculateFiltersAvailability() {
+    const points = this._pointsModel.getPoints().slice();
+
+    return {
+      [FilterType.EVERYTHING]: points.length > 0,
+      [FilterType.PAST]: points.filter(filters[FilterType.PAST]).length > 0,
+      [FilterType.FUTURE]: points.filter(filters[FilterType.FUTURE]).length > 0,
+    };
   }
 
   _handleMenuClick(menuType) {
@@ -121,20 +190,21 @@ class Header {
         this._renderFilter();
         this._newPointButton.disabled = false;
         this._filterComponent.disabled = false;
-        this._headerContainer.classList.remove('hide-after');
-        this._mainContainer.classList.remove('hide-after');
+        this._headerContainer.classList.remove(CssClassNames.HIDE_AFTER);
+        this._mainContainer.classList.remove(CssClassNames.HIDE_AFTER);
         break;
+
       case MenuType.STATS:
         this._tripPresenter.destroy();
         this._renderStats();
 
         this._filterComponent
           .getElement()
-          .querySelectorAll('.trip-filters__filter-input')
+          .querySelectorAll(CssClassNames.FILTER)
           .forEach((input) => (input.disabled = true));
         this._newPointButton.disabled = true;
-        this._headerContainer.classList.add('hide-after');
-        this._mainContainer.classList.add('hide-after');
+        this._headerContainer.classList.add(CssClassNames.HIDE_AFTER);
+        this._mainContainer.classList.add(CssClassNames.HIDE_AFTER);
         break;
     }
   }
@@ -143,7 +213,7 @@ class Header {
     evt.preventDefault();
 
     if (!isOnline()) {
-      toast('You can not create new point offline');
+      toast(OfflineErrorMessage.CREATE);
 
       return;
     }
@@ -173,32 +243,8 @@ class Header {
     }
   }
 
-  _getInfo() {
-    const points = this._pointsModel.getPoints().slice().sort(this._sortByDate);
-
-    if (points.length > 0) {
-      const startDate = points[0].dateFrom;
-      const endDate = points[points.length - 1].dateTo;
-
-      return {
-        title: points
-          .map(({ destination }) => destination.name)
-          .join(' &mdash; '),
-        cost: points.reduce((acc, { basePrice, offers }) => {
-          const offersTotalPrice = offers.reduce(
-            (total, { price }) => total + price,
-            0,
-          );
-          return acc + basePrice + offersTotalPrice;
-        }, 0),
-        date: createTripInfoDate(startDate, endDate),
-        hasInfo: true,
-      };
-    }
-
-    return {
-      hasInfo: false,
-    };
+  _handleFilterModelUpdate() {
+    this._renderFilter();
   }
 }
 

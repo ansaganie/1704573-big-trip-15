@@ -1,17 +1,24 @@
+const ServerNaming = {
+  BASE_PRICE: 'base_price',
+  DATE_FROM: 'date_from',
+  DATE_TO: 'date_to',
+  IS_FAVORITE: 'is_favorite',
+};
+
 class PointsAdapter {
   static adaptServerToClient(unit) {
     const adaptedUnit = {
       ...unit,
-      basePrice: unit['base_price'],
-      dateFrom: new Date(unit['date_from']),
-      dateTo: new Date(unit['date_to']),
-      isFavorite: unit['is_favorite'],
+      basePrice: unit[ServerNaming.BASE_PRICE],
+      dateFrom: new Date(unit[ServerNaming.DATE_FROM]),
+      dateTo: new Date(unit[ServerNaming.DATE_TO]),
+      isFavorite: unit[ServerNaming.IS_FAVORITE],
     };
 
-    delete adaptedUnit['base_price'];
-    delete adaptedUnit['date_from'];
-    delete adaptedUnit['date_to'];
-    delete adaptedUnit['is_favorite'];
+    delete adaptedUnit[ServerNaming.BASE_PRICE];
+    delete adaptedUnit[ServerNaming.DATE_FROM];
+    delete adaptedUnit[ServerNaming.DATE_TO];
+    delete adaptedUnit[ServerNaming.IS_FAVORITE];
 
     return adaptedUnit;
   }
@@ -19,10 +26,10 @@ class PointsAdapter {
   static adaptClientToServer(unit) {
     const adaptedUnit = {
       ...unit,
-      'base_price': unit.basePrice,
-      'date_from': unit.dateFrom.toISOString(),
-      'date_to': unit.dateTo.toISOString(),
-      'is_favorite': unit.isFavorite,
+      [ServerNaming.BASE_PRICE]: unit.basePrice,
+      [ServerNaming.DATE_FROM]: unit.dateFrom.toISOString(),
+      [ServerNaming.DATE_TO]: unit.dateTo.toISOString(),
+      [ServerNaming.IS_FAVORITE]: unit.isFavorite,
     };
 
     delete adaptedUnit.basePrice;

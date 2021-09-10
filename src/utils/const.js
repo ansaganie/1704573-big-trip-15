@@ -1,13 +1,3 @@
-const NUMBER_PATTERN = /^\d+$/;
-
-const Messages = {
-  EVERYTHING: 'Click New Event to create your first point',
-  FUTURE: 'There are no past events now',
-  PAST: 'There are no future events now',
-  LOADING: 'Loading...',
-  SERVER_ERROR: 'Something went wrong. </br> Please try to refresh the page',
-};
-
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
@@ -27,39 +17,36 @@ const FilterType = {
   PAST: 'past',
 };
 
-const SortType = {
-  DAY: 'sort-day',
-  TIME: 'sort-time',
-  PRICE: 'sort-price',
-};
-
 const MenuType = {
   TABLE: 'TABLE',
   STATS: 'STATS',
 };
 
-const HttpMethod = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE',
+const OfflineErrorMessage = {
+  CREATE: 'You can not create new point offline',
+  UPDATE: 'You can not update point offline',
+  DELETE: 'You can not delete point offline',
+  ADD: 'You can not add new point offline',
 };
 
-const EndPoints = {
-  OFFERS: 'offers',
-  POINTS: 'points',
-  DESTINATIONS: 'destinations',
-  POINTS_SYNC: 'points/sync',
+const CssClassNames = {
+  NEW_POINT_BUTTON: '.trip-main__event-add-btn',
+  HEADER_CONTAINER: '.page-body__container.page-header__container',
+  INFO_CONTAINER: '.trip-main',
+  MENU_CONTAINER: '.trip-controls__navigation',
+  FILTER_CONTAINER: '.trip-controls__filters',
+  MAIN_CONTAINER: 'main .page-body__container',
+  TRIP_CONTAINER:'.trip-events',
+  FILTER: '.trip-filters__filter-input',
+  HIDE_AFTER: 'hide-after',
+  GREEN_TEXT: 'green',
 };
 
 export {
-  NUMBER_PATTERN,
-  Messages,
   UserAction,
   UpdateType,
   FilterType,
-  SortType,
   MenuType,
-  HttpMethod,
-  EndPoints
+  OfflineErrorMessage,
+  CssClassNames
 };

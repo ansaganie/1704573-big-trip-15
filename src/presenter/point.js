@@ -2,7 +2,7 @@ import PointView from '../view/TripList/point.js';
 import FormView from '../view/EditForm/edit-form.js';
 import { remove, render, replace } from '../utils/render.js';
 import { isEscapePressed, isOnline } from '../utils/common.js';
-import { UpdateType, UserAction } from '../utils/const.js';
+import { OfflineErrorMessage, UpdateType, UserAction } from '../utils/const.js';
 import { toast } from '../utils/toast.js';
 
 const Mode = {
@@ -55,10 +55,12 @@ class Point {
     this._pointComponent.setRollDownButtonClickHandler(
       this._handleRollDownClick,
     );
+
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this._container, this._pointComponent);
+
       return;
     }
 
@@ -94,7 +96,8 @@ class Point {
 
   _handleFormSubmit(updatedPoint, pending) {
     if (!isOnline()) {
-      toast('You can not update point offline');
+      pending.showError();
+      toast(OfflineErrorMessage.UPDATE);
 
       return;
     }
@@ -128,7 +131,9 @@ class Point {
 
   _handleDeleteClick(deletedPoint, pending) {
     if (!isOnline()) {
-      toast('You can not delete point offline');
+      pending.showError();
+      toast(OfflineErrorMessage.DELETE);
+
       return;
     }
 
