@@ -1,7 +1,7 @@
 import MenuView from '../view/trip-tabs.js';
 import FilterView from '../view/trip-filters.js';
 import InfoView from '../view/trip-info.js';
-import StatsView from '../view/stats.js';
+import StatsView from '../view/statistics.js';
 import { remove, render, RenderPosition } from '../utils/render.js';
 import { createTripInfoDate } from '../utils/date.js';
 import { isOnline } from '../utils/common.js';

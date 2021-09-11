@@ -31,14 +31,14 @@ const createTripFiltersTemplate = (currentFilterType, filtersAvailability) => {
   );
 };
 
-class TripFilter extends AbstractView {
+class TripFilters extends AbstractView {
   constructor(filterType, filtersAvailability) {
     super();
 
     this._currentFilterType = filterType;
     this._filtersAvailability = filtersAvailability;
 
-    this._onFilterTypeChange = this._onFilterTypeChange.bind(this);
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
@@ -48,15 +48,15 @@ class TripFilter extends AbstractView {
     );
   }
 
-  _onFilterTypeChange({ target }) {
-    this._callback.changeFilterType(target.value);
-  }
-
   setFilterTypeChangeHandler(handler) {
     this._callback.changeFilterType = handler;
     this.getElement()
-      .addEventListener('change', this._onFilterTypeChange);
+      .addEventListener('change', this._filterTypeChangeHandler);
+  }
+
+  _filterTypeChangeHandler({ target }) {
+    this._callback.changeFilterType(target.value);
   }
 }
 
-export default TripFilter;
+export default TripFilters;

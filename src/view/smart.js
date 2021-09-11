@@ -36,10 +36,10 @@ class Smart extends Abstract {
 
     parent.replaceChild(newElement, prevElement);
 
-    this.restoreHandlers();
+    this.restoreEventHandlers();
   }
 
-  restoreHandlers() {
+  restoreEventHandlers() {
     throw new Error('Abstract method should be realized');
   }
 }

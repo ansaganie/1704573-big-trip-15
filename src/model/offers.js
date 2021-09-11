@@ -1,4 +1,4 @@
-class Offer {
+class Offers {
   constructor() {
     this._offers = null;
   }
@@ -12,4 +12,4 @@ class Offer {
   }
 }
 
-export default Offer;
+export default Offers;

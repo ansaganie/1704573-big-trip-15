@@ -52,7 +52,7 @@ class Point {
       this._point,
     );
 
-    this._pointComponent.setRollDownButtonClickHandler(
+    this._pointComponent.setRollDownClickHandler(
       this._handleRollDownClick,
     );
 

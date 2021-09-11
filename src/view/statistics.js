@@ -36,9 +36,9 @@ class Statistics extends AbstractView {
   }
 
   _renderStatsCharts() {
-    const moneyFormatter = (val) => `€ ${val}`;
-    const typeFormatter = (val) => `${val}x`;
-    const timeSpendFormatter = (val) => `${formatDuration(val)}`;
+    const formatMoney = (val) => `€ ${val}`;
+    const formatType = (val) => `${val}x`;
+    const formatTimeSpend = (val) => `${formatDuration(val)}`;
 
     const { money, type, timeSpend } = this._props;
     const moneyElement = this.getElement().querySelector('#money');
@@ -53,9 +53,9 @@ class Statistics extends AbstractView {
     timeElement.height = chartHeight;
 
     const chartConfigs = [
-      getStatsConfig(moneyElement, labels, money, moneyFormatter),
-      getStatsConfig(typeElement, labels, type, typeFormatter),
-      getStatsConfig(timeElement, labels, timeSpend, timeSpendFormatter),
+      getStatsConfig(moneyElement, labels, money, formatMoney),
+      getStatsConfig(typeElement, labels, type, formatType),
+      getStatsConfig(timeElement, labels, timeSpend, formatTimeSpend),
     ];
 
     chartConfigs.forEach((config) => new Chart(...config));
